@@ -1,0 +1,1220 @@
+:root {
+  /* ====== PALETTA COLORI PRINCIPALE ====== */
+  /* Blu - Brand principale */
+  --blue-light: #02119e;        /* Header chiaro, pulsanti principali */
+  --blue-dark: #010957;         /* Header scuro, hover pulsanti */
+  --blue-accent: #98b1f5;       /* Evidenziazioni, titoli colonne tabelle */
+  
+  /* Grigi - Background e testi */
+  --bg-body: #8a8a8a;           /* Sfondo pagina principale */
+  --bg-panel: #adadad;          /* Sfondo pannelli contenuti */
+  --bg-panel-light: #f7f9fb;    /* Sfondo interno pannelli */
+  --text-dark: #222;            /* Testi principali, titoli */
+  --text-muted: #666;           /* Testi secondari, sottotitoli */
+  --text-light-muted: #888;     /* Testi molto secondari */
+  --border-light: #e1e8f0;      /* Bordi leggeri */
+  
+  /* Colori di stato */
+  --success: #10b981;           /* Successo, valori positivi, calorie */
+  --warning: #f59e0b;           /* Avvisi, valori medi */
+  --danger: #ef4444;            /* Errori, valori critici */
+  
+  /* Colori speciali */
+  --tag-bg: #e9f2ff;            /* Sfondo tag e badge */
+  --pill-bg: #fffbeb;           /* Sfondo pillole informative */
+  --allergen-bg: #ffd6d6;       /* Sfondo allergeni (rosso chiaro) */
+  --allergen-text: #7b341e;     /* Testo allergeni (marrone scuro) */
+  --allergen-border: #fed7d7;   /* Bordo allergeni */
+  
+  /* ====== VARIABILI DI STILE ====== */
+  --radius: 12px;               /* Border-radius principale */
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --transition: all 0.3s ease;  /* Transizioni standard */
+}
+
+/* ====== STILI BASE ====== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
+  color: var(--text-dark);
+  background: var(--bg-body);
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 16px;
+}
+
+/* ====== HEADER MODERNO ====== */
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, var(--blue-light), var(--blue-dark));
+  color: #fff;
+  padding: 18px 28px;
+  border-radius: var(--radius);
+  margin: 16px auto;
+  max-width: 1200px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.site-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent);
+  border-radius: 0 0 0 100px;
+}
+
+.site-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.site-header .mute {
+  opacity: 0.9;
+  margin: 0;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.recipe-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recipe-meta-header {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.meta-tag {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+}
+
+.header-nav {
+  display: flex;
+  gap: 10px;
+}
+
+.header-nav .btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+}
+
+.header-nav .btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* ====== PULSANTI ====== */
+.btn {
+  background: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+  border: 1px solid var(--border-light);
+}
+
+.btn.primary {
+  background: var(--blue-light);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(2, 17, 158, 0.3);
+  border-color: var(--blue-light);
+}
+
+.btn.primary:hover {
+  background: var(--blue-dark);
+  transform: translateY(-2px);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.btn-small {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+/* ====== RICERCA ====== */
+.search {
+  padding: 12px;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 8px;
+  border: 1px solid #d6e6fb;
+  font-size: 16px;
+  transition: var(--transition);
+}
+
+.search:focus {
+  outline: none;
+  border-color: var(--blue-accent);
+  box-shadow: 0 0 0 3px rgba(152, 177, 245, 0.2);
+}
+
+/* ====== PANNELI ====== */
+.panel {
+  background: var(--bg-panel);
+  padding: 28px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-light);
+  transition: var(--transition);
+  margin-bottom: 20px;
+}
+
+.panel:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.panel-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.narrow {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* ====== LAYOUT RICETTA ====== */
+.recipe-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 32px;
+  padding: 32px;
+}
+
+/* ====== SEZIONE INGREDIENTI ====== */
+.ingredients-section {
+  margin-bottom: 32px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--blue-accent);
+}
+
+.section-header h2 {
+  margin: 0;
+  color: var(--text-dark);
+  font-size: 24px;
+}
+
+.portions-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.portions-input {
+  padding: 8px 12px;
+  border: 1px solid #d6e6fb;
+  border-radius: 6px;
+  width: 80px;
+  font-size: 16px;
+}
+
+/* ====== TABELLA INGREDIENTI ====== */
+.ingredients-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  background: var(--bg-panel-light);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.ingredients-table th {
+  background: linear-gradient(135deg, var(--blue-accent), #e3edf7);
+  color: var(--text-dark);
+  font-weight: 700;
+  padding: 16px 12px;
+  text-align: left;
+  font-size: 14px;
+  border-bottom: 2px solid var(--blue-light);
+}
+
+.ingredients-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #f0f4f8;
+  transition: background-color 0.2s ease;
+}
+
+.ingredients-table tr:hover td {
+  background: #fafcff;
+}
+
+.ingredients-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Riga totali */
+.total-row {
+  background: linear-gradient(135deg, #f0f7ff, #e3f2fd) !important;
+  border-top: 2px solid var(--blue-light);
+}
+
+.total-row td {
+  font-weight: 700;
+  color: var(--text-dark);
+  padding: 16px 12px;
+}
+
+/* Colonna costo evidenziata */
+.ingredients-table td:nth-child(4) {
+  font-weight: 600;
+  color: var(--blue-light);
+}
+
+/* Colonna calorie evidenziata */
+.ingredients-table td:nth-child(5) {
+  font-weight: 600;
+  color: var(--success);
+}
+
+/* ====== TABELLA INGREDIENTI (PAGINA INGREDIENTI) ====== */
+.table#ingredientTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  background: var(--bg-panel-light);
+  border-radius: 8px;
+  overflow: hidden;
+  table-layout: fixed;
+}
+
+.table#ingredientTable th,
+.table#ingredientTable td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #eef4fb;
+  text-align: left;
+  vertical-align: top;
+}
+
+.table#ingredientTable thead th {
+  background: linear-gradient(135deg, var(--blue-accent), #e3edf7);
+  color: var(--text-dark);
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+}
+
+/* Larghezza colonne specifiche per tabella ingredienti - MODIFICATO */
+.table#ingredientTable th:nth-child(1) { /* Nome */
+  width: 35%; /* Aumentato */
+  min-width: 280px;
+}
+
+.table#ingredientTable th:nth-child(2) { /* Prezzo */
+  width: 12%; /* Ridotto */
+  min-width: 100px;
+}
+
+.table#ingredientTable th:nth-child(3) { /* Unità */
+  width: 8%; /* Ridotto */
+  min-width: 70px;
+}
+
+.table#ingredientTable th:nth-child(4) { /* Allergeni */
+  width: 20%;
+  min-width: 150px;
+}
+
+.table#ingredientTable th:nth-child(5) { /* Macro */
+  width: 15%; /* Ridotto */
+  min-width: 100px;
+}
+
+.table#ingredientTable th:nth-child(6) { /* Azioni */
+  width: 10%;
+  min-width: 120px; /* Aumentato per due pulsanti */
+}
+
+/* Classi per colonne specifiche */
+.col-price {
+  width: 12% !important;
+}
+
+.col-unit {
+  width: 8% !important;
+}
+
+.col-macro {
+  width: 15% !important;
+}
+
+.col-actions {
+  width: 10% !important;
+  min-width: 120px !important;
+}
+
+/* ====== SEZIONE PREPARAZIONE ====== */
+.preparation-section {
+  margin-top: 32px;
+}
+
+.preparation-section h2 {
+  color: var(--text-dark);
+  font-size: 24px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--blue-accent);
+}
+
+.preparation {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--text-dark);
+  background: var(--bg-panel-light);
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.preparation p {
+  margin-bottom: 16px;
+}
+
+.preparation p:last-child {
+  margin-bottom: 0;
+}
+
+/* ====== COLONNA DESTRA ====== */
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Ridotto */
+}
+
+.recipe-image-container {
+  text-align: center;
+}
+
+.recipe-image {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+
+.recipe-image:hover {
+  transform: scale(1.02);
+}
+
+/* ====== BOX COSTI E MACRO (più stretti) ====== */
+.box {
+  background: linear-gradient(135deg, #f8fbff, #f0f7ff);
+  padding: 16px; /* Ridotto */
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+.box.compact-box {
+  padding: 14px 16px; /* Ancora più compatto */
+}
+
+.box h3 {
+  margin: 0 0 12px 0; /* Ridotto */
+  color: var(--text-dark);
+  font-size: 16px; /* Ridotto */
+  border-bottom: 2px solid var(--blue-light);
+  padding-bottom: 6px; /* Ridotto */
+}
+
+.cost-content,
+.macro-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Ridotto */
+}
+
+.cost-line,
+.macro-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0; /* Ridotto */
+  font-size: 14px; /* Ridotto */
+}
+
+.cost-line:not(:last-child),
+.macro-line:not(:last-child) {
+  border-bottom: 1px solid #e8f0fe;
+}
+
+.total-cost,
+.portion-cost {
+  font-size: 14px; /* Ridotto */
+}
+
+.total-cost strong {
+  color: var(--blue-light);
+  font-size: 15px; /* Ridotto */
+}
+
+.portion-cost strong {
+  color: var(--success);
+  font-size: 14px; /* Ridotto */
+}
+
+/* ====== ALLERGENI ====== */
+.allergens-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* Ridotto */
+  font-size: 14px; /* Ridotto */
+}
+
+.allergen-tag {
+  display: inline-block;
+  padding: 3px 8px !important;
+  margin: 2px 1px !important;
+  border-radius: 12px !important;
+  font-weight: 500 !important;
+  background: var(--allergen-bg);
+  color: var(--allergen-text);
+  font-size: 11px !important;
+  border: 1px solid var(--allergen-border);
+  line-height: 1.2 !important;
+  white-space: nowrap;
+}
+
+/* ====== PREPARAZIONI BASE INCLUSE ====== */
+.included-bases {
+  margin: 20px 0;
+  padding: 16px;
+  background: var(--blue-accent);
+  border-radius: 8px;
+  border-left: 4px solid var(--blue-light);
+}
+
+.included-bases h4 {
+  margin: 0 0 12px 0;
+  color: var(--text-dark);
+}
+
+/* ====== LISTE ====== */
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.list li {
+  padding: 16px;
+  border-left: 4px solid var(--blue-light);
+  margin: 8px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  background: var(--bg-panel-light);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.list li:hover {
+  background: #f2f0aa;
+  transform: translateX(8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* ====== TABELLE GENERALI ====== */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  background: var(--bg-panel-light);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #eef4fb;
+  text-align: left;
+}
+
+.table thead th {
+  background: linear-gradient(135deg, var(--blue-accent), #e3edf7);
+  color: var(--text-dark);
+  font-weight: 700;
+}
+
+/* ====== FORM ====== */
+.form-field {
+  margin-bottom: 20px;
+  display: block;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  font-size: 14px;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--blue-accent);
+  box-shadow: 0 0 0 3px rgba(152, 177, 245, 0.2);
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* ====== ALLERGENI CHECKBOX ====== */
+.allergen-grid-horizontal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.allergen-grid-horizontal label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--bg-panel-light);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 13px;
+  white-space: nowrap;
+  height: 36px; /* Altezza fissa più bassa */
+  margin-bottom: 0;
+}
+
+.allergen-grid-horizontal label:hover {
+  background: var(--tag-bg);
+}
+
+.allergen-grid-horizontal input[type="checkbox"] {
+  margin: 0;
+  width: 16px;
+  height: 16px;
+}
+
+/* ====== LISTE EDITOR ====== */
+.mini-list {
+  list-style: none;
+  padding: 0;
+}
+
+.mini-list li {
+  padding: 12px;
+  border: 1px dashed #e2f0ff;
+  margin: 8px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8px;
+  background: var(--bg-panel-light);
+}
+
+.editable-ingredients li {
+  padding: 12px;
+  border: 1px solid #e2f0ff;
+  margin: 8px 0;
+  border-radius: 8px;
+  background: #fafcff;
+}
+
+.ingredient-editor {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ingredient-editor input,
+.ingredient-editor select {
+  padding: 6px 8px;
+  border: 1px solid #d6e6fb;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.ingredient-name {
+  font-weight: 600;
+  min-width: 120px;
+  color: var(--text-dark);
+}
+
+.ingredient-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.ingredient-actions .btn {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+/* ====== LINEA AGGIUNGI INGREDIENTE ====== */
+.add-ingredient-line {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.add-ingredient-line select,
+.add-ingredient-line input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #dfeefb;
+  font-size: 14px;
+  min-width: 100px;
+}
+
+/* ====== TEXTAREA LARGA ====== */
+textarea {
+  font-family: inherit;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e6eefb;
+  font-size: 16px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+/* ====== CLASSI UTILITY ====== */
+.mute {
+  color: var(--text-muted);
+  font-size: 0.9em;
+}
+
+.success {
+  color: var(--success);
+}
+
+.warning {
+  color: var(--warning);
+}
+
+.danger {
+  color: var(--danger);
+}
+
+/* ====== ELENCHI A 2 COLONNE ====== */
+.two-columns-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.two-columns-list li {
+  margin: 0;
+  padding: 16px;
+  border-left: 4px solid var(--blue-light);
+  border-radius: 8px;
+  background: var(--bg-panel-light);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: var(--transition);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 60px; /* Altezza minima uniforme */
+}
+
+.two-columns-list li:hover {
+  background: #dceafc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Per liste con azioni (preparazioni-base) */
+.two-columns-list li > div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.two-columns-list li .btn {
+  padding: 6px 10px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* Responsive: su mobile torna a una colonna */
+@media (max-width: 900px) {
+  .two-columns-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .two-columns-list li {
+    min-height: auto;
+  }
+}
+
+/* Stile per elenchi senza azioni (index) */
+#recipesList li,
+#basesList li {
+  cursor: pointer;
+}
+
+#recipesList li small.mute,
+#basesList li small.mute {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-left: 8px;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 900px) {
+  .recipe-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .site-header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+    padding: 16px 20px;
+  }
+  
+  .header-left {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .ingredients-table {
+    font-size: 14px;
+  }
+  
+  .ingredients-table th,
+  .ingredients-table td {
+    padding: 10px 8px;
+  }
+  
+  .add-ingredient-line {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .allergen-grid-horizontal {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Responsive per tabella ingredienti */
+  .table#ingredientTable {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .table#ingredientTable th,
+  .table#ingredientTable td {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  
+  .table#ingredientTable th:nth-child(1),
+  .table#ingredientTable th:nth-child(2),
+  .table#ingredientTable th:nth-child(3),
+  .table#ingredientTable th:nth-child(4),
+  .table#ingredientTable th:nth-child(5),
+  .table#ingredientTable th:nth-child(6) {
+    width: auto;
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 8px;
+  }
+  
+  .panel {
+    padding: 20px;
+  }
+  
+  .recipe-layout {
+    padding: 20px;
+  }
+  
+  .ingredients-table {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .editable-ingredients li {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  
+  .ingredient-editor {
+    justify-content: space-between;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .form-actions .btn {
+    width: 100%;
+  }
+  
+  /* Mobile: tabella ingredienti diventa orizzontale */
+  .table#ingredientTable {
+    font-size: 12px;
+  }
+  
+  .allergen-tag {
+    font-size: 10px !important;
+    padding: 2px 6px !important;
+  }
+  
+  .allergen-grid-horizontal label {
+    font-size: 12px;
+    padding: 4px 8px;
+    height: 32px;
+  }
+}
+/* Stile per ingredienti provenienti da preparazioni base */
+.ingredients-table td:first-child small.mute {
+  font-size: 11px;
+  opacity: 0.7;
+  display: block;
+  margin-top: 2px;
+}
+
+/* Box preparazioni base incluse */
+.included-bases h4 {
+  margin: 0 0 15px 0;
+  color: var(--blue-light);
+  font-size: 16px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--blue-accent);
+}
+
+.included-bases ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 8px 0;
+}
+
+.included-bases li {
+  padding: 4px 0;
+  font-size: 14px;
+  border-bottom: 1px dashed #e0e0e0;
+}
+
+.included-bases li:last-child {
+  border-bottom: none;
+}
+
+/* ====== AGGIUNTE PER COSTI PREPARAZIONI BASE ====== */
+/* Stile per il totale costo nella pagina preparazione base */
+.cost-summary {
+  background: linear-gradient(135deg, #f0f7ff, #e3f2fd);
+  padding: 16px;
+  border-radius: 8px;
+  margin: 20px 0;
+  border: 2px solid var(--blue-accent);
+}
+
+.cost-summary h4 {
+  margin: 0 0 12px 0;
+  color: var(--blue-light);
+}
+
+/* Stile per il costo nella lista ingredienti preparazione base */
+#prepIngredientsList li {
+  padding: 12px;
+  border: 1px dashed #e2f0ff;
+  margin: 8px 0;
+  border-radius: 8px;
+  background: var(--bg-panel-light);
+}
+
+#prepIngredientsList li > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+#prepIngredientsList li .btn {
+  padding: 6px 10px;
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+/* Stile per il costo nelle preparazioni base incluse in ricetta */
+.included-bases .base-total-cost {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 2px dashed var(--blue-accent);
+  font-weight: bold;
+  color: var(--blue-light);
+  text-align: right;
+}
+
+/* Stile per il box peso */
+.weight-box {
+  background: linear-gradient(135deg, #f9fff0, #f7ffef);
+  border: 1px solid #e0f0d0;
+}
+
+.weight-box h3 {
+  border-bottom: 2px solid #8bc34a;
+}
+
+/* Stile per input porzioni con decimali */
+.portions-input {
+  padding: 8px 12px;
+  border: 1px solid #d6e6fb;
+  border-radius: 6px;
+  width: 80px;
+  font-size: 16px;
+}
+
+/* Migliora visibilità controllo peso */
+#weightControl {
+  background-color: rgba(240, 247, 255, 0.7);
+  padding: 12px;
+  border-radius: 8px;
+}
+
+/* Responsive per controllo peso */
+@media (max-width: 900px) {
+  .portions-control {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  #weightControl {
+    width: 100%;
+  }
+  
+  #desiredWeight {
+    width: 80px;
+  }
+}
+/* ========================================================================
+   AGGIUNTE PWA / MOBILE
+   ======================================================================== */
+
+/* 1) Safe-area per iPhone/Android con notch e gesture bar */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* 2) Blocca lo zoom su input (iOS) e migliora tap */
+input, select, textarea, button {
+  font-size: 16px; /* evita zoom automatico su iOS */
+}
+
+/* 3) Rimuovi highlight blu al tap su Android */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 4) Disabilita "bounce" elastico su iOS quando scrolli oltre */
+html, body {
+  overscroll-behavior: none;
+}
+
+/* 5) Header sticky per PWA (più comodo su mobile) */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Su mobile non sticky per evitare problemi */
+@media (max-width: 900px) {
+  .site-header {
+    position: relative;
+  }
+}
+
+/* 6) Bottom navigation (barra in basso stile app) */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: linear-gradient(135deg, var(--blue-light), var(--blue-dark));
+  padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 200;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bottom-nav a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  min-width: 60px;
+  gap: 2px;
+}
+
+.bottom-nav a.active,
+.bottom-nav a:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.bottom-nav a .nav-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* 7) Aggiungi spazio in fondo alle pagine per non coprire con la bottom nav */
+body.has-bottom-nav {
+  padding-bottom: calc(70px + env(safe-area-inset-bottom));
+}
+
+/* 8) Migliora scrollbar su Android */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(2, 17, 158, 0.3);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(2, 17, 158, 0.5);
+}
+
+/* 9) Form input più comodi su mobile */
+@media (max-width: 900px) {
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    padding: 12px 14px;
+    font-size: 16px;
+  }
+  
+  .btn {
+    padding: 12px 18px;
+    font-size: 15px;
+    min-height: 44px; /* tap target consigliato */
+  }
+  
+  .btn-small {
+    min-height: 36px;
+    padding: 8px 12px;
+  }
+  
+  /* Lista a due colonne: torna a una sola colonna su mobile */
+  .two-columns-list {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Tabelle: scroll orizzontale fluido */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* 10) Nasconde la bottom-nav su desktop (non serve) */
+@media (min-width: 901px) {
+  .bottom-nav {
+    display: none;
+  }
+  body.has-bottom-nav {
+    padding-bottom: 0;
+  }
+}

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <title>Editor Preparazione Base</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#02119e" />
+  <link rel="apple-touch-icon" href="images/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Ricette" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-left">
+      <h1>Editor Preparazione</h1>
+      <p class="mute">Crea o modifica una preparazione base</p>
+    </div>
+    <nav class="header-nav">
+      <a class="btn" href="preparazioni-base.html">Torna</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="panel narrow">
+      <form id="prepForm">
+        <div class="form-field">
+          <label>Nome: <input name="name" required /></label>
+        </div>
+
+        <h3>Ingredienti (aggiungi dalla lista)</h3>
+        <div class="add-ingredient-line">
+          <select id="prepIngredientSelect"></select>
+          <input id="prepIngredientQty" placeholder="quantità" />
+          <select id="prepIngredientUnit"></select>
+          <button id="addPrepIngredientBtn" type="button" class="btn">Aggiungi</button>
+        </div>
+
+        <ul id="prepIngredientsList" class="mini-list"></ul>
+        
+        <!-- Aggiunta: Totale costo preparazione base -->
+        <div id="prepTotalCost" class="cost-summary" style="
+          background: linear-gradient(135deg, #f0f7ff, #e3f2fd);
+          padding: 16px;
+          border-radius: 8px;
+          margin: 20px 0;
+          border: 2px solid var(--blue-accent);
+          display: none;
+        ">
+          <h4 style="margin: 0 0 12px 0; color: var(--blue-light);">
+            Costo Totale Preparazione
+          </h4>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 600; font-size: 16px;">Totale:</span>
+            <strong id="prepTotalCostValue" style="font-size: 20px; color: var(--blue-light);">€ 0.00</strong>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label>Preparazione (testo):<br/>
+            <textarea name="preparation" rows="10" style="width:100%"></textarea>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Salva</button>
+          <button id="cancelPrep" type="button" class="btn">Annulla</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="js/script.js"></script>
+  <script>
+    initEditPreparationPage();
+    document.getElementById('cancelPrep').addEventListener('click', ()=> window.location.href='preparazioni-base.html');
+  </script>
+</body>
+</html>

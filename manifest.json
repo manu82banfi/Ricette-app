@@ -1,0 +1,33 @@
+{
+  "name": "Ricette - Gestione ricette e preparazioni",
+  "short_name": "Ricette",
+  "description": "App per gestire ricette, ingredienti, costi e valori nutrizionali",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#8a8a8a",
+  "theme_color": "#02119e",
+  "lang": "it",
+  "categories": ["food", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

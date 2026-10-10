@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <title>Impostazioni</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#02119e" />
+  <link rel="apple-touch-icon" href="images/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Ricette" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-left">
+      <h1>Impostazioni</h1>
+      <p class="mute">Backup / Import / Export</p>
+    </div>
+    <nav class="header-nav">
+      <a class="btn" href="index.html">Indice</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="panel narrow">
+      <h3>Export</h3>
+      <button id="exportBtn" class="btn">Scarica data/*.json</button>
+
+      <h3>Importa</h3>
+      <input id="importFile" type="file" accept=".json" />
+      <p class="mute">Puoi caricare ingredienti.json o ricette.json per sostituire i dati.</p>
+    </section>
+  </main>
+
+  <script src="js/script.js"></script>
+  <script>initSettingsPage();</script>
+</body>
+</html>

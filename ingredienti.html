@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <title>Ingredienti</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#02119e" />
+  <link rel="apple-touch-icon" href="images/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Ricette" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-left">
+      <h1>Ingredienti</h1>
+      <p class="mute">Database ingredienti</p>
+    </div>
+    <nav class="header-nav">
+      <a class="btn" href="index.html">Indice</a>
+      <a class="btn primary" id="nuovoIngredienteBtn">+ Nuovo ingrediente</a>
+    </nav>
+  </header>
+  
+  <main class="container">
+    <section class="panel">
+      <div class="panel-header">
+        <input id="ingredientSearch" class="search" placeholder="Cerca ingrediente..." />
+      </div>
+      
+      <!-- Tabella ingredienti con larghezza colonne ottimizzata -->
+      <div class="table-responsive">
+        <table id="ingredientTable" class="table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th class="col-price">Prezzo Kg/L/Pcs</th>
+              <th class="col-unit">Unità</th>
+              <th>Allergeni</th>
+              <th class="col-macro">Macro/100g</th>
+              <th class="col-actions">Azioni</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  
+  <script src="js/script.js"></script>
+  <script>
+    document.getElementById('nuovoIngredienteBtn').addEventListener('click', function() {
+      window.location.href = 'modifica-ingrediente.html';
+    });
+    
+    initIngredientPage();
+  </script>
+</body>
+</html>
