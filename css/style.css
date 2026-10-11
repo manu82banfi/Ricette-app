@@ -1222,12 +1222,24 @@ body.has-bottom-nav {
    AGGIUNTE: MASCHERA HOME + MOBILE
    ======================================================================== */
 
+/* --- Body della maschera home: sfondo scuro, card centrate --- */
+.home-body {
+  background: #1a1a2e;
+  background: linear-gradient(160deg, #02119e 0%, #010957 100%);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+}
+
 /* --- Maschera home con le 4 card --- */
 .home-menu {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 20px 16px;
+  width: 100%;
   max-width: 700px;
   margin: 0 auto;
 }
@@ -1237,13 +1249,13 @@ body.has-bottom-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 120px;
+  min-height: 130px;
   padding: 20px 24px;
   border-radius: var(--radius);
   overflow: hidden;
   background-size: cover;
   background-position: center;
-  box-shadow: var(--shadow);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
   transition: var(--transition);
   color: #fff;
   text-decoration: none;
@@ -1253,36 +1265,57 @@ body.has-bottom-nav {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.15));
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.15));
   z-index: 1;
+  transition: var(--transition);
+}
+
+.home-card:hover::before,
+.home-card:active::before {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.3));
 }
 
 .home-card:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
 }
 
 .home-title {
   position: relative;
   z-index: 2;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
   letter-spacing: 0.5px;
 }
 
 .home-arrow {
   position: relative;
   z-index: 2;
-  font-size: 32px;
+  font-size: 40px;
   font-weight: 300;
   line-height: 1;
-  opacity: 0.9;
+  opacity: 0.85;
   transition: transform 0.3s ease;
 }
 
 .home-card:hover .home-arrow {
   transform: translateX(6px);
+  opacity: 1;
+}
+
+/* Su schermi piccoli le card sono un po' più basse */
+@media (max-width: 500px) {
+  .home-card {
+    min-height: 110px;
+    padding: 16px 20px;
+  }
+  .home-title {
+    font-size: 20px;
+  }
+  .home-arrow {
+    font-size: 34px;
+  }
 }
 
 /* --- Safe-area per notch / gesture bar --- */
@@ -1291,6 +1324,13 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
+}
+
+/* Eccezione: la maschera home gestisce il padding da sola */
+body.home-body {
+  padding: 20px 16px;
+  padding-top: calc(20px + env(safe-area-inset-top));
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
 }
 
 /* --- Blocca zoom su input iOS e rimuovi highlight tap --- */
