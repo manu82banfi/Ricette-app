@@ -1218,3 +1218,195 @@ body.has-bottom-nav {
     padding-bottom: 0;
   }
 }
+/* ========================================================================
+   AGGIUNTE: MASCHERA HOME + MOBILE
+   ======================================================================== */
+
+/* --- Maschera home con le 4 card --- */
+.home-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 16px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.home-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 120px;
+  padding: 20px 24px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  color: #fff;
+  text-decoration: none;
+}
+
+.home-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.15));
+  z-index: 1;
+}
+
+.home-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+
+.home-title {
+  position: relative;
+  z-index: 2;
+  font-size: 22px;
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.5px;
+}
+
+.home-arrow {
+  position: relative;
+  z-index: 2;
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1;
+  opacity: 0.9;
+  transition: transform 0.3s ease;
+}
+
+.home-card:hover .home-arrow {
+  transform: translateX(6px);
+}
+
+/* --- Safe-area per notch / gesture bar --- */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* --- Blocca zoom su input iOS e rimuovi highlight tap --- */
+input, select, textarea, button {
+  font-size: 16px;
+}
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* --- Disabilita bounce elastico --- */
+html, body {
+  overscroll-behavior: none;
+}
+
+/* --- Header sticky su desktop, normale su mobile --- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+@media (max-width: 900px) {
+  .site-header {
+    position: relative;
+  }
+}
+
+/* --- Bottom navigation a 5 voci --- */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: linear-gradient(135deg, var(--blue-light), var(--blue-dark));
+  padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 200;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bottom-nav a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 6px 4px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  flex: 1;
+  gap: 2px;
+  max-width: 80px;
+}
+
+.bottom-nav a.active,
+.bottom-nav a:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.bottom-nav a .nav-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+body.has-bottom-nav {
+  padding-bottom: calc(70px + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 901px) {
+  .bottom-nav {
+    display: none;
+  }
+  body.has-bottom-nav {
+    padding-bottom: 0;
+  }
+}
+
+/* --- Scrollbar carina --- */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb {
+  background: rgba(2, 17, 158, 0.3);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(2, 17, 158, 0.5);
+}
+
+/* --- Touch target comodi su mobile --- */
+@media (max-width: 900px) {
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    padding: 12px 14px;
+    font-size: 16px;
+  }
+  .btn {
+    padding: 12px 18px;
+    font-size: 15px;
+    min-height: 44px;
+  }
+  .btn-small {
+    min-height: 36px;
+    padding: 8px 12px;
+  }
+  .two-columns-list {
+    grid-template-columns: 1fr;
+  }
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

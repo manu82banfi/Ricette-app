@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>Editor Preparazione Base</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#02119e" />
   <link rel="apple-touch-icon" href="images/icon-192.png" />
@@ -39,8 +39,7 @@
         </div>
 
         <ul id="prepIngredientsList" class="mini-list"></ul>
-        
-        <!-- Aggiunta: Totale costo preparazione base -->
+
         <div id="prepTotalCost" class="cost-summary" style="
           background: linear-gradient(135deg, #f0f7ff, #e3f2fd);
           padding: 16px;
@@ -72,10 +71,19 @@
     </section>
   </main>
 
+  <nav class="bottom-nav">
+    <a href="index2.html"><span class="nav-icon">📖</span><span>Ricette</span></a>
+    <a href="preparazioni-base.html" class="active"><span class="nav-icon">🥣</span><span>Basi</span></a>
+    <a href="ingredienti.html"><span class="nav-icon">🥕</span><span>Ingredienti</span></a>
+    <a href="planner.html"><span class="nav-icon">📅</span><span>Planner</span></a>
+    <a href="impostazioni.html"><span class="nav-icon">⚙️</span><span>Setup</span></a>
+  </nav>
+  <script>document.body.classList.add('has-bottom-nav');</script>
+
   <script src="js/script.js"></script>
   <script>
     initEditPreparationPage();
-    document.getElementById('cancelPrep').addEventListener('click', ()=> window.location.href='preparazioni-base.html');
+    document.getElementById('cancelPrep').addEventListener('click', () => window.location.href = 'preparazioni-base.html');
   </script>
 </body>
 </html>

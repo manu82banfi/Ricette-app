@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>Ingredienti</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#02119e" />
   <link rel="apple-touch-icon" href="images/icon-192.png" />
@@ -19,18 +19,16 @@
       <p class="mute">Database ingredienti</p>
     </div>
     <nav class="header-nav">
-      <a class="btn" href="index.html">Indice</a>
       <a class="btn primary" id="nuovoIngredienteBtn">+ Nuovo ingrediente</a>
     </nav>
   </header>
-  
+
   <main class="container">
     <section class="panel">
       <div class="panel-header">
         <input id="ingredientSearch" class="search" placeholder="Cerca ingrediente..." />
       </div>
-      
-      <!-- Tabella ingredienti con larghezza colonne ottimizzata -->
+
       <div class="table-responsive">
         <table id="ingredientTable" class="table">
           <thead>
@@ -48,13 +46,21 @@
       </div>
     </section>
   </main>
-  
+
+  <nav class="bottom-nav">
+    <a href="index2.html"><span class="nav-icon">📖</span><span>Ricette</span></a>
+    <a href="preparazioni-base.html"><span class="nav-icon">🥣</span><span>Basi</span></a>
+    <a href="ingredienti.html" class="active"><span class="nav-icon">🥕</span><span>Ingredienti</span></a>
+    <a href="planner.html"><span class="nav-icon">📅</span><span>Planner</span></a>
+    <a href="impostazioni.html"><span class="nav-icon">⚙️</span><span>Setup</span></a>
+  </nav>
+  <script>document.body.classList.add('has-bottom-nav');</script>
+
   <script src="js/script.js"></script>
   <script>
     document.getElementById('nuovoIngredienteBtn').addEventListener('click', function() {
       window.location.href = 'modifica-ingrediente.html';
     });
-    
     initIngredientPage();
   </script>
 </body>

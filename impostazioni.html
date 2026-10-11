@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>Impostazioni</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#02119e" />
   <link rel="apple-touch-icon" href="images/icon-192.png" />
@@ -18,9 +18,6 @@
       <h1>Impostazioni</h1>
       <p class="mute">Backup / Import / Export</p>
     </div>
-    <nav class="header-nav">
-      <a class="btn" href="index.html">Indice</a>
-    </nav>
   </header>
 
   <main class="container">
@@ -31,8 +28,20 @@
       <h3>Importa</h3>
       <input id="importFile" type="file" accept=".json" />
       <p class="mute">Puoi caricare ingredienti.json o ricette.json per sostituire i dati.</p>
+
+      <h3>Sincronizzazione</h3>
+      <button id="syncBtn" class="btn">Sincronizza ora da JSONBin</button>
     </section>
   </main>
+
+  <nav class="bottom-nav">
+    <a href="index2.html"><span class="nav-icon">📖</span><span>Ricette</span></a>
+    <a href="preparazioni-base.html"><span class="nav-icon">🥣</span><span>Basi</span></a>
+    <a href="ingredienti.html"><span class="nav-icon">🥕</span><span>Ingredienti</span></a>
+    <a href="planner.html"><span class="nav-icon">📅</span><span>Planner</span></a>
+    <a href="impostazioni.html" class="active"><span class="nav-icon">⚙️</span><span>Setup</span></a>
+  </nav>
+  <script>document.body.classList.add('has-bottom-nav');</script>
 
   <script src="js/script.js"></script>
   <script>initSettingsPage();</script>

@@ -2,8 +2,8 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <title>Indice Ricette</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ricette</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#02119e" />
   <link rel="apple-touch-icon" href="images/icon-192.png" />
@@ -12,62 +12,42 @@
   <meta name="apple-mobile-web-app-title" content="Ricette" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<!-- Bottom navigation (stile app) -->
-<nav class="bottom-nav">
-  <a href="index.html" class="active">
-    <span class="nav-icon">📖</span>
-    <span>Ricette</span>
-  </a>
-  <a href="ingredienti.html">
-    <span class="nav-icon">🥕</span>
-    <span>Ingredienti</span>
-  </a>
-  <a href="preparazioni-base.html">
-    <span class="nav-icon">🥣</span>
-    <span>Basi</span>
-  </a>
-  <a href="impostazioni.html">
-    <span class="nav-icon">⚙️</span>
-    <span>Setup</span>
-  </a>
-</nav>
-<script>document.body.classList.add('has-bottom-nav');</script>
 <body>
   <header class="site-header">
     <div class="header-left">
       <h1>Ricette</h1>
-      <p class="mute">Indice - ricette e preparazioni base</p>
+      <p class="mute">La mia pasticceria</p>
     </div>
-    <nav class="header-nav">
-      <a class="btn" href="ingredienti.html">Ingredienti</a>
-      <a class="btn" href="preparazioni-base.html">Preparazioni base</a>
-      <a class="btn" href="impostazioni.html">Impostazioni</a>
-    </nav>
   </header>
 
-  <main class="container">
-    <section class="panel">
-      <div class="panel-header">
-        <input id="searchInput" class="search" placeholder="Cerca... ricette o preparazioni" />
-        <button id="nuovaRicettaBtn" class="btn primary">+ Nuova ricetta</button>
-      </div>
+  <main class="home-menu">
+    <a href="index2.html" class="home-card" style="background-image: url('images/home-ricette.jpg');">
+      <span class="home-title">Ricette</span>
+      <span class="home-arrow">→</span>
+    </a>
 
-      <h3>Ricette</h3>
-      <!-- Aggiunta la classe two-columns-list -->
-      <ul id="recipesList" class="list two-columns-list"></ul>
+    <a href="preparazioni-base.html" class="home-card" style="background-image: url('images/home-preparazioni.jpg');">
+      <span class="home-title">Preparazioni base</span>
+      <span class="home-arrow">→</span>
+    </a>
 
-      <h3>Preparazioni base</h3>
-      <!-- Aggiunta la classe two-columns-list -->
-      <ul id="basesList" class="list two-columns-list"></ul>
-    </section>
+    <a href="ingredienti.html" class="home-card" style="background-image: url('images/home-ingredienti.jpg');">
+      <span class="home-title">Ingredienti</span>
+      <span class="home-arrow">→</span>
+    </a>
+
+    <a href="planner.html" class="home-card" style="background-image: url('images/home-planner.jpg');">
+      <span class="home-title">Planner</span>
+      <span class="home-arrow">→</span>
+    </a>
   </main>
 
-  <script src="js/script.js"></script>
   <script>
-    document.getElementById('nuovaRicettaBtn').addEventListener('click', () => {
-      window.location.href = 'modifica-ricetta.html';
-    });
-    initIndexPage();
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW:', err));
+      });
+    }
   </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>Ricetta</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#02119e" />
   <link rel="apple-touch-icon" href="images/icon-192.png" />
@@ -26,7 +26,6 @@
       </div>
     </div>
     <nav class="header-nav">
-      <button class="btn" onclick="history.back()">← Indice</button>
       <button id="editRecipeBtn" class="btn">Modifica</button>
       <button id="printBtn" class="btn">Stampa</button>
     </nav>
@@ -34,21 +33,16 @@
 
   <main class="container">
     <section class="panel recipe-layout">
-      <!-- Colonna sinistra: Ingredienti e Preparazione -->
       <div class="left">
-        <!-- Sezione Ingredienti -->
         <div class="ingredients-section">
           <div class="section-header">
             <h2>Ingredienti</h2>
             <div class="portions-control">
-              <!-- Controllo porzioni standard -->
               <div id="standardPortionControl">
                 <label>Porzioni: 
                   <input id="recipePortions" type="number" min="0.1" step="0.1" value="1" class="portions-input" />
                 </label>
               </div>
-              
-              <!-- Controllo peso (solo se ricetta ha weightPerPortion) -->
               <div id="weightControl" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #e0e0e0;">
                 <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">
                   <strong>Oppure calcola per peso:</strong>
@@ -65,8 +59,7 @@
               </div>
             </div>
           </div>
-          
-          <!-- Tabella ingredienti con macro dettagliate -->
+
           <table id="ingredientsTable" class="table ingredients-table">
             <thead>
               <tr>
@@ -96,24 +89,19 @@
           </table>
         </div>
 
-        <!-- Preparazioni base incluse -->
         <div id="includedBases" class="included-bases"></div>
 
-        <!-- Sezione Preparazione -->
         <div class="preparation-section">
           <h2>Preparazione</h2>
           <div id="preparationText" class="preparation"></div>
         </div>
       </div>
 
-      <!-- Colonna destra: Info e Costi -->
       <aside class="right">
-        <!-- Immagine ricetta -->
         <div class="recipe-image-container">
           <img id="recipeImage" src="" alt="" class="recipe-image" />
         </div>
 
-        <!-- Box Costi - più stretto -->
         <div class="box cost-box compact-box">
           <h3>Costi</h3>
           <div id="costTable" class="cost-content">
@@ -125,7 +113,6 @@
               <span>Per porzione:</span>
               <strong id="portionCost">€ 0.00</strong>
             </div>
-            <!-- Nuovo: costo per 100g se ricetta ha peso -->
             <div id="costPer100g" class="cost-line" style="display: none;">
               <span>Per 100g:</span>
               <strong id="costPer100gValue">€ 0.00</strong>
@@ -133,27 +120,13 @@
           </div>
         </div>
 
-        <!-- Box Macronutrienti - più stretto -->
         <div class="box macro-box compact-box">
           <h3>Macronutrienti</h3>
           <div id="macroTable" class="macro-content">
-            <div class="macro-line">
-              <span>Calorie:</span>
-              <strong id="totalKcalBox">0 kcal</strong>
-            </div>
-            <div class="macro-line">
-              <span>Proteine:</span>
-              <strong id="totalProtBox">0g</strong>
-            </div>
-            <div class="macro-line">
-              <span>Carboidrati:</span>
-              <strong id="totalCarbBox">0g</strong>
-            </div>
-            <div class="macro-line">
-              <span>Grassi:</span>
-              <strong id="totalFatBox">0g</strong>
-            </div>
-            <!-- Nuovo: macro per 100g se ricetta ha peso -->
+            <div class="macro-line"><span>Calorie:</span><strong id="totalKcalBox">0 kcal</strong></div>
+            <div class="macro-line"><span>Proteine:</span><strong id="totalProtBox">0g</strong></div>
+            <div class="macro-line"><span>Carboidrati:</span><strong id="totalCarbBox">0g</strong></div>
+            <div class="macro-line"><span>Grassi:</span><strong id="totalFatBox">0g</strong></div>
             <div id="macroPer100g" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e8f0fe; display: none;">
               <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Per 100g:</div>
               <div class="macro-line" style="font-size: 13px;">
@@ -164,7 +137,6 @@
           </div>
         </div>
 
-        <!-- Box Peso Totale (nuovo) -->
         <div id="totalWeightBox" class="box weight-box compact-box" style="display: none;">
           <h3>Peso Totale</h3>
           <div class="weight-content">
@@ -175,7 +147,6 @@
           </div>
         </div>
 
-        <!-- Box Allergeni - più stretto -->
         <div class="box allergeni-box compact-box">
           <h3>Allergeni</h3>
           <div id="recipeAllergens" class="allergens-list">—</div>
@@ -183,6 +154,15 @@
       </aside>
     </section>
   </main>
+
+  <nav class="bottom-nav">
+    <a href="index2.html" class="active"><span class="nav-icon">📖</span><span>Ricette</span></a>
+    <a href="preparazioni-base.html"><span class="nav-icon">🥣</span><span>Basi</span></a>
+    <a href="ingredienti.html"><span class="nav-icon">🥕</span><span>Ingredienti</span></a>
+    <a href="planner.html"><span class="nav-icon">📅</span><span>Planner</span></a>
+    <a href="impostazioni.html"><span class="nav-icon">⚙️</span><span>Setup</span></a>
+  </nav>
+  <script>document.body.classList.add('has-bottom-nav');</script>
 
   <script src="js/script.js"></script>
   <script>

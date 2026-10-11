@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>Editor Ingrediente</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#02119e" />
   <link rel="apple-touch-icon" href="images/icon-192.png" />
@@ -22,17 +22,17 @@
       <a class="btn" href="ingredienti.html">Torna</a>
     </nav>
   </header>
-  
+
   <main class="container">
     <section class="panel narrow">
       <form id="ingredientForm">
         <div class="form-field">
           <label>Nome: <input name="name" required /></label>
         </div>
-        
+
         <div class="form-field">
           <label>Prezzo: <input name="price" type="number" step="0.01" placeholder="es. 3.50" /></label>
-          
+
           <label>Unità prezzo:
             <select name="priceUnit" id="priceUnit">
               <option value="kg">€/kg</option>
@@ -43,7 +43,7 @@
           </label>
           <small class="mute">Per corrente/metano usare €/h (inserire costo orario)</small>
         </div>
-        
+
         <div class="form-field">
           <label>Unità base ingrediente:
             <select name="unit">
@@ -58,21 +58,20 @@
           </label>
           <small class="mute">Per corrente/metano usare "min" (minuti di utilizzo)</small>
         </div>
-        
+
         <div class="form-field">
           <label>Macro per 100g (kcal,prot,carb,fat): 
             <input name="macro" placeholder="kcal,prot,carb,grassi" />
           </label>
           <small class="mute">Per corrente/metano lasciare vuoto o inserire 0,0,0,0</small>
         </div>
-        
-        <!-- MANU: ALLERGENI - checkbox list in orizzontale -->
+
         <fieldset class="allergeni-field form-field">
           <legend>Allergeni (seleziona)</legend>
           <div id="allergenCheckboxes" class="allergen-grid-horizontal"></div>
           <small class="mute">I tag selezionati appariranno nelle ricette che usano questo ingrediente.</small>
         </fieldset>
-        
+
         <div class="form-actions">
           <button type="submit" class="btn primary">Salva ingrediente</button>
           <button id="cancelBtn" type="button" class="btn">Annulla</button>
@@ -80,11 +79,20 @@
       </form>
     </section>
   </main>
-  
+
+  <nav class="bottom-nav">
+    <a href="index2.html"><span class="nav-icon">📖</span><span>Ricette</span></a>
+    <a href="preparazioni-base.html"><span class="nav-icon">🥣</span><span>Basi</span></a>
+    <a href="ingredienti.html" class="active"><span class="nav-icon">🥕</span><span>Ingredienti</span></a>
+    <a href="planner.html"><span class="nav-icon">📅</span><span>Planner</span></a>
+    <a href="impostazioni.html"><span class="nav-icon">⚙️</span><span>Setup</span></a>
+  </nav>
+  <script>document.body.classList.add('has-bottom-nav');</script>
+
   <script src="js/script.js"></script>
   <script>
     initEditIngredientPage();
-    document.getElementById('cancelBtn').addEventListener('click', ()=> window.location.href='ingredienti.html');
+    document.getElementById('cancelBtn').addEventListener('click', () => window.location.href = 'ingredienti.html');
   </script>
 </body>
 </html>
