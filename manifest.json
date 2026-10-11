@@ -4,11 +4,13 @@
   "description": "App per gestire ricette, ingredienti, costi e valori nutrizionali",
   "start_url": "./index.html",
   "scope": "./",
+  "id": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#8a8a8a",
   "theme_color": "#02119e",
   "lang": "it",
+  "dir": "ltr",
   "categories": ["food", "productivity", "utilities"],
   "icons": [
     {
