@@ -1464,3 +1464,111 @@ body.has-bottom-nav {
     -webkit-overflow-scrolling: touch;
   }
 }
+/* ========================================================================
+   PLANNER / ORDINI
+   ======================================================================== */
+
+.ordini-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.ordine-card {
+  background: var(--bg-panel-light);
+  border-left: 4px solid var(--blue-light);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: var(--transition);
+}
+
+.ordine-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.ordine-data {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--blue-light);
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+}
+
+.ordine-cliente {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.ordine-dolce {
+  font-size: 15px;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+.ordine-riga {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+
+.ordine-note {
+  background: #fffbeb;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border-left: 3px solid var(--warning);
+  margin-top: 8px;
+}
+
+.ordine-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e8f0fe;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ordine-stato {
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.ordine-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.ordine-actions .btn {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+/* Su mobile le card sono più compatte */
+@media (max-width: 600px) {
+  .ordine-card {
+    padding: 14px;
+  }
+  .ordine-cliente {
+    font-size: 16px;
+  }
+  .ordine-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .ordine-actions {
+    justify-content: flex-end;
+  }
+}

@@ -8,15 +8,18 @@ const JSONBIN_BASE = 'https://api.jsonbin.io/v3/b';
 const BIN_INGREDIENTI = '6aca9155ffd5d160535fd1cb';
 const BIN_RICETTE = '6aca9274ffd5d160535fd489';
 const BIN_PREPARAZIONI = '6aca92d1ffd5d160535fd530';
+const BIN_ORDINI = '6acbe727ac6210605a28abc2';
 
 /* ---------------- CACHE LOCALE (fallback offline) ---------------- */
 const LS_ING = 'ricette_cache_ingredienti';
 const LS_RIC = 'ricette_cache_ricette';
 const LS_PREP = 'ricette_cache_preparazioni';
+const LS_ORD = 'ricette_cache_ordini';
 
 let ingredienti = [];
 let ricette = [];
 let preparazioni = [];
+let ordini = [];
 
 /* ALLERGENI */
 const ALLERGEN_LIST = [
@@ -1129,6 +1132,203 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(err => {
       console.warn('Service Worker non registrato:', err);
     });
+  });
+}
+/* ========================================================================
+   ORDINI / PLANNER
+   ======================================================================== */
+
+async function saveOrdini(arr) {
+  try {
+    await jsonbinWrite(BIN_ORDINI, arr);
+    ordini = arr;
+    localStorage.setItem(LS_ORD, JSON.stringify(arr));
+    return true;
+  } catch (e) {
+    console.warn('Salvataggio ordini fallito, cache locale aggiornata', e);
+    localStorage.setItem(LS_ORD, JSON.stringify(arr));
+    return false;
+  }
+}
+
+async function loadOrdini(forceRemote = false) {
+  // cache locale prima
+  if (!forceRemote) {
+    try {
+      const co = localStorage.getItem(LS_ORD);
+      if (co) ordini = JSON.parse(co);
+    } catch (e) { /* ignore */ }
+  }
+  // poi sync da JSONBin
+  try {
+    const arr = await jsonbinRead(BIN_ORDINI);
+    if (Array.isArray(arr)) {
+      ordini = arr;
+      localStorage.setItem(LS_ORD, JSON.stringify(arr));
+    }
+  } catch (e) {
+    console.warn('Lettura ordini da JSONBin fallita, uso cache locale', e);
+  }
+}
+
+/* -------- PLANNER PAGE -------- */
+async function initPlannerPage() {
+  await loadOrdini();
+
+  const search = document.getElementById('ordiniSearch');
+  const containerFuturi = document.getElementById('ordiniFuturi');
+  const containerPassati = document.getElementById('ordiniPassati');
+
+  function formatData(iso) {
+    if (!iso) return '—';
+    try {
+      const d = new Date(iso);
+      const giorno = String(d.getDate()).padStart(2, '0');
+      const mese = String(d.getMonth() + 1).padStart(2, '0');
+      const anno = d.getFullYear();
+      const ore = String(d.getHours()).padStart(2, '0');
+      const min = String(d.getMinutes()).padStart(2, '0');
+      return `${giorno}/${mese}/${anno} ${ore}:${min}`;
+    } catch (e) {
+      return iso;
+    }
+  }
+
+  function statoBadge(stato) {
+    const s = (stato || 'in attesa').toLowerCase();
+    let color = '#f59e0b'; // giallo default
+    if (s === 'confermato') color = '#10b981';
+    if (s === 'fatto') color = '#02119e';
+    if (s === 'annullato') color = '#ef4444';
+    return `<span class="ordine-stato" style="background:${color};">${stato || 'in attesa'}</span>`;
+  }
+
+  function createOrdineCard(o) {
+    const div = document.createElement('div');
+    div.className = 'ordine-card';
+    div.innerHTML = `
+      <div class="ordine-data">${formatData(o.dataConsegna)}</div>
+      <div class="ordine-cliente">${o.cliente || '—'}</div>
+      <div class="ordine-dolce">${o.dolce || ''}</div>
+      ${o.quantita ? `<div class="ordine-riga"><strong>Qtà:</strong> ${o.quantita}</div>` : ''}
+      ${o.ritiroConsegna ? `<div class="ordine-riga"><strong>Ritiro/Consegna:</strong> ${o.ritiroConsegna}</div>` : ''}
+      ${o.note ? `<div class="ordine-riga ordine-note"><strong>Note:</strong> ${o.note}</div>` : ''}
+      <div class="ordine-footer">
+        ${statoBadge(o.stato)}
+        <div class="ordine-actions">
+          <button class="btn btn-small" data-act="edit" data-id="${o.id}">Modifica</button>
+          <button class="btn btn-small" data-act="del" data-id="${o.id}">Elimina</button>
+        </div>
+      </div>
+    `;
+    return div;
+  }
+
+  function render() {
+    const q = (search.value || '').toLowerCase().trim();
+    const now = new Date();
+
+    const filtered = ordini.filter(o => {
+      if (!q) return true;
+      const blob = `${o.cliente || ''} ${o.dolce || ''} ${o.note || ''} ${o.quantita || ''} ${o.ritiroConsegna || ''}`.toLowerCase();
+      return blob.includes(q);
+    });
+
+    const futuri = [];
+    const passati = [];
+
+    filtered.forEach(o => {
+      const d = o.dataConsegna ? new Date(o.dataConsegna) : null;
+      if (d && d >= now) futuri.push(o);
+      else passati.push(o);
+    });
+
+    futuri.sort((a, b) => new Date(a.dataConsegna) - new Date(b.dataConsegna));
+    passati.sort((a, b) => new Date(b.dataConsegna) - new Date(a.dataConsegna));
+
+    containerFuturi.innerHTML = '';
+    containerPassati.innerHTML = '';
+
+    if (futuri.length === 0) {
+      containerFuturi.innerHTML = '<p class="mute">Nessun ordine in programma.</p>';
+    } else {
+      futuri.forEach(o => containerFuturi.appendChild(createOrdineCard(o)));
+    }
+
+    if (passati.length === 0) {
+      containerPassati.innerHTML = '<p class="mute">Nessun ordine passato.</p>';
+    } else {
+      passati.forEach(o => containerPassati.appendChild(createOrdineCard(o)));
+    }
+
+    // Handlers
+    document.querySelectorAll('.ordine-card button').forEach(b => {
+      b.addEventListener('click', async (ev) => {
+        const id = ev.currentTarget.dataset.id;
+        const act = ev.currentTarget.dataset.act;
+        if (act === 'edit') {
+          window.location.href = `modifica-ordine.html?id=${encodeURIComponent(id)}`;
+        }
+        if (act === 'del') {
+          if (!confirm('Eliminare questo ordine?')) return;
+          const others = ordini.filter(x => String(x.id) !== String(id));
+          await saveOrdini(others);
+          render();
+        }
+      });
+    });
+  }
+
+  render();
+  search.addEventListener('input', render);
+}
+
+/* -------- EDIT ORDINE PAGE -------- */
+async function initEditOrdinePage() {
+  await loadOrdini();
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  const form = document.getElementById('ordineForm');
+
+  let editing = null;
+  if (id) {
+    editing = ordini.find(o => String(o.id) === String(id));
+    if (editing) {
+      form.cliente.value = editing.cliente || '';
+      form.dataConsegna.value = editing.dataConsegna || '';
+      form.dolce.value = editing.dolce || '';
+      form.quantita.value = editing.quantita || '';
+      form.note.value = editing.note || '';
+      form.ritiroConsegna.value = editing.ritiroConsegna || '';
+      form.stato.value = editing.stato || 'in attesa';
+    }
+  }
+
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+
+    const obj = {
+      id: editing ? editing.id : `o${Date.now()}`,
+      cliente: form.cliente.value,
+      dataConsegna: form.dataConsegna.value,
+      dolce: form.dolce.value,
+      quantita: form.quantita.value,
+      note: form.note.value,
+      ritiroConsegna: form.ritiroConsegna.value,
+      stato: form.stato.value || 'in attesa'
+    };
+
+    const others = ordini.filter(x => String(x.id) !== String(obj.id));
+    others.push(obj);
+
+    const ok = await saveOrdini(others);
+    if (ok) {
+      alert('Ordine salvato online.');
+    } else {
+      alert('Salvataggio online fallito. Salvato localmente.');
+    }
+    window.location.href = 'planner.html';
   });
 }
 

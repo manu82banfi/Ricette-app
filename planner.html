@@ -16,14 +16,26 @@
   <header class="site-header is-home-link" onclick="window.location.href='index.html'">
     <div class="header-left">
       <h1>Planner</h1>
-      <p class="mute">Calendario ordini</p>
+      <p class="mute">I miei ordini</p>
     </div>
   </header>
 
   <main class="container">
     <section class="panel">
-      <h2>In arrivo...</h2>
-      <p class="mute">Questa sezione sarà il calendario degli ordini.</p>
+      <div class="panel-header">
+        <input id="ordiniSearch" class="search" placeholder="Cerca cliente, dolce, note..." />
+        <button id="nuovoOrdineBtn" class="btn primary">+ Nuovo ordine</button>
+      </div>
+
+      <h3>📅 Prossimi appuntamenti</h3>
+      <div id="ordiniFuturi" class="ordini-list">
+        <p class="mute">Nessun ordine in programma.</p>
+      </div>
+
+      <h3 style="margin-top: 32px;">📦 Ordini passati</h3>
+      <div id="ordiniPassati" class="ordini-list">
+        <p class="mute">Nessun ordine passato.</p>
+      </div>
     </section>
   </main>
 
@@ -35,5 +47,13 @@
     <a href="impostazioni.html"><span class="nav-icon">⚙️</span><span>Setup</span></a>
   </nav>
   <script>document.body.classList.add('has-bottom-nav');</script>
+
+  <script src="js/script.js"></script>
+  <script>
+    document.getElementById('nuovoOrdineBtn').addEventListener('click', () => {
+      window.location.href = 'modifica-ordine.html';
+    });
+    initPlannerPage();
+  </script>
 </body>
 </html>

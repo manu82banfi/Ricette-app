@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <title>Editor Ordine</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#02119e" />
+  <link rel="apple-touch-icon" href="images/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Ricette" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header is-home-link" onclick="window.location.href='index.html'">
+    <div class="header-left">
+      <h1>Editor Ordine</h1>
+      <p class="mute">Crea o modifica un ordine</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel narrow">
+      <form id="ordineForm">
+        <div class="form-field">
+          <label>Cliente: <input name="cliente" required placeholder="es. Mario Rossi" /></label>
+        </div>
+
+        <div class="form-field">
+          <label>Data e ora di consegna: 
+            <input name="dataConsegna" type="datetime-local" required />
+          </label>
+        </div>
+
+        <div class="form-field">
+          <label>Torta o dolce richiesto:
+            <input name="dolce" placeholder="es. Torta 3 piani al cioccolato" />
+          </label>
+        </div>
+
+        <div class="form-field">
+          <label>Quantità:
+            <input name="quantita" placeholder="es. 2 torte da 8 porzioni" />
+          </label>
+        </div>
+
+        <div class="form-field">
+          <label>Note:<br/>
+            <textarea name="note" rows="4" placeholder="Allergie, richieste speciali, decorazioni..."></textarea>
+          </label>
+        </div>
+
+        <div class="form-field">
+          <label>Modalità di ritiro o consegna:
+            <input name="ritiroConsegna" placeholder="es. Consegna a domicilio Via Roma 5" />
+          </label>
+        </div>
+
+        <div class="form-field">
+          <label>Stato:
+            <select name="stato">
+              <option value="in attesa">In attesa</option>
+              <option value="confermato">Confermato</option>
+              <option value="fatto">Fatto</option>
+              <option value="annullato">Annullato</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Salva ordine</button>
+          <button id="cancelBtn" type="button" class="btn">Annulla</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="index2.html"><span class="nav-icon">📖</span><span>Ricette</span></a>
+    <a href="preparazioni-base.html"><span class="nav-icon">🥣</span><span>Basi</span></a>
+    <a href="ingredienti.html"><span class="nav-icon">🥕</span><span>Ingredienti</span></a>
+    <a href="planner.html" class="active"><span class="nav-icon">📅</span><span>Planner</span></a>
+    <a href="impostazioni.html"><span class="nav-icon">⚙️</span><span>Setup</span></a>
+  </nav>
+  <script>document.body.classList.add('has-bottom-nav');</script>
+
+  <script src="js/script.js"></script>
+  <script>
+    initEditOrdinePage();
+    document.getElementById('cancelBtn').addEventListener('click', () => window.location.href = 'planner.html');
+  </script>
+</body>
+</html>
