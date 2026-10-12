@@ -1572,3 +1572,23 @@ body.has-bottom-nav {
     justify-content: flex-end;
   }
 }
+/* ========================================================================
+   DATA LEGGIBILE (modifica-ordine)
+   ======================================================================== */
+
+.data-leggibile {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: #e9f2ff;
+  color: var(--blue-light);
+  border-left: 3px solid var(--blue-light);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 0;
+  transition: var(--transition);
+}
+
+.data-leggibile:empty {
+  display: none;
+}

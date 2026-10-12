@@ -29,8 +29,9 @@
 
         <div class="form-field">
           <label>Data e ora di consegna: 
-            <input name="dataConsegna" type="datetime-local" required />
+            <input name="dataConsegna" id="dataConsegna" type="datetime-local" required />
           </label>
+          <div id="dataConsegnaLeggibile" class="data-leggibile"></div>
         </div>
 
         <div class="form-field">
@@ -87,7 +88,45 @@
 
   <script src="js/script.js"></script>
   <script>
-    initEditOrdinePage();
+    /* -------- Aggiorna la scritta "→ Martedì 15 dicembre 2025, ore 18:00" -------- */
+    const GIORNI = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
+    const MESI = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno',
+                  'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+
+    function aggiornaDataLeggibile() {
+      const input = document.getElementById('dataConsegna');
+      const out = document.getElementById('dataConsegnaLeggibile');
+      if (!input || !out) return;
+
+      if (!input.value) {
+        out.textContent = '';
+        return;
+      }
+
+      const d = new Date(input.value);
+      if (isNaN(d.getTime())) {
+        out.textContent = '';
+        return;
+      }
+
+      const giornoSettimana = GIORNI[d.getDay()];
+      const giorno = d.getDate();
+      const mese = MESI[d.getMonth()];
+      const anno = d.getFullYear();
+      const ore = String(d.getHours()).padStart(2, '0');
+      const minuti = String(d.getMinutes()).padStart(2, '0');
+
+      out.textContent = `→ ${giornoSettimana} ${giorno} ${mese} ${anno}, ore ${ore}:${minuti}`;
+    }
+
+    document.getElementById('dataConsegna').addEventListener('input', aggiornaDataLeggibile);
+    document.getElementById('dataConsegna').addEventListener('change', aggiornaDataLeggibile);
+
+    /* Inizializza la pagina (carica eventuale ordine esistente) */
+    initEditOrdinePage().then(() => {
+      aggiornaDataLeggibile(); // mostra la scritta anche in modalità "modifica"
+    });
+
     document.getElementById('cancelBtn').addEventListener('click', () => window.location.href = 'planner.html');
   </script>
 </body>
