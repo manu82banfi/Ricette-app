@@ -16,23 +16,79 @@
   <header class="site-header is-home-link" onclick="window.location.href='index.html'">
     <div class="header-left">
       <h1>Impostazioni</h1>
-      <p class="mute">Backup / Import / Export</p>
+      <p class="mute">Tema / Export / Sync</p>
     </div>
   </header>
 
   <main class="container">
     <section class="panel narrow">
-      <h3>Export</h3>
+
+      <!-- ============ TEMA ============ -->
+      <h3>Tema</h3>
+      <p class="mute" style="margin-top:-8px;">Scegli l'aspetto dell'app. La scelta viene salvata e applicata ovunque.</p>
+
+      <div class="theme-grid">
+        <button class="theme-card" data-theme="default">
+          <span class="theme-preview theme-preview-default"></span>
+          <span class="theme-label">Default</span>
+        </button>
+        <button class="theme-card" data-theme="dark">
+          <span class="theme-preview theme-preview-dark"></span>
+          <span class="theme-label">Dark</span>
+        </button>
+        <button class="theme-card" data-theme="white">
+          <span class="theme-preview theme-preview-white"></span>
+          <span class="theme-label">White</span>
+        </button>
+      </div>
+
+      <!-- ============ EXPORT PDF ============ -->
+      <h3 style="margin-top: 32px;">Esporta PDF</h3>
+      <button id="exportPdfBtn" class="btn primary" style="width:100%;">
+        📄 Esporta ricetta in PDF
+      </button>
+
+      <!-- ============ EXPORT JSON ============ -->
+      <h3 style="margin-top: 32px;">Backup JSON</h3>
       <button id="exportBtn" class="btn">Scarica data/*.json</button>
 
-      <h3>Importa</h3>
+      <h3 style="margin-top: 24px;">Importa JSON</h3>
       <input id="importFile" type="file" accept=".json" />
       <p class="mute">Puoi caricare ingredienti.json o ricette.json per sostituire i dati.</p>
 
-      <h3>Sincronizzazione</h3>
+      <!-- ============ SYNC ============ -->
+      <h3 style="margin-top: 32px;">Sincronizzazione</h3>
       <button id="syncBtn" class="btn">Sincronizza ora da JSONBin</button>
+
     </section>
   </main>
+
+  <!-- ============ MODALE EXPORT PDF ============ -->
+  <div id="pdfModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <h3 style="margin-top:0;">Esporta PDF</h3>
+
+      <p style="margin-bottom: 8px; font-weight: 600;">Cosa esportare:</p>
+      <label class="modal-check">
+        <input type="checkbox" id="pdfChkIngredienti" checked />
+        <span>Ingredienti</span>
+      </label>
+      <label class="modal-check">
+        <input type="checkbox" id="pdfChkAllergeni" checked />
+        <span>Allergeni</span>
+      </label>
+
+      <p style="margin-top: 16px; margin-bottom: 8px; font-weight: 600;">Ricetta da esportare:</p>
+      <select id="pdfRicettaSelect" class="pdf-select">
+        <option value="">-- Seleziona una ricetta --</option>
+      </select>
+
+      <div class="modal-actions">
+        <button id="pdfCancelBtn" class="btn" type="button">Annulla</button>
+        <button id="pdfConfirmBtn" class="btn primary" type="button">Esporta PDF</button>
+      </div>
+    </div>
+  </div>
 
   <nav class="bottom-nav">
     <a href="index2.html"><span class="nav-icon">📖</span><span>Ricette</span></a>

@@ -4,6 +4,8 @@
 
 /* ---------------- CONFIGURAZIONE JSONBIN ---------------- */
 const JSONBIN_KEY = '$2a$10$O9DeoNpqBSYwuBJUsebAdON/SGrC8KTJ/btm8DGG/LxCTplTcq7LO';
+const JSPDF_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+const LS_THEME = 'ricette_tema';
 const JSONBIN_BASE = 'https://api.jsonbin.io/v3/b';
 const BIN_INGREDIENTI = '6aca9155ffd5d160535fd1cb';
 const BIN_RICETTE = '6aca9274ffd5d160535fd489';
@@ -1065,65 +1067,6 @@ async function initEditRecipePage() {
     window.location.href = `ricetta.html?id=${encodeURIComponent(r.id)}`;
   });
 }
-
-/* ========================================================================
-   SETTINGS PAGE
-   ======================================================================== */
-async function initSettingsPage() {
-  // Forza lettura da JSONBin per avere i dati freschi
-  await loadData(true);
-
-  document.getElementById('exportBtn').addEventListener('click', () => {
-    const bi = new Blob([JSON.stringify(ingredienti, null, 2)], { type: 'application/json' });
-    const ai = document.createElement('a');
-    ai.href = URL.createObjectURL(bi);
-    ai.download = 'ingredienti.json';
-    ai.click();
-
-    const br = new Blob([JSON.stringify(ricette, null, 2)], { type: 'application/json' });
-    const ar = document.createElement('a');
-    ar.href = URL.createObjectURL(br);
-    ar.download = 'ricette.json';
-    ar.click();
-
-    const bp = new Blob([JSON.stringify(preparazioni, null, 2)], { type: 'application/json' });
-    const ap = document.createElement('a');
-    ap.href = URL.createObjectURL(bp);
-    ap.download = 'preparazioni.json';
-    ap.click();
-  });
-
-  document.getElementById('importFile').addEventListener('change', async (ev) => {
-    const f = ev.target.files[0];
-    if (!f) return;
-    const text = await f.text();
-    try {
-      const json = JSON.parse(text);
-      if (Array.isArray(json) && json.length && json[0].ingredients !== undefined && json[0].preparation !== undefined && json[0].name !== undefined && json[0].id && String(json[0].id).startsWith('pb')) {
-        await savePreparazioni(json);
-        alert('Preparazioni importate e salvate online.');
-      } else if (Array.isArray(json) && json.length && json[0].price !== undefined && json[0].priceUnit !== undefined) {
-        await saveIngredienti(json);
-        alert('Ingredienti importati e salvati online.');
-      } else {
-        await saveRicette(json);
-        alert('Ricette importate e salvate online.');
-      }
-    } catch (e) {
-      alert('File non valido JSON');
-    }
-  });
-
-  // Pulsante extra "Sincronizza ora da JSONBin" se presente
-  const syncBtn = document.getElementById('syncBtn');
-  if (syncBtn) {
-    syncBtn.addEventListener('click', async () => {
-      await loadData(true);
-      alert('Dati sincronizzati da JSONBin!');
-    });
-  }
-}
-
 /* ========================================================================
    REGISTRAZIONE SERVICE WORKER (chiamata da ogni pagina)
    ======================================================================== */
@@ -1331,5 +1274,299 @@ async function initEditOrdinePage() {
     window.location.href = 'planner.html';
   });
 }
+/* ========================================================================
+   TEMA (chiaro/scuro/default)
+   ======================================================================== */
 
+function applyTheme(theme) {
+  document.body.classList.remove('theme-dark', 'theme-white');
+  if (theme === 'dark') document.body.classList.add('theme-dark');
+  else if (theme === 'white') document.body.classList.add('theme-white');
+  // default: nessuna classe
+}
+
+function initTheme() {
+  const saved = localStorage.getItem(LS_THEME) || 'default';
+  applyTheme(saved);
+}
+
+/* Applica il tema appena il DOM è pronto (su ogni pagina) */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initTheme);
+} else {
+  initTheme();
+}
+
+function setTheme(theme) {
+  localStorage.setItem(LS_THEME, theme);
+  applyTheme(theme);
+  // evidenzia il pulsante attivo (solo se siamo in impostazioni)
+  document.querySelectorAll('.theme-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.theme === theme);
+  });
+}
+
+/* ========================================================================
+   IMPOSTAZIONI - pagina con temi + export PDF + JSON
+   ======================================================================== */
+
+async function initSettingsPage() {
+  await loadData(true); // forza sync da JSONBin
+
+  /* ---- TEMA ---- */
+  const currentTheme = localStorage.getItem(LS_THEME) || 'default';
+  document.querySelectorAll('.theme-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.theme === currentTheme);
+    c.addEventListener('click', () => setTheme(c.dataset.theme));
+  });
+
+  /* ---- EXPORT JSON ---- */
+  document.getElementById('exportBtn').addEventListener('click', () => {
+    const bi = new Blob([JSON.stringify(ingredienti, null, 2)], { type: 'application/json' });
+    const ai = document.createElement('a');
+    ai.href = URL.createObjectURL(bi);
+    ai.download = 'ingredienti.json';
+    ai.click();
+
+    const br = new Blob([JSON.stringify(ricette, null, 2)], { type: 'application/json' });
+    const ar = document.createElement('a');
+    ar.href = URL.createObjectURL(br);
+    ar.download = 'ricette.json';
+    ar.click();
+
+    const bp = new Blob([JSON.stringify(preparazioni, null, 2)], { type: 'application/json' });
+    const ap = document.createElement('a');
+    ap.href = URL.createObjectURL(bp);
+    ap.download = 'preparazioni.json';
+    ap.click();
+  });
+
+  /* ---- IMPORT JSON ---- */
+  document.getElementById('importFile').addEventListener('change', async (ev) => {
+    const f = ev.target.files[0];
+    if (!f) return;
+    const text = await f.text();
+    try {
+      const json = JSON.parse(text);
+      if (Array.isArray(json) && json.length && json[0].ingredients !== undefined && json[0].preparation !== undefined && json[0].name !== undefined && json[0].id && String(json[0].id).startsWith('pb')) {
+        await savePreparazioni(json);
+        alert('Preparazioni importate e salvate online.');
+      } else if (Array.isArray(json) && json.length && json[0].price !== undefined && json[0].priceUnit !== undefined) {
+        await saveIngredienti(json);
+        alert('Ingredienti importati e salvati online.');
+      } else {
+        await saveRicette(json);
+        alert('Ricette importate e salvate online.');
+      }
+    } catch (e) {
+      alert('File non valido JSON');
+    }
+  });
+
+  /* ---- SYNC ---- */
+  const syncBtn = document.getElementById('syncBtn');
+  if (syncBtn) {
+    syncBtn.addEventListener('click', async () => {
+      await loadData(true);
+      await loadOrdini(true);
+      alert('Dati sincronizzati da JSONBin!');
+    });
+  }
+
+  /* ---- EXPORT PDF ---- */
+  const modal = document.getElementById('pdfModal');
+  const select = document.getElementById('pdfRicettaSelect');
+
+  // Popola select ricette (ordine alfabetico)
+  [...ricette]
+    .sort((a, b) => a.name.localeCompare(b.name, 'it', { sensitivity: 'base' }))
+    .forEach(r => {
+      const o = document.createElement('option');
+      o.value = r.id;
+      o.textContent = r.name;
+      select.appendChild(o);
+    });
+
+  document.getElementById('exportPdfBtn').addEventListener('click', () => {
+    modal.style.display = 'flex';
+  });
+
+  document.getElementById('pdfCancelBtn').addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  // Chiudi cliccando fuori
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.style.display = 'none';
+  });
+
+  document.getElementById('pdfConfirmBtn').addEventListener('click', async () => {
+    const chkIng = document.getElementById('pdfChkIngredienti').checked;
+    const chkAll = document.getElementById('pdfChkAllergeni').checked;
+    const ricettaId = select.value;
+
+    if (!chkIng && !chkAll) {
+      alert('Seleziona almeno una cosa da esportare (ingredienti o allergeni).');
+      return;
+    }
+    if (!ricettaId) {
+      alert('Seleziona una ricetta.');
+      return;
+    }
+
+    modal.style.display = 'none';
+    await generaPdfRicetta(ricettaId, chkIng, chkAll);
+  });
+}
+
+/* ========================================================================
+   GENERAZIONE PDF
+   ======================================================================== */
+
+/* Carica jsPDF dal CDN al volo se non è già caricato */
+function loadJsPDF() {
+  return new Promise((resolve, reject) => {
+    if (window.jspdf && window.jspdf.jsPDF) return resolve(window.jspdf.jsPDF);
+    const s = document.createElement('script');
+    s.src = JSPDF_CDN;
+    s.onload = () => resolve(window.jspdf.jsPDF);
+    s.onerror = () => reject(new Error('Impossibile caricare jsPDF'));
+    document.head.appendChild(s);
+  });
+}
+
+async function generaPdfRicetta(ricettaId, includiIngredienti, includiAllergeni) {
+  const ricetta = ricette.find(r => String(r.id) === String(ricettaId));
+  if (!ricetta) { alert('Ricetta non trovata'); return; }
+
+  let JsPDF;
+  try {
+    JsPDF = await loadJsPDF();
+  } catch (e) {
+    alert('Errore nel caricamento della libreria PDF. Controlla la connessione.');
+    return;
+  }
+
+  /* -------- 1. Raccogli ingredienti (ricetta + preparazioni base) -------- */
+  const ingredientiUnici = []; // array di oggetti ingredient, senza duplicati
+  const aggiunti = new Set();  // per evitare duplicati per id
+
+  function aggiungiIngrediente(id) {
+    if (aggiunti.has(id)) return;
+    aggiunti.add(id);
+    const ing = ingredienti.find(x => String(x.id) === String(id));
+    if (ing) ingredientiUnici.push(ing);
+  }
+
+  // Ingredienti diretti della ricetta
+  (ricetta.ingredients || []).forEach(it => aggiungiIngrediente(it.id));
+
+  // Ingredienti delle preparazioni base
+  (ricetta.importedBases || []).forEach(bid => {
+    const base = preparazioni.find(p => String(p.id) === String(bid));
+    if (!base) return;
+    (base.ingredients || []).forEach(it => aggiungiIngrediente(it.id));
+  });
+
+  // Ordine alfabetico
+  ingredientiUnici.sort((a, b) => a.name.localeCompare(b.name, 'it', { sensitivity: 'base' }));
+
+  /* -------- 2. Raccogli allergeni (di tutti gli ingredienti) -------- */
+  const allergeniSet = new Set();
+  ingredientiUnici.forEach(ing => {
+    (ing.allergeni || []).forEach(code => allergeniSet.add(code));
+  });
+  const allergeniArr = Array.from(allergeniSet).sort();
+
+  /* -------- 3. Genera PDF -------- */
+  const doc = new JsPDF({ unit: 'mm', format: 'a4' });
+  const MARGINE = 18;
+  let y = MARGINE;
+  const larghezzaPagina = doc.internal.pageSize.getWidth();
+  const altezzaPagina = doc.internal.pageSize.getHeight();
+  const larghezzaUtile = larghezzaPagina - MARGINE * 2;
+
+  function nuovaPaginaSeNecessario(px = 8) {
+    if (y + px > altezzaPagina - MARGINE) {
+      doc.addPage();
+      y = MARGINE;
+    }
+  }
+
+  /* --- Titolo --- */
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(20);
+  doc.setTextColor(2, 17, 158);
+  doc.text(ricetta.name, MARGINE, y);
+  y += 10;
+
+  /* linea sotto titolo */
+  doc.setDrawColor(2, 17, 158);
+  doc.setLineWidth(0.6);
+  doc.line(MARGINE, y, larghezzaPagina - MARGINE, y);
+  y += 8;
+
+  /* Data generazione */
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(120, 120, 120);
+  doc.text(`Generato il ${new Date().toLocaleDateString('it-IT')}`, MARGINE, y);
+  y += 10;
+
+  /* --- Blocco INGREDIENTI --- */
+  if (includiIngredienti) {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.setTextColor(40, 40, 40);
+    doc.text('INGREDIENTI', MARGINE, y);
+    y += 8;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor(30, 30, 30);
+
+    if (ingredientiUnici.length === 0) {
+      doc.text('(nessun ingrediente)', MARGINE, y);
+      y += 8;
+    } else {
+      ingredientiUnici.forEach(ing => {
+        nuovaPaginaSeNecessario(6);
+        doc.text(`• ${ing.name}`, MARGINE, y);
+        y += 6;
+      });
+    }
+    y += 6;
+  }
+
+  /* --- Blocco ALLERGENI --- */
+  if (includiAllergeni) {
+    nuovaPaginaSeNecessario(20);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.setTextColor(40, 40, 40);
+    doc.text('ALLERGENI', MARGINE, y);
+    y += 8;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor(30, 30, 30);
+
+    if (allergeniArr.length === 0) {
+      doc.text('(nessun allergene presente)', MARGINE, y);
+      y += 8;
+    } else {
+      allergeniArr.forEach(code => {
+        nuovaPaginaSeNecessario(6);
+        const allergen = ALLERGEN_LIST.find(x => x.code === code);
+        const nome = allergen ? allergen.name : code;
+        doc.text(`• ${nome} (${code})`, MARGINE, y);
+        y += 6;
+      });
+    }
+  }
+
+  /* --- Salva --- */
+  const nomeFile = `ricetta-${ricetta.name.replace(/[^a-z0-9]/gi, '_')}.pdf`;
+  doc.save(nomeFile);
+}
 /* FINE FILE */

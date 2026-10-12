@@ -5,7 +5,7 @@
    - Funziona offline per le pagine già visitate
    ======================================================================== */
 
-const CACHE_NAME = 'ricette-pwa-v7';
+const CACHE_NAME = 'ricette-pwa-v8';
 
 const PRECACHE_URLS = [
   './',
@@ -53,10 +53,25 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
-  /* 1) NON toccare JSONBin (dati sempre live) */
-  if (url.hostname.includes('jsonbin.io')) {
-    return; // lascia passare la richiesta normalmente
-  }
+/* 1) NON toccare JSONBin (dati sempre live) */
+if (url.hostname.includes('jsonbin.io')) {
+  return;
+}
+
+/* 1b) jsPDF: cache-first (una volta scaricato, resta offline) */
+if (url.hostname.includes('cdnjs.cloudflare.com')) {
+  event.respondWith(
+    caches.match(req).then(cached => {
+      if (cached) return cached;
+      return fetch(req).then(resp => {
+        const copy = resp.clone();
+        caches.open(CACHE_NAME).then(c => c.put(req, copy));
+        return resp;
+      });
+    })
+  );
+  return;
+}
 
   /* 2) NON toccare richieste non-GET */
   if (req.method !== 'GET') {

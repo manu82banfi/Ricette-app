@@ -1592,3 +1592,289 @@ body.has-bottom-nav {
 .data-leggibile:empty {
   display: none;
 }
+/* ========================================================================
+   TEMI
+   ======================================================================== */
+
+/* --- TEMA DARK (scala di grigi) --- */
+body.theme-dark {
+  --bg-body: #1a1a1a;
+  --bg-panel: #2a2a2a;
+  --bg-panel-light: #333333;
+  --text-dark: #f0f0f0;
+  --text-muted: #b8b8b8;
+  --text-light-muted: #909090;
+  --border-light: #404040;
+  --tag-bg: #3a3a3a;
+  --pill-bg: #3a3a3a;
+  --allergen-bg: #4a2020;
+  --allergen-text: #ffb3b3;
+  --allergen-border: #6a3030;
+  color-scheme: dark;
+}
+
+body.theme-dark .ingredients-table td,
+body.theme-dark .table td {
+  border-bottom-color: #404040;
+}
+
+body.theme-dark .ingredients-table tr:hover td,
+body.theme-dark .table tr:hover td {
+  background: #3a3a3a;
+}
+
+body.theme-dark .total-row {
+  background: linear-gradient(135deg, #333333, #3a3a3a) !important;
+}
+
+body.theme-dark .ingredients-table th,
+body.theme-dark .table thead th {
+  background: linear-gradient(135deg, #404040, #4a4a4a);
+  color: #f0f0f0;
+}
+
+body.theme-dark .preparation {
+  background: var(--bg-panel-light);
+  color: var(--text-dark);
+}
+
+body.theme-dark .list li:hover,
+body.theme-dark .two-columns-list li:hover {
+  background: #3a3a3a;
+}
+
+body.theme-dark .search {
+  background: #333;
+  color: #f0f0f0;
+  border-color: #505050;
+}
+
+body.theme-dark .form-field input,
+body.theme-dark .form-field select,
+body.theme-dark .form-field textarea {
+  background: #333;
+  color: #f0f0f0;
+  border-color: #505050;
+}
+
+body.theme-dark .btn {
+  background: #404040;
+  color: #f0f0f0;
+  border-color: #505050;
+}
+
+body.theme-dark .btn.primary {
+  background: var(--blue-light);
+  color: #fff;
+}
+
+body.theme-dark .included-bases {
+  background: #3a3a3a;
+}
+
+body.theme-dark .included-bases > div {
+  background: #333333 !important;
+}
+
+body.theme-dark .allergen-tag {
+  background: #4a2020;
+  color: #ffb3b3;
+  border-color: #6a3030;
+}
+
+body.theme-dark .ordine-card {
+  background: var(--bg-panel-light);
+}
+
+body.theme-dark .ordine-note {
+  background: #3a3520;
+  border-left-color: #b8860b;
+}
+
+/* --- TEMA WHITE (bianco/panna/avorio) --- */
+body.theme-white {
+  --bg-body: #faf8f3;
+  --bg-panel: #fffefb;
+  --bg-panel-light: #fdfbf6;
+  --text-dark: #2a2a2a;
+  --text-muted: #6b6b6b;
+  --text-light-muted: #909090;
+  --border-light: #e8e3d8;
+  --tag-bg: #f5f0e3;
+  --pill-bg: #fef9ed;
+  --allergen-bg: #ffe8e8;
+  --allergen-text: #8a1f1f;
+  --allergen-border: #f5c5c5;
+  color-scheme: light;
+}
+
+body.theme-white .ingredients-table td,
+body.theme-white .table td {
+  border-bottom-color: #f0ebe0;
+}
+
+body.theme-white .ingredients-table tr:hover td,
+body.theme-white .table tr:hover td {
+  background: #fdf8ec;
+}
+
+body.theme-white .ingredients-table th,
+body.theme-white .table thead th {
+  background: linear-gradient(135deg, #f5eede, #efe8d5);
+  color: #2a2a2a;
+}
+
+body.theme-white .total-row {
+  background: linear-gradient(135deg, #f5eede, #efe8d5) !important;
+}
+
+body.theme-white .included-bases {
+  background: #f5eede;
+}
+
+body.theme-white .list li:hover,
+body.theme-white .two-columns-list li:hover {
+  background: #f9f2dd;
+}
+
+body.theme-white .ordine-note {
+  background: #fef9ed;
+}
+
+/* --- GRIGLIA DEI PULSANTI TEMA --- */
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.theme-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--bg-panel-light);
+  border: 2px solid var(--border-light);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.theme-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.theme-card.active {
+  border-color: var(--blue-light);
+  box-shadow: 0 0 0 2px rgba(2, 17, 158, 0.2);
+}
+
+.theme-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.theme-preview {
+  width: 100%;
+  height: 50px;
+  border-radius: 6px;
+  display: block;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.theme-preview-default {
+  background: linear-gradient(135deg, #8a8a8a 0%, #adadad 100%);
+}
+
+.theme-preview-dark {
+  background: linear-gradient(135deg, #1a1a1a 0%, #3a3a3a 100%);
+}
+
+.theme-preview-white {
+  background: linear-gradient(135deg, #faf8f3 0%, #fffefb 100%);
+  border: 1px solid #e0d8c8;
+}
+
+/* --- MODALE --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  padding: 20px;
+}
+
+.modal-box {
+  background: var(--bg-panel-light);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  color: var(--text-dark);
+}
+
+.modal-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-panel);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.modal-check:hover {
+  background: var(--tag-bg);
+}
+
+.modal-check input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--blue-light);
+  cursor: pointer;
+}
+
+.pdf-select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-panel);
+  color: var(--text-dark);
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+@media (max-width: 500px) {
+  .theme-grid {
+    grid-template-columns: 1fr;
+  }
+  .theme-preview {
+    height: 40px;
+  }
+  .modal-actions {
+    flex-direction: column;
+  }
+  .modal-actions .btn {
+    width: 100%;
+  }
+}
