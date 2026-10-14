@@ -1552,3 +1552,49 @@ body.theme-white .ordine-note { background: #fef9ed; }
   .modal-actions .btn { width: 100%; }           /* Bottoni full-width — solo impostazioni.html */
   .pdf-select[multiple] { min-height: 140px; }   /* Select più bassa — solo impostazioni.html */
 }
+/* ========================================================================
+   TABELLA INGREDIENTI - RIGHE CLICCABILI (pagina ingredienti)
+   ======================================================================== */
+
+/* Riga cliccabile */
+#ingredientTable tbody tr {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#ingredientTable tbody tr:hover {
+  background: #dceafc;
+}
+
+/* Su mobile non mostrare hover (evita flash al tap) */
+@media (max-width: 900px) {
+  #ingredientTable tbody tr:hover {
+    background: inherit;
+  }
+  #ingredientTable tbody tr:active {
+    background: #dceafc;
+  }
+}
+
+/* Colonna Azioni: due pulsanti affiancati */
+#ingredientTable td:last-child {
+  white-space: nowrap;
+}
+
+#ingredientTable td:last-child .btn {
+  margin-right: 4px;
+}
+
+#ingredientTable td:last-child .btn:last-child {
+  margin-right: 0;
+}
+
+/* Tema dark: hover riga */
+body.theme-dark #ingredientTable tbody tr:hover {
+  background: #3a3a3a;
+}
+
+/* Tema white: hover riga */
+body.theme-white #ingredientTable tbody tr:hover {
+  background: #fdf8ec;
+}

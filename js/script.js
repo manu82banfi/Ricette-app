@@ -734,6 +734,7 @@ async function initIngredientPage() {
         '';
 
       const tr = document.createElement('tr');
+      tr.dataset.id = i.id;
       tr.innerHTML = `
         <td><strong>${i.name}</strong></td>
         <td>€ ${Number(i.price || 0).toFixed(2)}<br><small class="mute">${i.priceUnit || 'kg'}</small></td>
@@ -741,22 +742,24 @@ async function initIngredientPage() {
         <td>${allergenHtml || '<span class="mute">nessuno</span>'}</td>
         <td><small>${macroHtml}</small></td>
         <td>
-          <button data-id="${i.id}" class="btn btn-small editIng">Modifica</button>
           <button data-id="${i.id}" class="btn btn-small duplicateIng">Duplica</button>
+          <button data-id="${i.id}" class="btn btn-small deleteIng">Elimina</button>
         </td>
       `;
+
+      // Click sulla riga (tranne pulsanti) → modifica
+      tr.addEventListener('click', (ev) => {
+        if (ev.target.closest('button')) return;
+        window.location.href = `modifica-ingrediente.html?id=${encodeURIComponent(i.id)}`;
+      });
+
       tbody.appendChild(tr);
     });
 
-    tbody.querySelectorAll('.editIng').forEach(b => {
-      b.addEventListener('click', (e) => {
-        const id = e.currentTarget.dataset.id;
-        window.location.href = `modifica-ingrediente.html?id=${encodeURIComponent(id)}`;
-      });
-    });
-
+    // Pulsante Duplica
     tbody.querySelectorAll('.duplicateIng').forEach(b => {
       b.addEventListener('click', async (e) => {
+        e.stopPropagation();
         const id = e.currentTarget.dataset.id;
         const original = ingredienti.find(i => String(i.id) === String(id));
         if (!original) return;
@@ -772,6 +775,28 @@ async function initIngredientPage() {
         const ok = await saveIngredienti(ingredienti);
         if (ok) {
           alert('Ingrediente duplicato e salvato!');
+          render();
+        } else {
+          alert('Salvataggio online fallito. Dati salvati localmente.');
+          render();
+        }
+      });
+    });
+
+    // Pulsante Elimina
+    tbody.querySelectorAll('.deleteIng').forEach(b => {
+      b.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const id = e.currentTarget.dataset.id;
+        const ing = ingredienti.find(i => String(i.id) === String(id));
+        if (!ing) return;
+
+        if (!confirm(`Eliminare l'ingrediente "${ing.name}"?`)) return;
+
+        const others = ingredienti.filter(x => String(x.id) !== String(id));
+        const ok = await saveIngredienti(others);
+        if (ok) {
+          alert('Ingrediente eliminato.');
           render();
         } else {
           alert('Salvataggio online fallito. Dati salvati localmente.');
