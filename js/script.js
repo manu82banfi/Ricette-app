@@ -808,7 +808,7 @@ async function initIngredientPage() {
 
   render();
 
-    search.addEventListener('input', () => {
+      search.addEventListener('input', () => {
     const query = search.value.toLowerCase().trim();
     Array.from(tbody.querySelectorAll('tr')).forEach(tr => {
       // Prende SOLO il testo della prima cella (colonna Nome)
