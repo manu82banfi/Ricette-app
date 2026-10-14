@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <title>Stampa comande</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#02119e" />
+  <link rel="apple-touch-icon" href="images/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Ricette" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Header schermo (nascosto in stampa) -->
+  <header class="site-header is-home-link no-print" onclick="window.location.href='index.html'">
+    <div class="header-left">
+      <h1>Stampa comande</h1>
+      <p class="mute">Seleziona gli ordini da stampare</p>
+    </div>
+    <nav class="header-nav" onclick="event.stopPropagation()">
+      <button id="printBtn" class="btn primary">🖨️ Stampa</button>
+      <button id="backBtn" class="btn">← Torna al planner</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Pannello selezione (nascosto in stampa) -->
+    <section class="panel narrow no-print" id="selectionPanel">
+      <h3>Ordini futuri</h3>
+      <p class="mute" style="margin-top:-8px;">
+        Seleziona quali ordini stampare. Le comande usciranno tutte sullo stesso foglio, una sotto l'altra.
+      </p>
+      <div id="ordiniCheckboxList" class="ordini-checkbox-list"></div>
+    </section>
+
+    <!-- Comanda (visibile anche in stampa) -->
+    <section class="comanda-container" id="comandaContainer">
+      <!-- generato da JS -->
+    </section>
+  </main>
+
+  <nav class="bottom-nav no-print">
+    <a href="index2.html"><span class="nav-icon">📖</span><span>Ricette</span></a>
+    <a href="preparazioni-base.html"><span class="nav-icon">🥣</span><span>Basi</span></a>
+    <a href="ingredienti.html"><span class="nav-icon">🥕</span><span>Ingredienti</span></a>
+    <a href="planner.html" class="active"><span class="nav-icon">📅</span><span>Planner</span></a>
+    <a href="impostazioni.html"><span class="nav-icon">⚙️</span><span>Setup</span></a>
+  </nav>
+  <script>document.body.classList.add('has-bottom-nav');</script>
+
+  <script src="js/script.js"></script>
+  <script>
+    initStampaOrdiniPage();
+  </script>
+</body>
+</html>

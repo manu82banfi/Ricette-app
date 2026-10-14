@@ -1,7 +1,7 @@
 /* ========================================================================
    SCRIPT.JS - Ricette PWA
    Gestione ricette, preparazioni base, ingredienti, ordini (planner)
-   Dati su JSONBin, cache locale per offline, temi, export PDF
+   Dati su JSONBin, cache locale per offline, temi, export PDF, stampa comande
    ======================================================================== */
 
 /* ---------------- CONFIGURAZIONE JSONBIN ---------------- */
@@ -72,7 +72,6 @@ async function jsonbinWrite(binId, data) {
 /* ========================================================================
    MIGRAZIONE DATI
    Converte il vecchio formato `importedBases: ["pb123"]` in `[{id, porzioni}]`
-   usando le porzioni base della preparazione come default.
    ======================================================================== */
 
 function migrateImportedBases(ricetteArr, preparazioniArr) {
@@ -84,14 +83,12 @@ function migrateImportedBases(ricetteArr, preparazioniArr) {
       return;
     }
     r.importedBases = r.importedBases.map(item => {
-      // Già nel formato nuovo
       if (typeof item === 'object' && item !== null && item.id) {
         return {
           id: String(item.id),
           porzioni: Number(item.porzioni) || 1
         };
       }
-      // Vecchio formato: stringa
       const base = preparazioniArr.find(p => String(p.id) === String(item));
       return {
         id: String(item),
@@ -147,7 +144,7 @@ async function savePreparazioni(arr) {
 }
 
 /* ========================================================================
-   LOAD DATA (con fallback localStorage + migrazione)
+   LOAD DATA
    ======================================================================== */
 
 async function loadData(forceRemote = false) {
@@ -159,7 +156,6 @@ async function loadData(forceRemote = false) {
       if (ci) ingredienti = JSON.parse(ci);
       if (cr) ricette = JSON.parse(cr);
       if (cp) preparazioni = JSON.parse(cp);
-      // Migra la cache locale
       ricette = migrateImportedBases(ricette, preparazioni);
     } catch (e) { /* ignore */ }
   }
@@ -179,7 +175,6 @@ async function loadData(forceRemote = false) {
       localStorage.setItem(LS_PREP, JSON.stringify(prep));
     }
     if (Array.isArray(ric)) {
-      // Migra il formato importedBases
       ricette = migrateImportedBases(ric, preparazioni);
       localStorage.setItem(LS_RIC, JSON.stringify(ricette));
     }
@@ -246,8 +241,7 @@ function computeMacroForIngredient(ing, qty, unitInRecipe) {
 }
 
 /* ========================================================================
-   HELPERS: costo/macro/peso/allergeni di una preparazione base
-   Calcolati alle porzioni base della preparazione.
+   HELPERS: stats preparazione base
    ======================================================================== */
 
 function computePreparazioneBaseStats(base) {
@@ -277,7 +271,6 @@ function computePreparazioneBaseStats(base) {
 
     (ing.allergeni || []).forEach(a => stats.allergeni.add(a));
 
-    // Peso stimato
     if (unit === 'g' || unit === 'gr' || unit === 'grammi') stats.pesoStimato += qty;
     else if (unit === 'pcs' && ing.weightPerPiece) stats.pesoStimato += qty * ing.weightPerPiece;
     else if (unit === 'ml') stats.pesoStimato += qty;
@@ -288,7 +281,6 @@ function computePreparazioneBaseStats(base) {
 
 /* ========================================================================
    INDEX PAGE (ricette + preparazioni base)
-   Card uniformi con pulsanti Modifica / Elimina
    ======================================================================== */
 
 async function initIndexPage() {
@@ -298,7 +290,6 @@ async function initIndexPage() {
   const search = document.getElementById('searchInput');
 
   function createCard(item, tipo) {
-    // tipo: 'ricetta' | 'preparazione'
     const li = document.createElement('li');
     li.className = 'card-item';
 
@@ -312,9 +303,7 @@ async function initIndexPage() {
       </div>
     `;
 
-    // Click sulla card (non sui pulsanti) → vista lettura
     li.addEventListener('click', (ev) => {
-      // Se il click è partito da un pulsante, ignora
       if (ev.target.closest('.card-actions')) return;
       if (isRicetta) {
         window.location.href = `ricetta.html?id=${encodeURIComponent(item.id)}`;
@@ -323,7 +312,6 @@ async function initIndexPage() {
       }
     });
 
-    // Pulsante Modifica
     li.querySelector('.card-btn-edit').addEventListener('click', (ev) => {
       ev.stopPropagation();
       if (isRicetta) {
@@ -333,7 +321,6 @@ async function initIndexPage() {
       }
     });
 
-    // Pulsante Elimina
     li.querySelector('.card-btn-del').addEventListener('click', async (ev) => {
       ev.stopPropagation();
       const msg = isRicetta ? 'Eliminare questa ricetta?' : 'Eliminare questa preparazione?';
@@ -381,8 +368,7 @@ async function initIndexPage() {
 }
 
 /* ========================================================================
-   PREPARATIONS PAGE (lista preparazioni base)
-   Card uniformi con pulsanti Modifica / Elimina
+   PREPARATIONS PAGE
    ======================================================================== */
 
 async function initPreparationsPage() {
@@ -402,19 +388,16 @@ async function initPreparationsPage() {
       </div>
     `;
 
-    // Click sulla card → vista lettura
     li.addEventListener('click', (ev) => {
       if (ev.target.closest('.card-actions')) return;
       window.location.href = `preparazione-base.html?id=${encodeURIComponent(p.id)}`;
     });
 
-    // Modifica
     li.querySelector('.card-btn-edit').addEventListener('click', (ev) => {
       ev.stopPropagation();
       window.location.href = `modifica-preparazione-base.html?id=${encodeURIComponent(p.id)}`;
     });
 
-    // Elimina
     li.querySelector('.card-btn-del').addEventListener('click', async (ev) => {
       ev.stopPropagation();
       if (!confirm('Eliminare questa preparazione?')) return;
@@ -445,7 +428,7 @@ async function initPreparationsPage() {
 }
 
 /* ========================================================================
-   PREPARAZIONE BASE PAGE (vista lettura, come ricetta.html)
+   PREPARAZIONE BASE PAGE (vista lettura)
    ======================================================================== */
 
 async function initPreparazioneBasePage() {
@@ -465,7 +448,6 @@ async function initPreparazioneBasePage() {
   const stats = computePreparazioneBaseStats(base);
   const porzioni = Number(base.porzioni) || 1;
 
-  // Tabella ingredienti
   const tbody = document.querySelector('#baseIngredientsTable tbody');
   tbody.innerHTML = '';
 
@@ -474,7 +456,6 @@ async function initPreparazioneBasePage() {
     tr.innerHTML = `<td colspan="8" class="mute">Nessun ingrediente</td>`;
     tbody.appendChild(tr);
   } else {
-    // Ordina alfabeticamente
     const sorted = [...base.ingredients].sort((a, b) => {
       const ingA = ingredienti.find(i => String(i.id) === String(a.id));
       const ingB = ingredienti.find(i => String(i.id) === String(b.id));
@@ -505,25 +486,21 @@ async function initPreparazioneBasePage() {
     });
   }
 
-  // Totali tabella
   document.getElementById('baseTotalCost').textContent = `€ ${stats.costo.toFixed(2)}`;
   document.getElementById('baseTotalKcal').textContent = stats.macro.kcal.toFixed(1);
   document.getElementById('baseTotalFat').textContent = `${stats.macro.fat.toFixed(1)}g`;
   document.getElementById('baseTotalCarb').textContent = `${stats.macro.carb.toFixed(1)}g`;
   document.getElementById('baseTotalProt').textContent = `${stats.macro.prot.toFixed(1)}g`;
 
-  // Box costi
   const costoPerPorzione = stats.costo / porzioni;
   document.getElementById('baseTotalCostBox').textContent = `€ ${stats.costo.toFixed(2)}`;
   document.getElementById('basePortionCost').textContent = `€ ${costoPerPorzione.toFixed(2)}`;
 
-  // Box macro
   document.getElementById('baseKcalBox').textContent = `${Math.round(stats.macro.kcal)} kcal`;
   document.getElementById('baseProtBox').textContent = `${Math.round(stats.macro.prot)}g`;
   document.getElementById('baseCarbBox').textContent = `${Math.round(stats.macro.carb)}g`;
   document.getElementById('baseFatBox').textContent = `${Math.round(stats.macro.fat)}g`;
 
-  // Peso e costi/macro per 100g se peso/porzione definito
   const pesoPerPorzione = Number(base.pesoPerPorzione) || 0;
   if (pesoPerPorzione > 0) {
     const pesoAtteso = porzioni * pesoPerPorzione;
@@ -540,7 +517,6 @@ async function initPreparazioneBasePage() {
     document.getElementById('baseTotalWeightValue').textContent = `${Math.round(stats.pesoStimato)} g`;
   }
 
-  // Allergeni
   const allergenDiv = document.getElementById('baseAllergens');
   const codes = Array.from(stats.allergeni);
   if (codes.length === 0) {
@@ -552,10 +528,8 @@ async function initPreparazioneBasePage() {
     }).join('');
   }
 
-  // Procedimento
   document.getElementById('basePreparationText').innerHTML = base.preparation || '';
 
-  // Bottoni
   document.getElementById('editBaseBtn').addEventListener('click', () => {
     window.location.href = `modifica-preparazione-base.html?id=${encodeURIComponent(base.id)}`;
   });
@@ -563,7 +537,7 @@ async function initPreparazioneBasePage() {
 }
 
 /* ========================================================================
-   EDIT PREPARATION PAGE (editor completo: porzioni, peso, ingredienti, macro, allergeni)
+   EDIT PREPARATION PAGE
    ======================================================================== */
 
 async function initEditPreparationPage() {
@@ -577,7 +551,6 @@ async function initEditPreparationPage() {
   const addBtn = document.getElementById('addPrepIngredientBtn');
   const list = document.getElementById('prepIngredientsList');
 
-  // Popola select ingredienti
   const sortedIngredients = [...ingredienti].sort((a, b) => a.name.localeCompare(b.name));
   sortedIngredients.forEach(i => {
     const o = document.createElement('option');
@@ -663,7 +636,6 @@ async function initEditPreparationPage() {
     items.forEach(item => listElement.appendChild(item));
   }
 
-  // Carica dati esistenti se in modifica
   if (id) {
     const editing = preparazioni.find(p => String(p.id) === String(id));
     if (editing) {
@@ -747,7 +719,6 @@ async function initIngredientPage() {
         </td>
       `;
 
-      // Click sulla riga (tranne pulsanti) → modifica
       tr.addEventListener('click', (ev) => {
         if (ev.target.closest('button')) return;
         window.location.href = `modifica-ingrediente.html?id=${encodeURIComponent(i.id)}`;
@@ -756,7 +727,6 @@ async function initIngredientPage() {
       tbody.appendChild(tr);
     });
 
-    // Pulsante Duplica
     tbody.querySelectorAll('.duplicateIng').forEach(b => {
       b.addEventListener('click', async (e) => {
         e.stopPropagation();
@@ -783,7 +753,6 @@ async function initIngredientPage() {
       });
     });
 
-    // Pulsante Elimina
     tbody.querySelectorAll('.deleteIng').forEach(b => {
       b.addEventListener('click', async (e) => {
         e.stopPropagation();
@@ -808,10 +777,9 @@ async function initIngredientPage() {
 
   render();
 
-      search.addEventListener('input', () => {
+  search.addEventListener('input', () => {
     const query = search.value.toLowerCase().trim();
     Array.from(tbody.querySelectorAll('tr')).forEach(tr => {
-      // Prende SOLO il testo della prima cella (colonna Nome)
       const firstCell = tr.querySelector('td:first-child');
       const nome = firstCell ? firstCell.textContent.toLowerCase() : '';
       tr.style.display = (query === '' || nome.includes(query)) ? '' : 'none';
@@ -887,7 +855,6 @@ async function initEditIngredientPage() {
 
 /* ========================================================================
    RECIPE PAGE (vista lettura)
-   Considera preparazioni base importate con porzioni selezionate
    ======================================================================== */
 
 async function initRecipePage() {
@@ -921,17 +888,13 @@ async function initRecipePage() {
   let currentPortions = Number(recipe.portions || 1);
   let totalRecipeWeight = 0;
 
-  /* Raccoglie ingredienti: quelli della ricetta + quelli delle prep base importate,
-     scalati in base alle porzioni importate / porzioni base della prep. */
   function gatherAllIngredients(forPortions) {
     const result = [];
 
-    // Ingredienti diretti
     (recipe.ingredients || []).forEach(it => {
       result.push({ ...it, source: 'recipe', parentBase: null, parentScale: 1 });
     });
 
-    // Prep base importate
     (recipe.importedBases || []).forEach(ib => {
       const baseId = ib.id;
       const basePorzioniImportate = Number(ib.porzioni) || 1;
@@ -953,7 +916,6 @@ async function initRecipePage() {
       });
     });
 
-    // Scala per porzioni ricetta
     const factor = forPortions / (recipe.portions || 1);
     return result.map(it => ({
       id: it.id,
@@ -1070,7 +1032,6 @@ async function initRecipePage() {
       document.getElementById('totalWeightBox').style.display = 'none';
     }
 
-    // Allergeni
     const codes = Array.from(allergenCodes);
     const allergenDiv = document.getElementById('recipeAllergens');
     if (codes.length === 0) {
@@ -1082,7 +1043,6 @@ async function initRecipePage() {
       }).join('');
     }
 
-    // Preparazioni base incluse (con porzioni importate)
     const includedDiv = document.getElementById('includedBases');
     includedDiv.innerHTML = '';
 
@@ -1174,7 +1134,7 @@ async function initRecipePage() {
 }
 
 /* ========================================================================
-   EDIT RECIPE PAGE (con selezione porzioni per prep base importate)
+   EDIT RECIPE PAGE
    ======================================================================== */
 
 async function initEditRecipePage() {
@@ -1192,7 +1152,6 @@ async function initEditRecipePage() {
   const importBaseBtn = document.getElementById('importBaseBtn');
   const importedBasesList = document.getElementById('importedBasesList');
 
-  // Popola select ingredienti
   const sortedIngredients = [...ingredienti].sort((a, b) => a.name.localeCompare(b.name));
   ingSelect.innerHTML = '<option value="">Seleziona ingrediente...</option>';
   sortedIngredients.forEach(i => {
@@ -1222,7 +1181,6 @@ async function initEditRecipePage() {
   }
   populateBaseSelect();
 
-  // Quando si seleziona una prep, il campo porzioni si aggiorna col valore di default
   baseSelect.addEventListener('change', () => {
     const baseId = baseSelect.value;
     const base = preparazioni.find(p => String(p.id) === String(baseId));
@@ -1305,7 +1263,6 @@ async function initEditRecipePage() {
     sortIngredientsListAlphabetically();
   }
 
-  /* Aggiunge una prep base importata con porzioni specifiche */
   function addImportedBase(baseId, porzioni) {
     if (!baseId) return;
     if (Array.from(importedBasesList.children).some(li => li.dataset.id === baseId)) return;
@@ -1321,7 +1278,6 @@ async function initEditRecipePage() {
     const label = document.createElement('span');
     label.innerHTML = `<strong>${base.name}</strong> — ${porz} ${porz === 1 ? 'porzione' : 'porzioni'}`;
 
-    // Input per modificare le porzioni
     const porzInput = document.createElement('input');
     porzInput.type = 'number';
     porzInput.min = '0.1';
@@ -1352,7 +1308,6 @@ async function initEditRecipePage() {
     sortBasesListAlphabetically();
   }
 
-  // Carica dati esistenti se in modifica
   let editing = null;
   if (id) {
     editing = ricette.find(r => String(r.id) === String(id));
@@ -1534,6 +1489,7 @@ async function initPlannerPage() {
       <div class="ordine-footer">
         ${statoBadge(o.stato)}
         <div class="ordine-actions">
+          <button class="btn btn-small" data-act="print" data-id="${o.id}">🖨️ Stampa</button>
           <button class="btn btn-small" data-act="edit" data-id="${o.id}">Modifica</button>
           <button class="btn btn-small" data-act="del" data-id="${o.id}">Elimina</button>
         </div>
@@ -1583,6 +1539,9 @@ async function initPlannerPage() {
       b.addEventListener('click', async (ev) => {
         const id = ev.currentTarget.dataset.id;
         const act = ev.currentTarget.dataset.act;
+        if (act === 'print') {
+          window.location.href = `stampa-ordini.html?id=${encodeURIComponent(id)}`;
+        }
         if (act === 'edit') {
           window.location.href = `modifica-ordine.html?id=${encodeURIComponent(id)}`;
         }
@@ -1646,7 +1605,170 @@ async function initEditOrdinePage() {
 }
 
 /* ========================================================================
-   TEMA (chiaro/scuro/default)
+   STAMPA ORDINI PAGE
+   ======================================================================== */
+
+async function initStampaOrdiniPage() {
+  await loadOrdini();
+
+  const params = new URLSearchParams(window.location.search);
+  const idPartenza = params.get('id');
+
+  const now = new Date();
+
+  // Ordini futuri ordinati per data
+  const futuri = ordini
+    .filter(o => o.dataConsegna && new Date(o.dataConsegna) >= now)
+    .sort((a, b) => new Date(a.dataConsegna) - new Date(b.dataConsegna));
+
+  // Se l'ordine di partenza non è tra i futuri (es. è passato), lo aggiungiamo in cima
+  const startOrd = ordini.find(o => String(o.id) === String(idPartenza));
+  let ordiniDaMostrare = [...futuri];
+  if (startOrd && !futuri.some(o => String(o.id) === String(startOrd.id))) {
+    ordiniDaMostrare.unshift(startOrd);
+  }
+
+  if (ordiniDaMostrare.length === 0) {
+    document.getElementById('selectionPanel').innerHTML = '<p class="mute">Nessun ordine da stampare.</p>';
+    document.getElementById('comandaContainer').innerHTML = '<p class="mute">Nessun ordine da stampare.</p>';
+    return;
+  }
+
+  // Stato selezione: Set di id selezionati
+  const selezionati = new Set();
+  if (startOrd) {
+    selezionati.add(String(startOrd.id));
+  } else if (ordiniDaMostrare.length > 0) {
+    selezionati.add(String(ordiniDaMostrare[0].id));
+  }
+
+  // Costruisci checkbox
+  const checkboxList = document.getElementById('ordiniCheckboxList');
+  checkboxList.innerHTML = '';
+
+  function formatDataBreve(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    const g = String(d.getDate()).padStart(2, '0');
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const a = d.getFullYear();
+    const o = String(d.getHours()).padStart(2, '0');
+    const mi = String(d.getMinutes()).padStart(2, '0');
+    return `${g}/${m}/${a} ${o}:${mi}`;
+  }
+
+  ordiniDaMostrare.forEach(o => {
+    const wrapper = document.createElement('label');
+    wrapper.className = 'ordine-checkbox-item';
+
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.value = o.id;
+    cb.checked = selezionati.has(String(o.id));
+    cb.addEventListener('change', () => {
+      if (cb.checked) selezionati.add(String(o.id));
+      else selezionati.delete(String(o.id));
+      renderComande();
+    });
+
+    const txt = document.createElement('span');
+    txt.innerHTML = `<strong>${o.cliente || '—'}</strong> — ${formatDataBreve(o.dataConsegna)} <span class="mute">${o.dolce || ''}</span>`;
+
+    wrapper.appendChild(cb);
+    wrapper.appendChild(txt);
+    checkboxList.appendChild(wrapper);
+  });
+
+  // Costruisci comande
+  function renderComande() {
+    const container = document.getElementById('comandaContainer');
+    container.innerHTML = '';
+
+    const ordiniSel = ordiniDaMostrare.filter(o => selezionati.has(String(o.id)));
+
+    if (ordiniSel.length === 0) {
+      container.innerHTML = '<p class="mute" style="text-align:center;padding:40px 0;">Nessun ordine selezionato.</p>';
+      return;
+    }
+
+    ordiniSel.forEach((o, idx) => {
+      const comanda = document.createElement('div');
+      comanda.className = 'comanda-box';
+
+      // Intestazione con numero progressivo (se più di uno)
+      if (ordiniSel.length > 1) {
+        const header = document.createElement('div');
+        header.className = 'comanda-numero';
+        header.textContent = `Comanda ${idx + 1} di ${ordiniSel.length}`;
+        comanda.appendChild(header);
+      }
+
+      // Blocco principale
+      const block = document.createElement('div');
+      block.className = 'comanda-block';
+
+      block.innerHTML = `
+        <div class="comanda-row comanda-row-data">
+          <div class="comanda-label">Consegna</div>
+          <div class="comanda-value comanda-grande">${formatDataBreve(o.dataConsegna)}</div>
+        </div>
+
+        <div class="comanda-row">
+          <div class="comanda-label">Cliente</div>
+          <div class="comanda-value comanda-grande">${o.cliente || '—'}</div>
+        </div>
+
+        <div class="comanda-row">
+          <div class="comanda-label">Torta / Dolce</div>
+          <div class="comanda-value">${o.dolce || '—'}</div>
+        </div>
+
+        <div class="comanda-row">
+          <div class="comanda-label">Quantità</div>
+          <div class="comanda-value">${o.quantita || '—'}</div>
+        </div>
+
+        <div class="comanda-row">
+          <div class="comanda-label">Ritiro / Consegna</div>
+          <div class="comanda-value">${o.ritiroConsegna || '—'}</div>
+        </div>
+
+        ${o.note ? `
+        <div class="comanda-row comanda-row-note">
+          <div class="comanda-label">Note</div>
+          <div class="comanda-value">${o.note}</div>
+        </div>` : ''}
+
+        <div class="comanda-row comanda-row-stato">
+          <div class="comanda-label">Stato</div>
+          <div class="comanda-value">${o.stato || 'in attesa'}</div>
+        </div>
+      `;
+
+      comanda.appendChild(block);
+      container.appendChild(comanda);
+    });
+  }
+
+  renderComande();
+
+  // Pulsante Stampa
+  document.getElementById('printBtn').addEventListener('click', () => {
+    if (selezionati.size === 0) {
+      alert('Seleziona almeno un ordine da stampare.');
+      return;
+    }
+    window.print();
+  });
+
+  // Pulsante Torna
+  document.getElementById('backBtn').addEventListener('click', () => {
+    window.location.href = 'planner.html';
+  });
+}
+
+/* ========================================================================
+   TEMA
    ======================================================================== */
 
 function applyTheme(theme) {
@@ -1675,20 +1797,18 @@ function setTheme(theme) {
 }
 
 /* ========================================================================
-   IMPOSTAZIONI - temi + export PDF + JSON
+   IMPOSTAZIONI
    ======================================================================== */
 
 async function initSettingsPage() {
   await loadData(true);
 
-  /* ---- TEMA ---- */
   const currentTheme = localStorage.getItem(LS_THEME) || 'default';
   document.querySelectorAll('.theme-card').forEach(c => {
     c.classList.toggle('active', c.dataset.theme === currentTheme);
     c.addEventListener('click', () => setTheme(c.dataset.theme));
   });
 
-  /* ---- EXPORT JSON ---- */
   document.getElementById('exportBtn').addEventListener('click', () => {
     const bi = new Blob([JSON.stringify(ingredienti, null, 2)], { type: 'application/json' });
     const ai = document.createElement('a');
@@ -1709,7 +1829,6 @@ async function initSettingsPage() {
     ap.click();
   });
 
-  /* ---- IMPORT JSON ---- */
   document.getElementById('importFile').addEventListener('change', async (ev) => {
     const f = ev.target.files[0];
     if (!f) return;
@@ -1723,7 +1842,6 @@ async function initSettingsPage() {
         await saveIngredienti(json);
         alert('Ingredienti importati e salvati online.');
       } else {
-        // Migra le ricette importate
         const migrated = migrateImportedBases(json, preparazioni);
         await saveRicette(migrated);
         alert('Ricette importate e salvate online.');
@@ -1733,7 +1851,6 @@ async function initSettingsPage() {
     }
   });
 
-  /* ---- SYNC ---- */
   const syncBtn = document.getElementById('syncBtn');
   if (syncBtn) {
     syncBtn.addEventListener('click', async () => {
@@ -1743,7 +1860,6 @@ async function initSettingsPage() {
     });
   }
 
-  /* ---- EXPORT PDF ---- */
   const modal = document.getElementById('pdfModal');
   const select = document.getElementById('pdfRicettaSelect');
 
@@ -1790,7 +1906,7 @@ async function initSettingsPage() {
 }
 
 /* ========================================================================
-   GENERAZIONE PDF (multipla)
+   GENERAZIONE PDF
    ======================================================================== */
 
 function loadJsPDF() {
@@ -1937,7 +2053,6 @@ async function generaPdfRicette(ricettaIds, includiIngredienti, includiAllergeni
       y += 8;
     } else {
       allergeniArr.forEach(code => {
-        nuovaPaginaSelezionaSeNecessario && null;
         nuovaPaginaSeNecessario(6);
         const allergen = ALLERGEN_LIST.find(x => x.code === code);
         const nome = allergen ? allergen.name : code;

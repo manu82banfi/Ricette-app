@@ -1598,3 +1598,195 @@ body.theme-dark #ingredientTable tbody tr:hover {
 body.theme-white #ingredientTable tbody tr:hover {
   background: #fdf8ec;
 }
+/* ========================================================================
+   STAMPA ORDINI (stampa-ordini.html)
+   Comanda cartacea + layout stampa
+   ======================================================================== */
+
+/* Lista checkbox ordini da stampare */
+.ordini-checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ordine-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-panel-light);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid var(--border-light);
+  font-size: 14px;
+}
+
+.ordine-checkbox-item:hover {
+  background: var(--tag-bg);
+}
+
+.ordine-checkbox-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--blue-light);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.ordine-checkbox-item span {
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+/* Contenitore comande */
+.comanda-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* Singola comanda */
+.comanda-box {
+  background: #fff;
+  color: #000;
+  border: 2px solid #000;
+  border-radius: 8px;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.comanda-numero {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #555;
+  border-bottom: 1px dashed #999;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.comanda-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comanda-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.comanda-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #666;
+}
+
+.comanda-value {
+  font-size: 16px;
+  color: #000;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.comanda-grande {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.comanda-row-note .comanda-value {
+  background: #fffbe6;
+  padding: 8px 12px;
+  border-left: 4px solid #f0c000;
+  border-radius: 4px;
+  font-style: italic;
+}
+
+.comanda-row-stato .comanda-value {
+  text-transform: capitalize;
+  font-weight: 600;
+}
+
+/* ========================================================================
+   STAMPA (@media print) — nasconde tutto tranne le comande
+   ======================================================================== */
+
+@media print {
+  /* Nasconde header, nav, pannelli selezione, footer */
+  .no-print,
+  .site-header,
+  .bottom-nav,
+  #selectionPanel {
+    display: none !important;
+  }
+
+  /* Reset body per la stampa */
+  body {
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    color: #000 !important;
+  }
+
+  .container {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Comande a tutta pagina */
+  .comanda-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .comanda-box {
+    border: 2px solid #000 !important;
+    box-shadow: none !important;
+    margin: 0 0 20px 0 !important;
+    padding: 20px 24px !important;
+    background: #fff !important;
+    color: #000 !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Forza colori in stampa */
+  .comanda-label { color: #333 !important; }
+  .comanda-value { color: #000 !important; }
+  .comanda-numero { color: #000 !important; border-color: #666 !important; }
+
+  .comanda-row-note .comanda-value {
+    background: #f5f5f5 !important;
+    border-left: 4px solid #999 !important;
+  }
+
+  /* Ogni comanda nuova pagina se ci sono più ordini */
+  .comanda-box + .comanda-box {
+    page-break-before: always;
+    break-before: page;
+  }
+}
+
+/* Responsive mobile */
+@media (max-width: 600px) {
+  .comanda-box {
+    padding: 18px 16px;
+  }
+  .comanda-value {
+    font-size: 15px;
+  }
+  .comanda-grande {
+    font-size: 18px;
+  }
+}

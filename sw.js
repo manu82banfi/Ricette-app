@@ -5,7 +5,7 @@
    - Funziona offline per le pagine già visitate
    ======================================================================== */
 
-const CACHE_NAME = 'ricette-pwa-v10';
+const CACHE_NAME = 'ricette-pwa-v11';
 
 const PRECACHE_URLS = [
   './',
@@ -20,6 +20,7 @@ const PRECACHE_URLS = [
   './modifica-preparazione-base.html',
   './planner.html',
   './modifica-ordine.html',
+  './stampa-ordini.html',
   './impostazioni.html',
   './css/style.css',
   './js/script.js',
@@ -80,7 +81,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  /* 3) HTML: network-first (pagina sempre aggiornata se online) */
+  /* 3) HTML: network-first */
   if (req.headers.get('accept')?.includes('text/html')) {
     event.respondWith(
       fetch(req)
@@ -94,7 +95,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  /* 4) Tutto il resto (CSS, JS, immagini): cache-first */
+  /* 4) Tutto il resto: cache-first */
   event.respondWith(
     caches.match(req).then((cached) => {
       if (cached) return cached;
