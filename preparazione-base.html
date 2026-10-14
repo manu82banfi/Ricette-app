@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <title>Preparazione base</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#02119e" />
+  <link rel="apple-touch-icon" href="images/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Ricette" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header is-home-link" onclick="window.location.href='index.html'">
+    <div class="header-left">
+      <div class="recipe-header-info">
+        <h1 id="baseTitle">Caricamento...</h1>
+        <div class="recipe-meta-header">
+          <span class="meta-tag">Porzioni base: <span id="basePortionsBase"></span></span>
+        </div>
+      </div>
+    </div>
+    <nav class="header-nav" onclick="event.stopPropagation()">
+      <button id="editBaseBtn" class="btn">Modifica</button>
+      <button id="printBaseBtn" class="btn">Stampa</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="panel recipe-layout">
+      <div class="left">
+        <div class="ingredients-section">
+          <div class="section-header">
+            <h2>Ingredienti</h2>
+          </div>
+
+          <table id="baseIngredientsTable" class="table ingredients-table">
+            <thead>
+              <tr>
+                <th>Ingrediente</th>
+                <th>Qtà</th>
+                <th>Unità</th>
+                <th>Costo</th>
+                <th>kcal</th>
+                <th>grassi</th>
+                <th>carbo</th>
+                <th>pro</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td><strong>Totali</strong></td>
+                <td></td>
+                <td></td>
+                <td><strong id="baseTotalCost">€ 0.00</strong></td>
+                <td><strong id="baseTotalKcal">0</strong></td>
+                <td><strong id="baseTotalFat">0g</strong></td>
+                <td><strong id="baseTotalCarb">0g</strong></td>
+                <td><strong id="baseTotalProt">0g</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="preparation-section">
+          <h2>Preparazione</h2>
+          <div id="basePreparationText" class="preparation"></div>
+        </div>
+      </div>
+
+      <aside class="right">
+        <div class="box cost-box compact-box">
+          <h3>Costi</h3>
+          <div class="cost-content">
+            <div class="cost-line total-cost">
+              <span>Totale:</span>
+              <strong id="baseTotalCostBox">€ 0.00</strong>
+            </div>
+            <div class="cost-line portion-cost">
+              <span>Per porzione:</span>
+              <strong id="basePortionCost">€ 0.00</strong>
+            </div>
+            <div id="baseCostPer100g" class="cost-line" style="display: none;">
+              <span>Per 100g:</span>
+              <strong id="baseCostPer100gValue">€ 0.00</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="box macro-box compact-box">
+          <h3>Macronutrienti</h3>
+          <div class="macro-content">
+            <div class="macro-line"><span>Calorie:</span><strong id="baseKcalBox">0 kcal</strong></div>
+            <div class="macro-line"><span>Proteine:</span><strong id="baseProtBox">0g</strong></div>
+            <div class="macro-line"><span>Carboidrati:</span><strong id="baseCarbBox">0g</strong></div>
+            <div class="macro-line"><span>Grassi:</span><strong id="baseFatBox">0g</strong></div>
+            <div id="baseMacroPer100g" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e8f0fe; display: none;">
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Per 100g:</div>
+              <div class="macro-line" style="font-size: 13px;">
+                <span>Calorie:</span>
+                <span id="baseKcalPer100g">0 kcal</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="baseTotalWeightBox" class="box weight-box compact-box" style="display: none;">
+          <h3>Peso Totale</h3>
+          <div class="weight-content">
+            <div style="text-align: center; padding: 10px 0;">
+              <div style="font-size: 24px; font-weight: bold; color: var(--blue-light);" id="baseTotalWeightValue">0 g</div>
+              <div style="font-size: 14px; color: var(--text-muted); margin-top: 4px;">Peso stimato</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="box allergeni-box compact-box">
+          <h3>Allergeni</h3>
+          <div id="baseAllergens" class="allergens-list">—</div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="index2.html"><span class="nav-icon">📖</span><span>Ricette</span></a>
+    <a href="preparazioni-base.html" class="active"><span class="nav-icon">🥣</span><span>Basi</span></a>
+    <a href="ingredienti.html"><span class="nav-icon">🥕</span><span>Ingredienti</span></a>
+    <a href="planner.html"><span class="nav-icon">📅</span><span>Planner</span></a>
+    <a href="impostazioni.html"><span class="nav-icon">⚙️</span><span>Setup</span></a>
+  </nav>
+  <script>document.body.classList.add('has-bottom-nav');</script>
+
+  <script src="js/script.js"></script>
+  <script>
+    initPreparazioneBasePage();
+  </script>
+</body>
+</html>

@@ -27,6 +27,20 @@
           <label>Nome: <input name="name" required /></label>
         </div>
 
+        <div class="form-field">
+          <label>Porzioni base: <input name="porzioni" type="number" min="1" value="1" /></label>
+        </div>
+
+        <div class="form-field">
+          <label>Peso per porzione (g, opzionale):
+            <input name="pesoPerPorzione" type="number" step="1" min="1" placeholder="es: 125" />
+          </label>
+          <small class="mute">
+            Se definito, permette di calcolare la preparazione anche per peso.
+            Esempio: Frolla → porzioni: 8, peso/porzione: 125g → totale 1000g.
+          </small>
+        </div>
+
         <h3>Ingredienti (aggiungi dalla lista)</h3>
         <div class="add-ingredient-line">
           <select id="prepIngredientSelect"></select>
@@ -37,14 +51,7 @@
 
         <ul id="prepIngredientsList" class="mini-list"></ul>
 
-        <div id="prepTotalCost" class="cost-summary" style="
-          background: linear-gradient(135deg, #f0f7ff, #e3f2fd);
-          padding: 16px;
-          border-radius: 8px;
-          margin: 20px 0;
-          border: 2px solid var(--blue-accent);
-          display: none;
-        ">
+        <div id="prepTotalCost" class="cost-summary" style="display: none;">
           <h4 style="margin: 0 0 12px 0; color: var(--blue-light);">
             Costo Totale Preparazione
           </h4>

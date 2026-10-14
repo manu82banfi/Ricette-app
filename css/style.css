@@ -1,1267 +1,1307 @@
 :root {
-  /* ====== PALETTA COLORI PRINCIPALE ====== */
-  /* Blu - Brand principale */
-  --blue-light: #02119e;
-  --blue-dark: #010957;
-  --blue-accent: #98b1f5;
+  /* ====== PALETTA COLORI ====== */
+  /* Blu brand — usato in: tutte le pagine (header, bottoni, bordi, link) */
+  --blue-light: #02119e;          /* Blu principale — tutte le pagine */
+  --blue-dark: #010957;           /* Blu scuro (gradiente header, hover) — tutte le pagine */
+  --blue-accent: #98b1f5;         /* Blu chiaro (bordi, sfondi tenui) — tutte le pagine */
 
-  /* Grigi - Background e testi */
-  --bg-body: #8a8a8a;
-  --bg-panel: #adadad;
-  --bg-panel-light: #f7f9fb;
-  --text-dark: #222;
-  --text-muted: #666;
-  --text-light-muted: #888;
-  --border-light: #e1e8f0;
+  /* Grigi — usati in: tutte le pagine */
+  --bg-body: #8a8a8a;             /* Sfondo pagina — tutte le pagine tranne index.html (home) */
+  --bg-panel: #adadad;            /* Sfondo pannello — tutte le pagine con .panel */
+  --bg-panel-light: #f7f9fb;      /* Sfondo pannelli interni — tutte le pagine con .panel */
+  --text-dark: #222;              /* Testo principale — tutte le pagine */
+  --text-muted: #666;             /* Testo secondario (.mute) — tutte le pagine */
+  --text-light-muted: #888;       /* Testo molto tenue — ricetta.html, preparazione-base.html, modifica-* */
+  --border-light: #e1e8f0;        /* Bordi chiari — tutte le pagine */
 
-  /* Colori di stato */
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
+  /* Colori stato — tutte le pagine (macro, stati, avvisi) */
+  --success: #10b981;             /* Verde (costo per porzione, kcal) — ricetta.html, preparazione-base.html */
+  --warning: #f59e0b;             /* Arancione (note ordini, avvisi) — planner.html, modifica-ordine.html */
+  --danger: #ef4444;              /* Rosso (errori) — tutte le pagine */
 
-  /* Colori speciali */
-  --tag-bg: #e9f2ff;
-  --pill-bg: #fffbeb;
-  --allergen-bg: #ffd6d6;
-  --allergen-text: #7b341e;
-  --allergen-border: #fed7d7;
+  /* Colori speciali — tutte le pagine */
+  --tag-bg: #e9f2ff;              /* Sfondo tag generici — modifica-ingrediente.html, impostazioni.html */
+  --pill-bg: #fffbeb;             /* Sfondo pillole gialle — planner.html, modifica-ordine.html */
+  --allergen-bg: #ffd6d6;         /* Sfondo tag allergeni — ingredienti.html, ricetta.html, preparazione-base.html */
+  --allergen-text: #7b341e;       /* Testo allergeni — ingredienti.html, ricetta.html, preparazione-base.html */
+  --allergen-border: #fed7d7;     /* Bordo tag allergeni — ingredienti.html, ricetta.html, preparazione-base.html */
 
   /* ====== VARIABILI DI STILE ====== */
-  --radius: 12px;
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
-  --transition: all 0.3s ease;
+  --radius: 12px;                                 /* Raggio arrotondamento — tutte le pagine */
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);       /* Ombra standard — tutte le pagine */
+  --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12); /* Ombra all'hover — tutte le pagine */
+  --transition: all 0.3s ease;                    /* Transizione animazioni — tutte le pagine */
 }
 
 /* ====== STILI BASE ====== */
 * {
-  box-sizing: border-box;
+  box-sizing: border-box;         /* Tutte le pagine — padding/bordo inclusi nella larghezza */
 }
 
 body {
-  font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
-  margin: 0;
-  color: var(--text-dark);
-  background: var(--bg-body);
-  line-height: 1.6;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;  /* Font globale — tutte le pagine */
+  margin: 0;                      /* Tutte le pagine — rimuove margine default */
+  color: var(--text-dark);        /* Tutte le pagine — colore testo default */
+  background: var(--bg-body);     /* Tutte le pagine tranne index.html — sfondo grigio */
+  line-height: 1.6;               /* Tutile le pagine — interlinea */
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+  color: inherit;                 /* Tutte le pagine — link ereditano colore testo */
+  text-decoration: none;          /* Tutte le pagine — niente sottolineatura */
 }
 
 .container {
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 16px;
+  max-width: 1200px;              /* Tutte le pagine tranne index.html — larghezza massima */
+  margin: 20px auto;              /* Tutte le pagine tranne index.html — centrato verticalmente */
+  padding: 16px;                  /* Tutte le pagine tranne index.html — spazio interno */
 }
 
-/* ====== HEADER MODERNO ====== */
+/* ====== HEADER ====== */
+/* Header blu in cima — usato in: index2.html, ricetta.html, preparazione-base.html, ingredienti.html, modifica-ingrediente.html, preparazioni-base.html, modifica-preparazione-base.html, modifica-ricetta.html, planner.html, modifica-ordine.html, impostazioni.html */
 .site-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(135deg, var(--blue-light), var(--blue-dark));
-  color: #fff;
-  padding: 18px 28px;
-  border-radius: var(--radius);
-  margin: 16px auto;
-  max-width: 1200px;
-  box-shadow: var(--shadow);
-  position: relative;
-  overflow: hidden;
+  display: flex;                  /* Tutte le pagine tranne index.html — layout orizzontale */
+  justify-content: space-between; /* Tutte le pagine tranne index.html — titolo a sx, bottoni a dx */
+  align-items: center;            /* Tutte le pagine tranne index.html — allineamento verticale */
+  background: linear-gradient(135deg, var(--blue-light), var(--blue-dark)); /* Sfondo gradiente blu — tutte le pagine tranne index.html */
+  color: #fff;                    /* Testo bianco — tutte le pagine tranne index.html */
+  padding: 18px 28px;             /* Spazio interno — tutte le pagine tranne index.html */
+  border-radius: var(--radius);   /* Angoli arrotondati — tutte le pagine tranne index.html */
+  margin: 16px auto;              /* Centrato — tutte le pagine tranne index.html */
+  max-width: 1200px;              /* Larghezza max — tutte le pagine tranne index.html */
+  box-shadow: var(--shadow);      /* Ombra — tutte le pagine tranne index.html */
+  position: relative;             /* Per decorazione ::before — tutte le pagine tranne index.html */
+  overflow: hidden;               /* Taglia decorazioni — tutte le pagine tranne index.html */
 }
 
 .site-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100px;
-  height: 100px;
-  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent);
-  border-radius: 0 0 0 100px;
+  content: '';                    /* Decorazione angolo curvo — tutte le pagine tranne index.html */
+  position: absolute;             /* Posizionamento assoluto — tutte le pagine tranne index.html */
+  top: 0;                         /* In alto — tutte le pagine tranne index.html */
+  right: 0;                       /* A destra — tutte le pagine tranne index.html */
+  width: 100px;                   /* Larghezza decorazione — tutte le pagine tranne index.html */
+  height: 100px;                  /* Altezza decorazione — tutte le pagine tranne index.html */
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent); /* Curva bianca tenue — tutte le pagine tranne index.html */
+  border-radius: 0 0 0 100px;     /* Curva angolo — tutte le pagine tranne index.html */
 }
 
 .site-header h1 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 700;
+  margin: 0;                      /* Titolo header — tutte le pagine tranne index.html */
+  font-size: 24px;                /* Dimensione titolo — tutte le pagine tranne index.html */
+  font-weight: 700;               /* Grassetto — tutte le pagine tranne index.html */
 }
 
 .site-header .mute {
-  opacity: 0.9;
-  margin: 0;
+  opacity: 0.9;                   /* Sottotitolo header — tutte le pagine tranne index.html */
+  margin: 0;                      /* Nessun margine — tutte le pagine tranne index.html */
 }
 
 .header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
+  display: flex;                  /* Contenitore sx header — tutte le pagine tranne index.html */
+  align-items: center;            /* Allineamento verticale — tutte le pagine tranne index.html */
+  gap: 20px;                      /* Spazio tra elementi — tutte le pagine tranne index.html */
 }
 
 .recipe-header-info {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: flex;                  /* Info ricetta nell'header — solo ricetta.html */
+  flex-direction: column;         /* In colonna — solo ricetta.html */
+  gap: 8px;                       /* Spazio tra titolo e meta — solo ricetta.html */
 }
 
 .recipe-meta-header {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  display: flex;                  /* Tag meta (tempo, difficoltà) — ricetta.html */
+  gap: 12px;                      /* Spazio tra tag — ricetta.html */
+  flex-wrap: wrap;                /* Vanno a capo — ricetta.html */
 }
 
 .meta-tag {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 500;
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.2);  /* Pillola bianca trasparente — ricetta.html */
+  padding: 4px 12px;                     /* Spazio interno pillola — ricetta.html */
+  border-radius: 20px;                   /* Forma pillola — ricetta.html */
+  font-size: 14px;                       /* Testo piccolo — ricetta.html */
+  font-weight: 500;                      /* Medio — ricetta.html */
+  backdrop-filter: blur(10px);           /* Effetto vetro — ricetta.html */
 }
 
 .header-nav {
-  display: flex;
-  gap: 10px;
+  display: flex;                  /* Bottoni header (Modifica, Stampa) — ricetta.html, preparazione-base.html */
+  gap: 10px;                      /* Spazio tra bottoni — ricetta.html, preparazione-base.html */
 }
 
 .header-nav .btn {
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: var(--transition);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.15);       /* Bottone trasparente su blu — ricetta.html, preparazione-base.html */
+  color: #fff;                                  /* Testo bianco — ricetta.html, preparazione-base.html */
+  padding: 10px 16px;                           /* Spazio interno — ricetta.html, preparazione-base.html */
+  border-radius: 8px;                           /* Angoli arrotondati — ricetta.html, preparazione-base.html */
+  border: none;                                 /* Nessun bordo — ricetta.html, preparazione-base.html */
+  cursor: pointer;                              /* Cursore mano — ricetta.html, preparazione-base.html */
+  font-weight: 600;                             /* Semi-grassetto — ricetta.html, preparazione-base.html */
+  border: 1px solid rgba(255, 255, 255, 0.3);   /* Bordo bianco tenue — ricetta.html, preparazione-base.html */
+  transition: var(--transition);                /* Transizione — ricetta.html, preparazione-base.html */
+  backdrop-filter: blur(10px);                  /* Effetto vetro — ricetta.html, preparazione-base.html */
 }
 
 .header-nav .btn:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.25);        /* Più chiaro all'hover — ricetta.html, preparazione-base.html */
+  transform: translateY(-2px);                  /* Sale all'hover — ricetta.html, preparazione-base.html */
+  border-color: rgba(255, 255, 255, 0.5);       /* Bordo più visibile — ricetta.html, preparazione-base.html */
 }
 
-/* ====== PULSANTI ====== */
+/* ====== BOTTONI ====== */
+/* Bottoni globali — usati in: tutte le pagine */
 .btn {
-  background: #fff;
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: var(--transition);
-  border: 1px solid var(--border-light);
+  background: #fff;                       /* Tutte le pagine — sfondo bianco default */
+  padding: 10px 16px;                     /* Tutte le pagine — spazio interno */
+  border-radius: 8px;                     /* Tutte le pagine — angoli arrotondati */
+  border: none;                           /* Tutte le pagine — nessun bordo default */
+  cursor: pointer;                        /* Tutte le pagine — cursore mano */
+  font-weight: 600;                       /* Tutte le pagine — semi-grassetto */
+  transition: var(--transition);          /* Tutte le pagine — animazione */
+  border: 1px solid var(--border-light);  /* Tutte le pagine — bordo tenue */
 }
 
 .btn.primary {
-  background: var(--blue-light);
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(2, 17, 158, 0.3);
-  border-color: var(--blue-light);
+  background: var(--blue-light);                  /* Bottone primario blu — tutte le pagine */
+  color: #fff;                                     /* Testo bianco — tutte le pagine */
+  box-shadow: 0 2px 8px rgba(2, 17, 158, 0.3);    /* Ombra blu — tutte le pagine */
+  border-color: var(--blue-light);                 /* Bordo blu — tutte le pagine */
 }
 
 .btn.primary:hover {
-  background: var(--blue-dark);
-  transform: translateY(-2px);
+  background: var(--blue-dark);        /* Più scuro all'hover — tutte le pagine */
+  transform: translateY(-2px);         /* Sale all'hover — tutte le pagine */
 }
 
 .btn:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow);
+  transform: translateY(-1px);         /* Sale leggermente — tutte le pagine */
+  box-shadow: var(--shadow);           /* Ombra — tutte le pagine */
 }
 
 .btn-small {
-  padding: 6px 10px;
-  font-size: 12px;
+  padding: 6px 10px;                   /* Bottone piccolo — index2.html, ingredienti.html, preparazioni-base.html, planner.html, ricetta.html, preparazione-base.html */
+  font-size: 12px;                     /* Testo piccolo — stesse pagine */
 }
 
 /* ====== RICERCA ====== */
+/* Barra di ricerca — usata in: index2.html, ingredienti.html, preparazioni-base.html, planner.html */
 .search {
-  padding: 12px;
-  width: 100%;
-  max-width: 420px;
-  border-radius: 8px;
-  border: 1px solid #d6e6fb;
-  font-size: 16px;
-  transition: var(--transition);
+  padding: 12px;                          /* Tutte le pagine con ricerca */
+  width: 100%;                            /* Tutte le pagine con ricerca */
+  max-width: 420px;                       /* Tutte le pagine con ricerca */
+  border-radius: 8px;                     /* Tutte le pagine con ricerca */
+  border: 1px solid #d6e6fb;              /* Bordo azzurrino — tutte le pagine con ricerca */
+  font-size: 16px;                        /* Tutte le pagine con ricerca */
+  transition: var(--transition);          /* Tutte le pagine con ricerca */
 }
 
 .search:focus {
-  outline: none;
-  border-color: var(--blue-accent);
-  box-shadow: 0 0 0 3px rgba(152, 177, 245, 0.2);
+  outline: none;                                  /* Nessun contorno default — tutte le pagine con ricerca */
+  border-color: var(--blue-accent);               /* Bordo blu chiaro — tutte le pagine con ricerca */
+  box-shadow: 0 0 0 3px rgba(152, 177, 245, 0.2); /* Alone azzurro — tutte le pagine con ricerca */
 }
 
-/* ====== PANNELI ====== */
+/* ====== PANNELLI ====== */
+/* Contenitore grigio principale — usato in: tutte le pagine tranne index.html */
 .panel {
-  background: var(--bg-panel);
-  padding: 28px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border-light);
-  transition: var(--transition);
-  margin-bottom: 20px;
+  background: var(--bg-panel);            /* Tutte le pagine tranne index.html */
+  padding: 28px;                          /* Tutte le pagine tranne index.html */
+  border-radius: var(--radius);           /* Tutte le pagine tranne index.html */
+  box-shadow: var(--shadow);              /* Tutte le pagine tranne index.html */
+  border: 1px solid var(--border-light);  /* Tutte le pagine tranne index.html */
+  transition: var(--transition);          /* Tutte le pagine tranne index.html */
+  margin-bottom: 20px;                    /* Tutte le pagine tranne index.html */
 }
 
 .panel:hover {
-  box-shadow: var(--shadow-hover);
+  box-shadow: var(--shadow-hover);        /* Ombra più forte all'hover — tutte le pagine tranne index.html */
 }
 
 .panel-header {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 16px;
+  display: flex;                          /* Riga con ricerca + bottone — index2.html, ingredienti.html, preparazioni-base.html, planner.html */
+  gap: 12px;                              /* Spazio tra elementi — stesse pagine */
+  align-items: center;                    /* Allineamento verticale — stesse pagine */
+  margin-bottom: 16px;                    /* Margine sotto — stesse pagine */
 }
 
 .narrow {
-  max-width: 640px;
-  margin: 0 auto;
+  max-width: 640px;                       /* Pannello stretto per form — modifica-ingrediente.html, modifica-preparazione-base.html, modifica-ordine.html, impostazioni.html */
+  margin: 0 auto;                         /* Centrato — stesse pagine */
 }
 
-/* ====== LAYOUT RICETTA ====== */
+/* ====== LAYOUT RICETTA / PREPARAZIONE BASE ====== */
 .recipe-layout {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 32px;
-  padding: 32px;
+  display: grid;                          /* Griglia 2 colonne — ricetta.html, preparazione-base.html */
+  grid-template-columns: 2fr 1fr;         /* 2/3 a sinistra, 1/3 a destra — ricetta.html, preparazione-base.html */
+  gap: 32px;                              /* Spazio tra colonne — ricetta.html, preparazione-base.html */
+  padding: 32px;                          /* Spazio interno — ricetta.html, preparazione-base.html */
 }
 
-/* ====== SEZIONE INGREDIENTI ====== */
+/* ====== SEZIONE INGREDIENTI (vista lettura) ====== */
 .ingredients-section {
-  margin-bottom: 32px;
+  margin-bottom: 32px;                    /* Spazio sotto — ricetta.html, preparazione-base.html */
 }
 
 .section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid var(--blue-accent);
+  display: flex;                          /* Riga con titolo + controllo porzioni — ricetta.html, preparazione-base.html */
+  justify-content: space-between;         /* Titolo a sx, porzioni a dx — ricetta.html, preparazione-base.html */
+  align-items: center;                    /* Allineamento verticale — ricetta.html, preparazione-base.html */
+  margin-bottom: 20px;                    /* Margine sotto — ricetta.html, preparazione-base.html */
+  padding-bottom: 12px;                   /* Padding sotto — ricetta.html, preparazione-base.html */
+  border-bottom: 2px solid var(--blue-accent); /* Riga blu sotto — ricetta.html, preparazione-base.html */
 }
 
 .section-header h2 {
-  margin: 0;
-  color: var(--text-dark);
-  font-size: 24px;
+  margin: 0;                              /* Titolo "Ingredienti" — ricetta.html, preparazione-base.html */
+  color: var(--text-dark);                /* Testo scuro — ricetta.html, preparazione-base.html */
+  font-size: 24px;                        /* Dimensione — ricetta.html, preparazione-base.html */
 }
 
 .portions-control {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  display: flex;                          /* Controllo porzioni — solo ricetta.html */
+  align-items: center;                    /* Allineamento verticale — solo ricetta.html */
+  gap: 8px;                               /* Spazio tra elementi — solo ricetta.html */
 }
 
 .portions-input {
-  padding: 8px 12px;
-  border: 1px solid #d6e6fb;
-  border-radius: 6px;
-  width: 80px;
-  font-size: 16px;
+  padding: 8px 12px;                      /* Input porzioni — solo ricetta.html */
+  border: 1px solid #d6e6fb;              /* Bordo azzurrino — solo ricetta.html */
+  border-radius: 6px;                     /* Angoli arrotondati — solo ricetta.html */
+  width: 80px;                            /* Larghezza — solo ricetta.html */
+  font-size: 16px;                        /* Dimensione — solo ricetta.html */
 }
 
-/* ====== TABELLA INGREDIENTI ====== */
+/* ====== TABELLA INGREDIENTI (vista lettura) ====== */
 .ingredients-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 16px;
-  background: var(--bg-panel-light);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  width: 100%;                            /* ricetta.html, preparazione-base.html */
+  border-collapse: collapse;              /* ricetta.html, preparazione-base.html */
+  margin-top: 16px;                       /* ricetta.html, preparazione-base.html */
+  background: var(--bg-panel-light);      /* Sfondo quasi bianco — ricetta.html, preparazione-base.html */
+  border-radius: 8px;                     /* ricetta.html, preparazione-base.html */
+  overflow: hidden;                       /* ricetta.html, preparazione-base.html */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* ricetta.html, preparazione-base.html */
 }
 
 .ingredients-table th {
-  background: linear-gradient(135deg, var(--blue-accent), #e3edf7);
-  color: var(--text-dark);
-  font-weight: 700;
-  padding: 16px 12px;
-  text-align: left;
-  font-size: 14px;
-  border-bottom: 2px solid var(--blue-light);
+  background: linear-gradient(135deg, var(--blue-accent), #e3edf7); /* Intestazione azzurra — ricetta.html, preparazione-base.html */
+  color: var(--text-dark);                /* Testo scuro — ricetta.html, preparazione-base.html */
+  font-weight: 700;                       /* Grassetto — ricetta.html, preparazione-base.html */
+  padding: 16px 12px;                     /* Spazio interno — ricetta.html, preparazione-base.html */
+  text-align: left;                       /* Allineato a sinistra — ricetta.html, preparazione-base.html */
+  font-size: 14px;                        /* Testo — ricetta.html, preparazione-base.html */
+  border-bottom: 2px solid var(--blue-light); /* Riga blu sotto — ricetta.html, preparazione-base.html */
 }
 
 .ingredients-table td {
-  padding: 14px 12px;
-  border-bottom: 1px solid #f0f4f8;
-  transition: background-color 0.2s ease;
+  padding: 14px 12px;                     /* Celle — ricetta.html, preparazione-base.html */
+  border-bottom: 1px solid #f0f4f8;       /* Separatore — ricetta.html, preparazione-base.html */
+  transition: background-color 0.2s ease; /* Animazione sfondo — ricetta.html, preparazione-base.html */
 }
 
 .ingredients-table tr:hover td {
-  background: #fafcff;
+  background: #fafcff;                    /* Riga più chiara all'hover — ricetta.html, preparazione-base.html */
 }
 
 .ingredients-table tr:last-child td {
-  border-bottom: none;
+  border-bottom: none;                    /* Ultima riga senza bordo — ricetta.html, preparazione-base.html */
 }
 
 .total-row {
-  background: linear-gradient(135deg, #f0f7ff, #e3f2fd) !important;
-  border-top: 2px solid var(--blue-light);
+  background: linear-gradient(135deg, #f0f7ff, #e3f2fd) !important; /* Riga totali azzurra — ricetta.html, preparazione-base.html */
+  border-top: 2px solid var(--blue-light);                          /* Riga blu sopra — ricetta.html, preparazione-base.html */
 }
 
 .total-row td {
-  font-weight: 700;
-  color: var(--text-dark);
-  padding: 16px 12px;
+  font-weight: 700;                       /* Celle totali grassetto — ricetta.html, preparazione-base.html */
+  color: var(--text-dark);                /* Testo scuro — ricetta.html, preparazione-base.html */
+  padding: 16px 12px;                     /* Spazio interno — ricetta.html, preparazione-base.html */
 }
 
 .ingredients-table td:nth-child(4) {
-  font-weight: 600;
-  color: var(--blue-light);
+  font-weight: 600;                       /* Colonna costo (4ª) — ricetta.html, preparazione-base.html */
+  color: var(--blue-light);               /* Testo blu — ricetta.html, preparazione-base.html */
 }
 
 .ingredients-table td:nth-child(5) {
-  font-weight: 600;
-  color: var(--success);
+  font-weight: 600;                       /* Colonna kcal (5ª) — ricetta.html, preparazione-base.html */
+  color: var(--success);                  /* Testo verde — ricetta.html, preparazione-base.html */
 }
 
-/* ====== TABELLA INGREDIENTI (PAGINA INGREDIENTI) ====== */
+/* ====== TABELLA INGREDIENTI (pagina ingredienti) ====== */
 .table#ingredientTable {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 12px;
-  background: var(--bg-panel-light);
-  border-radius: 8px;
-  overflow: hidden;
-  table-layout: fixed;
+  width: 100%;                            /* Solo ingredienti.html */
+  border-collapse: collapse;              /* Solo ingredienti.html */
+  margin-top: 12px;                       /* Solo ingredienti.html */
+  background: var(--bg-panel-light);      /* Solo ingredienti.html */
+  border-radius: 8px;                     /* Solo ingredienti.html */
+  overflow: hidden;                       /* Solo ingredienti.html */
+  table-layout: fixed;                    /* Colonne a larghezza fissa — solo ingredienti.html */
 }
 
 .table#ingredientTable th,
 .table#ingredientTable td {
-  padding: 10px 12px;
-  border-bottom: 1px solid #eef4fb;
-  text-align: left;
-  vertical-align: top;
+  padding: 10px 12px;                     /* Solo ingredienti.html */
+  border-bottom: 1px solid #eef4fb;       /* Solo ingredienti.html */
+  text-align: left;                       /* Solo ingredienti.html */
+  vertical-align: top;                    /* Solo ingredienti.html */
 }
 
 .table#ingredientTable thead th {
-  background: linear-gradient(135deg, var(--blue-accent), #e3edf7);
-  color: var(--text-dark);
-  font-weight: 700;
-  position: sticky;
-  top: 0;
+  background: linear-gradient(135deg, var(--blue-accent), #e3edf7); /* Intestazione azzurra — solo ingredienti.html */
+  color: var(--text-dark);                /* Testo scuro — solo ingredienti.html */
+  font-weight: 700;                       /* Grassetto — solo ingredienti.html */
+  position: sticky;                       /* Intestazione fissa in alto — solo ingredienti.html */
+  top: 0;                                 /* Solo ingredienti.html */
 }
 
+/* Larghezze colonne — solo ingredienti.html */
 .table#ingredientTable th:nth-child(1) { width: 35%; min-width: 280px; }
 .table#ingredientTable th:nth-child(2) { width: 12%; min-width: 100px; }
-.table#ingredientTable th:nth-child(3) { width: 8%; min-width: 70px; }
+.table#ingredientTable th:nth-child(3) { width: 8%;  min-width: 70px; }
 .table#ingredientTable th:nth-child(4) { width: 20%; min-width: 150px; }
 .table#ingredientTable th:nth-child(5) { width: 15%; min-width: 100px; }
 .table#ingredientTable th:nth-child(6) { width: 10%; min-width: 120px; }
 
-.col-price { width: 12% !important; }
-.col-unit { width: 8% !important; }
-.col-macro { width: 15% !important; }
+.col-price   { width: 12% !important; }
+.col-unit    { width: 8%  !important; }
+.col-macro   { width: 15% !important; }
 .col-actions { width: 10% !important; min-width: 120px !important; }
 
-/* ====== SEZIONE PREPARAZIONE ====== */
+/* ====== SEZIONE PREPARAZIONE (testo procedimento) ====== */
 .preparation-section {
-  margin-top: 32px;
+  margin-top: 32px;                       /* ricetta.html, preparazione-base.html */
 }
 
 .preparation-section h2 {
-  color: var(--text-dark);
-  font-size: 24px;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid var(--blue-accent);
+  color: var(--text-dark);                /* Titolo "Preparazione" — ricetta.html, preparazione-base.html */
+  font-size: 24px;                        /* ricetta.html, preparazione-base.html */
+  margin-bottom: 20px;                    /* ricetta.html, preparazione-base.html */
+  padding-bottom: 12px;                   /* ricetta.html, preparazione-base.html */
+  border-bottom: 2px solid var(--blue-accent); /* Riga blu sotto — ricetta.html, preparazione-base.html */
 }
 
 .preparation {
-  font-size: 16px;
-  line-height: 1.8;
-  color: var(--text-dark);
-  background: var(--bg-panel-light);
-  padding: 20px;
-  border-radius: 8px;
+  font-size: 16px;                        /* Testo preparazione — ricetta.html, preparazione-base.html */
+  line-height: 1.8;                       /* Interlinea ampia — ricetta.html, preparazione-base.html */
+  color: var(--text-dark);                /* Testo scuro — ricetta.html, preparazione-base.html */
+  background: var(--bg-panel-light);      /* Sfondo quasi bianco — ricetta.html, preparazione-base.html */
+  padding: 20px;                          /* ricetta.html, preparazione-base.html */
+  border-radius: 8px;                     /* ricetta.html, preparazione-base.html */
 }
 
 .preparation p {
-  margin-bottom: 16px;
+  margin-bottom: 16px;                    /* Paragrafi — ricetta.html, preparazione-base.html */
 }
 
 .preparation p:last-child {
-  margin-bottom: 0;
+  margin-bottom: 0;                       /* Ultimo paragrafo — ricetta.html, preparazione-base.html */
 }
 
-/* ====== COLONNA DESTRA ====== */
+/* ====== COLONNA DESTRA (vista lettura) ====== */
 .right {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  display: flex;                          /* Colonna destra — ricetta.html, preparazione-base.html */
+  flex-direction: column;                 /* In colonna — ricetta.html, preparazione-base.html */
+  gap: 16px;                              /* Spazio tra box — ricetta.html, preparazione-base.html */
 }
 
 .recipe-image-container {
-  text-align: center;
+  text-align: center;                     /* Immagine centrata — solo ricetta.html */
 }
 
 .recipe-image {
-  max-width: 100%;
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  transition: var(--transition);
+  max-width: 100%;                        /* Immagine ricetta — solo ricetta.html */
+  border-radius: 12px;                    /* Solo ricetta.html */
+  box-shadow: var(--shadow);              /* Solo ricetta.html */
+  transition: var(--transition);          /* Solo ricetta.html */
 }
 
 .recipe-image:hover {
-  transform: scale(1.02);
+  transform: scale(1.02);                 /* Zoom leggero all'hover — solo ricetta.html */
 }
 
-/* ====== BOX COSTI E MACRO ====== */
+/* ====== BOX COSTI E MACRO (vista lettura) ====== */
 .box {
-  background: linear-gradient(135deg, #f8fbff, #f0f7ff);
-  padding: 16px;
-  border-radius: 12px;
-  border: 1px solid var(--border-light);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, #f8fbff, #f0f7ff); /* Gradiente azzurro tenue — ricetta.html, preparazione-base.html */
+  padding: 16px;                          /* ricetta.html, preparazione-base.html */
+  border-radius: 12px;                    /* ricetta.html, preparazione-base.html */
+  border: 1px solid var(--border-light);  /* ricetta.html, preparazione-base.html */
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05); /* ricetta.html, preparazione-base.html */
 }
 
 .box.compact-box {
-  padding: 14px 16px;
+  padding: 14px 16px;                     /* Box più compatto — ricetta.html, preparazione-base.html */
 }
 
 .box h3 {
-  margin: 0 0 12px 0;
-  color: var(--text-dark);
-  font-size: 16px;
-  border-bottom: 2px solid var(--blue-light);
-  padding-bottom: 6px;
+  margin: 0 0 12px 0;                     /* Titolo box — ricetta.html, preparazione-base.html */
+  color: var(--text-dark);                /* Testo scuro — ricetta.html, preparazione-base.html */
+  font-size: 16px;                        /* ricetta.html, preparazione-base.html */
+  border-bottom: 2px solid var(--blue-light); /* Riga blu sotto — ricetta.html, preparazione-base.html */
+  padding-bottom: 6px;                    /* ricetta.html, preparazione-base.html */
 }
 
 .cost-content,
 .macro-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: flex;                          /* Contenuto costi/macro — ricetta.html, preparazione-base.html */
+  flex-direction: column;                 /* In colonna — ricetta.html, preparazione-base.html */
+  gap: 8px;                               /* Spazio tra righe — ricetta.html, preparazione-base.html */
 }
 
 .cost-line,
 .macro-line {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 0;
-  font-size: 14px;
+  display: flex;                          /* Riga costo/macro — ricetta.html, preparazione-base.html */
+  justify-content: space-between;         /* Etichetta sx, valore dx — ricetta.html, preparazione-base.html */
+  align-items: center;                    /* Allineamento verticale — ricetta.html, preparazione-base.html */
+  padding: 6px 0;                         /* ricetta.html, preparazione-base.html */
+  font-size: 14px;                        /* ricetta.html, preparazione-base.html */
 }
 
 .cost-line:not(:last-child),
 .macro-line:not(:last-child) {
-  border-bottom: 1px solid #e8f0fe;
+  border-bottom: 1px solid #e8f0fe;       /* Separatore — ricetta.html, preparazione-base.html */
 }
 
 .total-cost,
 .portion-cost {
-  font-size: 14px;
+  font-size: 14px;                        /* Riga totali — ricetta.html, preparazione-base.html */
 }
 
 .total-cost strong {
-  color: var(--blue-light);
-  font-size: 15px;
+  color: var(--blue-light);               /* Totale costo: blu — ricetta.html, preparazione-base.html */
+  font-size: 15px;                        /* ricetta.html, preparazione-base.html */
 }
 
 .portion-cost strong {
-  color: var(--success);
-  font-size: 14px;
+  color: var(--success);                  /* Costo porzione: verde — ricetta.html, preparazione-base.html */
+  font-size: 14px;                        /* ricetta.html, preparazione-base.html */
 }
 
-/* ====== ALLERGENI ====== */
+/* ====== ALLERGENI (tag) ====== */
 .allergens-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 14px;
+  display: flex;                          /* Lista allergeni — ricetta.html, preparazione-base.html */
+  flex-direction: column;                 /* In colonna — ricetta.html, preparazione-base.html */
+  gap: 6px;                               /* Spazio tra tag — ricetta.html, preparazione-base.html */
+  font-size: 14px;                        /* ricetta.html, preparazione-base.html */
 }
 
 .allergen-tag {
-  display: inline-block;
-  padding: 3px 8px !important;
-  margin: 2px 1px !important;
-  border-radius: 12px !important;
-  font-weight: 500 !important;
-  background: var(--allergen-bg);
-  color: var(--allergen-text);
-  font-size: 11px !important;
-  border: 1px solid var(--allergen-border);
-  line-height: 1.2 !important;
-  white-space: nowrap;
+  display: inline-block;                          /* Tag allergene — ingredienti.html, ricetta.html, preparazione-base.html */
+  padding: 3px 8px !important;                    /* stesse pagine */
+  margin: 2px 1px !important;                     /* stesse pagine */
+  border-radius: 12px !important;                 /* Forma pillola — stesse pagine */
+  font-weight: 500 !important;                    /* stesse pagine */
+  background: var(--allergen-bg);                 /* Sfondo rosato — stesse pagine */
+  color: var(--allergen-text);                    /* Testo marrone — stesse pagine */
+  font-size: 11px !important;                     /* stesse pagine */
+  border: 1px solid var(--allergen-border);       /* stesse pagine */
+  line-height: 1.2 !important;                    /* stesse pagine */
+  white-space: nowrap;                            /* stesse pagine */
 }
 
-/* ====== PREPARAZIONI BASE INCLUSE ====== */
+/* ====== PREPARAZIONI BASE INCLUSE (ricetta) ====== */
 .included-bases {
-  margin: 20px 0;
-  padding: 16px;
-  background: var(--blue-accent);
-  border-radius: 8px;
-  border-left: 4px solid var(--blue-light);
+  margin: 20px 0;                         /* Box preparazioni incluse — solo ricetta.html */
+  padding: 16px;                          /* solo ricetta.html */
+  background: var(--blue-accent);         /* Sfondo azzurro — solo ricetta.html */
+  border-radius: 8px;                     /* solo ricetta.html */
+  border-left: 4px solid var(--blue-light); /* Barra blu a sx — solo ricetta.html */
 }
 
 .included-bases h4 {
-  margin: 0 0 12px 0;
-  color: var(--text-dark);
+  margin: 0 0 12px 0;                     /* Titolo box — solo ricetta.html */
+  color: var(--text-dark);                /* Testo scuro — solo ricetta.html */
 }
 
-/* ====== LISTE ====== */
+/* ====== LISTE GENERICHE ====== */
 .list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  list-style: none;                       /* index2.html, preparazioni-base.html */
+  padding: 0;                             /* stesse pagine */
+  margin: 0;                              /* stesse pagine */
 }
 
 .list li {
-  padding: 16px;
-  border-left: 4px solid var(--blue-light);
-  margin: 8px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: var(--transition);
-  background: var(--bg-panel-light);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  padding: 16px;                                  /* index2.html, preparazioni-base.html */
+  border-left: 4px solid var(--blue-light);       /* Barra blu a sx — stesse pagine */
+  margin: 8px 0;                                  /* stesse pagine */
+  display: flex;                                  /* stesse pagine */
+  justify-content: space-between;                 /* stesse pagine */
+  align-items: center;                            /* stesse pagine */
+  border-radius: 8px;                             /* stesse pagine */
+  cursor: pointer;                                /* stesse pagine */
+  transition: var(--transition);                  /* stesse pagine */
+  background: var(--bg-panel-light);              /* stesse pagine */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);      /* stesse pagine */
 }
 
 .list li:hover {
-  background: #f2f0aa;
-  transform: translateX(8px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background: #f2f0aa;                            /* Giallo tenue all'hover — index2.html, preparazioni-base.html */
+  transform: translateX(8px);                     /* Scivola a dx — stesse pagine */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);     /* stesse pagine */
+}
+
+/* ====== CARD CON PULSANTI (index2.html, preparazioni-base.html) ====== */
+/* Le card hanno titolo a sinistra e pulsanti Modifica/Elimina a destra */
+.card-item {
+  cursor: pointer;                        /* Card cliccabile — index2.html, preparazioni-base.html */
+}
+
+.card-title {
+  font-weight: 600;                       /* Titolo card — index2.html, preparazioni-base.html */
+  color: var(--text-dark);                /* Testo scuro — stesse pagine */
+  flex: 1;                                /* Occupa spazio disponibile — stesse pagine */
+  min-width: 0;                           /* Permette troncamento — stesse pagine */
+  word-break: break-word;                 /* Va a capo se lungo — stesse pagine */
+}
+
+.card-actions {
+  display: flex;                          /* Contenitore pulsanti card — index2.html, preparazioni-base.html */
+  gap: 6px;                               /* Spazio tra pulsanti — stesse pagine */
+  flex-shrink: 0;                         /* Non si restringe — stesse pagine */
+  margin-left: 12px;                      /* Spazio dal titolo — stesse pagine */
+}
+
+.card-actions .btn {
+  padding: 6px 10px;                      /* Pulsanti piccoli — index2.html, preparazioni-base.html */
+  font-size: 12px;                        /* Testo piccolo — stesse pagine */
+  white-space: nowrap;                    /* Non va a capo — stesse pagine */
+  cursor: pointer;                        /* Cursore mano — stesse pagine */
 }
 
 /* ====== TABELLE GENERALI ====== */
 .table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 12px;
-  background: var(--bg-panel-light);
-  border-radius: 8px;
-  overflow: hidden;
+  width: 100%;                            /* ingredienti.html, ricetta.html, preparazione-base.html */
+  border-collapse: collapse;              /* stesse pagine */
+  margin-top: 12px;                       /* stesse pagine */
+  background: var(--bg-panel-light);      /* stesse pagine */
+  border-radius: 8px;                     /* stesse pagine */
+  overflow: hidden;                       /* stesse pagine */
 }
 
 .table th,
 .table td {
-  padding: 12px;
-  border-bottom: 1px solid #eef4fb;
-  text-align: left;
+  padding: 12px;                          /* ingredienti.html, ricetta.html, preparazione-base.html */
+  border-bottom: 1px solid #eef4fb;       /* stesse pagine */
+  text-align: left;                       /* stesse pagine */
 }
 
 .table thead th {
-  background: linear-gradient(135deg, var(--blue-accent), #e3edf7);
-  color: var(--text-dark);
-  font-weight: 700;
+  background: linear-gradient(135deg, var(--blue-accent), #e3edf7); /* Intestazione azzurra — stesse pagine */
+  color: var(--text-dark);                /* Testo scuro — stesse pagine */
+  font-weight: 700;                       /* Grassetto — stesse pagine */
 }
 
 /* ====== FORM ====== */
+/* Campi form — usati in: modifica-ingrediente.html, modifica-preparazione-base.html, modifica-ricetta.html, modifica-ordine.html */
 .form-field {
-  margin-bottom: 20px;
-  display: block;
+  margin-bottom: 20px;                    /* Tutte le pagine con form */
+  display: block;                         /* Tutte le pagine con form */
 }
 
 .form-field label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: var(--text-dark);
+  display: block;                         /* Etichetta campo — tutte le pagine con form */
+  margin-bottom: 8px;                     /* Tutte le pagine con form */
+  font-weight: 600;                       /* Semi-grassetto — tutte le pagine con form */
+  color: var(--text-dark);                /* Testo scuro — tutte le pagine con form */
 }
 
 .form-field input,
 .form-field select,
 .form-field textarea {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--border-light);
-  border-radius: 6px;
-  font-size: 14px;
-  transition: var(--transition);
-  font-family: inherit;
+  width: 100%;                            /* Input/select/textarea — tutte le pagine con form */
+  padding: 10px 12px;                     /* Tutte le pagine con form */
+  border: 1px solid var(--border-light);  /* Tutte le pagine con form */
+  border-radius: 6px;                     /* Tutte le pagine con form */
+  font-size: 14px;                        /* Tutte le pagine con form */
+  transition: var(--transition);          /* Tutte le pagine con form */
+  font-family: inherit;                   /* Tutte le pagine con form */
 }
 
 .form-field input:focus,
 .form-field select:focus,
 .form-field textarea:focus {
-  outline: none;
-  border-color: var(--blue-accent);
-  box-shadow: 0 0 0 3px rgba(152, 177, 245, 0.2);
+  outline: none;                                  /* Nessun contorno default — tutte le pagine con form */
+  border-color: var(--blue-accent);               /* Bordo blu chiaro — tutte le pagine con form */
+  box-shadow: 0 0 0 3px rgba(152, 177, 245, 0.2); /* Alone azzurro — tutte le pagine con form */
 }
 
 .form-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 24px;
+  display: flex;                          /* Riga bottoni (Salva/Annulla) — tutte le pagine con form */
+  gap: 12px;                              /* Tutte le pagine con form */
+  margin-top: 24px;                       /* Tutte le pagine con form */
 }
 
-/* ====== ALLERGENI CHECKBOX ====== */
+/* ====== CHECKBOX ALLERGENI (form modifica-ingrediente) ====== */
 .allergen-grid-horizontal {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
+  display: flex;                          /* Contenitore checkbox allergeni — solo modifica-ingrediente.html */
+  flex-wrap: wrap;                        /* Vanno a capo — solo modifica-ingrediente.html */
+  gap: 8px;                               /* Spazio tra checkbox — solo modifica-ingrediente.html */
+  margin-top: 8px;                        /* solo modifica-ingrediente.html */
 }
 
 .allergen-grid-horizontal label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  background: var(--bg-panel-light);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: var(--transition);
-  font-size: 13px;
-  white-space: nowrap;
-  height: 36px;
-  margin-bottom: 0;
+  display: flex;                          /* Singola checkbox con testo — solo modifica-ingrediente.html */
+  align-items: center;                    /* Allineamento verticale — solo modifica-ingrediente.html */
+  gap: 6px;                               /* Spazio checkbox-testo — solo modifica-ingrediente.html */
+  padding: 6px 10px;                      /* Spazio interno — solo modifica-ingrediente.html */
+  background: var(--bg-panel-light);      /* Sfondo chiaro — solo modifica-ingrediente.html */
+  border-radius: 6px;                     /* Angoli arrotondati — solo modifica-ingrediente.html */
+  cursor: pointer;                        /* Cursore mano — solo modifica-ingrediente.html */
+  transition: var(--transition);          /* solo modifica-ingrediente.html */
+  font-size: 13px;                        /* Testo piccolo — solo modifica-ingrediente.html */
+  white-space: nowrap;                    /* Non va a capo — solo modifica-ingrediente.html */
+  height: 36px;                           /* Altezza fissa — solo modifica-ingrediente.html */
+  margin-bottom: 0;                       /* Nessun margine — solo modifica-ingrediente.html */
 }
 
 .allergen-grid-horizontal label:hover {
-  background: var(--tag-bg);
+  background: var(--tag-bg);              /* Azzurro tenue all'hover — solo modifica-ingrediente.html */
 }
 
 .allergen-grid-horizontal input[type="checkbox"] {
-  margin: 0;
-  width: 16px;
-  height: 16px;
+  margin: 0;                              /* Checkbox allergene — solo modifica-ingrediente.html */
+  width: 16px;                            /* solo modifica-ingrediente.html */
+  height: 16px;                           /* solo modifica-ingrediente.html */
 }
 
-/* ====== LISTE EDITOR ====== */
+/* ====== LISTE EDITOR (mini-list) ====== */
+/* Liste con elementi editabili — usate in: modifica-preparazione-base.html, modifica-ricetta.html */
 .mini-list {
-  list-style: none;
-  padding: 0;
+  list-style: none;                       /* stesse pagine */
+  padding: 0;                             /* stesse pagine */
 }
 
 .mini-list li {
-  padding: 12px;
-  border: 1px dashed #e2f0ff;
-  margin: 8px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-radius: 8px;
-  background: var(--bg-panel-light);
+  padding: 12px;                          /* stesse pagine */
+  border: 1px dashed #e2f0ff;             /* Bordo tratteggiato azzurro — stesse pagine */
+  margin: 8px 0;                          /* stesse pagine */
+  display: flex;                          /* stesse pagine */
+  justify-content: space-between;         /* stesse pagine */
+  align-items: center;                    /* stesse pagine */
+  border-radius: 8px;                     /* stesse pagine */
+  background: var(--bg-panel-light);      /* stesse pagine */
 }
 
 .editable-ingredients li {
-  padding: 12px;
-  border: 1px solid #e2f0ff;
-  margin: 8px 0;
-  border-radius: 8px;
-  background: #fafcff;
+  padding: 12px;                          /* Lista ingredienti editabili — solo modifica-ricetta.html */
+  border: 1px solid #e2f0ff;              /* Bordo azzurro — solo modifica-ricetta.html */
+  margin: 8px 0;                          /* solo modifica-ricetta.html */
+  border-radius: 8px;                     /* solo modifica-ricetta.html */
+  background: #fafcff;                    /* solo modifica-ricetta.html */
 }
 
 .ingredient-editor {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
+  display: flex;                          /* Riga editor ingrediente — solo modifica-ricetta.html */
+  gap: 8px;                               /* solo modifica-ricetta.html */
+  align-items: center;                    /* solo modifica-ricetta.html */
+  flex-wrap: wrap;                        /* solo modifica-ricetta.html */
 }
 
 .ingredient-editor input,
 .ingredient-editor select {
-  padding: 6px 8px;
-  border: 1px solid #d6e6fb;
-  border-radius: 4px;
-  font-size: 14px;
+  padding: 6px 8px;                       /* Input/select editor — solo modifica-ricetta.html */
+  border: 1px solid #d6e6fb;              /* Bordo azzurrino — solo modifica-ricetta.html */
+  border-radius: 4px;                     /* solo modifica-ricetta.html */
+  font-size: 14px;                        /* solo modifica-ricetta.html */
 }
 
 .ingredient-name {
-  font-weight: 600;
-  min-width: 120px;
-  color: var(--text-dark);
+  font-weight: 600;                       /* Nome ingrediente — solo modifica-ricetta.html */
+  min-width: 120px;                       /* solo modifica-ricetta.html */
+  color: var(--text-dark);                /* solo modifica-ricetta.html */
 }
 
 .ingredient-actions {
-  display: flex;
-  gap: 6px;
+  display: flex;                          /* Bottoni (Aggiorna/Elimina) — solo modifica-ricetta.html */
+  gap: 6px;                               /* solo modifica-ricetta.html */
 }
 
 .ingredient-actions .btn {
-  padding: 6px 10px;
-  font-size: 12px;
+  padding: 6px 10px;                      /* Bottoni piccoli editor — solo modifica-ricetta.html */
+  font-size: 12px;                        /* solo modifica-ricetta.html */
 }
 
 /* ====== LINEA AGGIUNGI INGREDIENTE ====== */
 .add-ingredient-line {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
+  display: flex;                          /* Riga "aggiungi ingrediente" — modifica-preparazione-base.html, modifica-ricetta.html */
+  gap: 10px;                              /* stesse pagine */
+  align-items: center;                    /* stesse pagine */
+  margin-bottom: 16px;                    /* stesse pagine */
+  flex-wrap: wrap;                        /* Va a capo su mobile — stesse pagine */
 }
 
 .add-ingredient-line select,
 .add-ingredient-line input {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #dfeefb;
-  font-size: 14px;
-  min-width: 100px;
+  padding: 10px;                          /* Select/input riga — modifica-preparazione-base.html, modifica-ricetta.html */
+  border-radius: 8px;                     /* stesse pagine */
+  border: 1px solid #dfeefb;              /* Bordo azzurrino — stesse pagine */
+  font-size: 14px;                        /* stesse pagine */
+  min-width: 100px;                       /* stesse pagine */
 }
 
 /* ====== TEXTAREA LARGA ====== */
 textarea {
-  font-family: inherit;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #e6eefb;
-  font-size: 16px;
-  line-height: 1.6;
-  resize: vertical;
+  font-family: inherit;                   /* Tutte le pagine con textarea — modifica-preparazione-base.html, modifica-ricetta.html, modifica-ordine.html */
+  padding: 12px;                          /* stesse pagine */
+  border-radius: 8px;                     /* stesse pagine */
+  border: 1px solid #e6eefb;              /* Bordo azzurrino — stesse pagine */
+  font-size: 16px;                        /* stesse pagine */
+  line-height: 1.6;                       /* stesse pagine */
+  resize: vertical;                       /* Ridimensionabile in verticale — stesse pagine */
 }
 
-/* ====== CLASSI UTILITY ====== */
+/* ====== UTILITY ====== */
 .mute {
-  color: var(--text-muted);
-  font-size: 0.9em;
+  color: var(--text-muted);               /* Testo secondario — tutte le pagine */
+  font-size: 0.9em;                       /* Più piccolo — tutte le pagine */
 }
 
-.success { color: var(--success); }
-.warning { color: var(--warning); }
-.danger { color: var(--danger); }
+.success { color: var(--success); }       /* Verde — ricetta.html, preparazione-base.html */
+.warning { color: var(--warning); }       /* Arancione — planner.html */
+.danger  { color: var(--danger); }        /* Rosso — tutte le pagine */
 
 /* ====== ELENCHI A 2 COLONNE ====== */
 .two-columns-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  display: grid;                          /* Griglia 2 colonne — index2.html, preparazioni-base.html */
+  grid-template-columns: repeat(2, 1fr);  /* 2 colonne uguali — stesse pagine */
+  gap: 12px;                              /* Spazio tra elementi — stesse pagine */
 }
 
 .two-columns-list li {
-  margin: 0;
-  padding: 16px;
-  border-left: 4px solid var(--blue-light);
-  border-radius: 8px;
-  background: var(--bg-panel-light);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-  transition: var(--transition);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 60px;
+  margin: 0;                                      /* Elementi lista — index2.html, preparazioni-base.html */
+  padding: 16px;                                  /* stesse pagine */
+  border-left: 4px solid var(--blue-light);       /* Barra blu a sx — stesse pagine */
+  border-radius: 8px;                             /* stesse pagine */
+  background: var(--bg-panel-light);              /* stesse pagine */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);      /* stesse pagine */
+  transition: var(--transition);                  /* stesse pagine */
+  display: flex;                                  /* stesse pagine */
+  justify-content: space-between;                 /* stesse pagine */
+  align-items: center;                            /* stesse pagine */
+  min-height: 60px;                               /* stesse pagine */
 }
 
 .two-columns-list li:hover {
-  background: #dceafc;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background: #dceafc;                            /* Azzurro all'hover — index2.html, preparazioni-base.html */
+  transform: translateY(-2px);                    /* Sale — stesse pagine */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);     /* stesse pagine */
 }
 
 .two-columns-list li > div {
-  display: flex;
-  gap: 8px;
-  align-items: center;
+  display: flex;                          /* Contenitore bottoni dentro li — index2.html, preparazioni-base.html */
+  gap: 8px;                               /* stesse pagine */
+  align-items: center;                    /* stesse pagine */
 }
 
 .two-columns-list li .btn {
-  padding: 6px 10px;
-  font-size: 12px;
-  white-space: nowrap;
+  padding: 6px 10px;                      /* Bottoni dentro elementi — index2.html, preparazioni-base.html */
+  font-size: 12px;                        /* stesse pagine */
+  white-space: nowrap;                    /* stesse pagine */
 }
 
 @media (max-width: 900px) {
-  .two-columns-list { grid-template-columns: 1fr; }
-  .two-columns-list li { min-height: auto; }
+  .two-columns-list { grid-template-columns: 1fr; }  /* 1 colonna su tablet — index2.html, preparazioni-base.html */
+  .two-columns-list li { min-height: auto; }         /* Altezza automatica — stesse pagine */
 }
 
-#recipesList li,
-#basesList li {
-  cursor: pointer;
-}
-
-#recipesList li small.mute,
-#basesList li small.mute {
-  font-size: 12px;
-  opacity: 0.7;
-  margin-left: 8px;
-}
-
-/* ====== RESPONSIVE ====== */
+/* ====== RESPONSIVE (TABLET ≤900px) ====== */
 @media (max-width: 900px) {
-  .recipe-layout { grid-template-columns: 1fr; gap: 24px; }
-  .site-header { flex-direction: column; gap: 16px; text-align: center; padding: 16px 20px; }
-  .header-left { flex-direction: column; gap: 12px; }
-  .section-header { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .ingredients-table { font-size: 14px; }
-  .ingredients-table th, .ingredients-table td { padding: 10px 8px; }
-  .add-ingredient-line { flex-direction: column; align-items: stretch; }
-  .allergen-grid-horizontal { grid-template-columns: 1fr; }
-  .table#ingredientTable { display: block; overflow-x: auto; }
-  .table#ingredientTable th, .table#ingredientTable td { padding: 8px 10px; font-size: 13px; }
+  .recipe-layout { grid-template-columns: 1fr; gap: 24px; }    /* Vista lettura: 1 colonna — ricetta.html, preparazione-base.html */
+  .site-header { flex-direction: column; gap: 16px; text-align: center; padding: 16px 20px; } /* Header in colonna — tutte le pagine tranne index.html */
+  .header-left { flex-direction: column; gap: 12px; }          /* Header sinistra in colonna — tutte le pagine tranne index.html */
+  .section-header { flex-direction: column; align-items: flex-start; gap: 12px; } /* ricetta.html, preparazione-base.html */
+  .ingredients-table { font-size: 14px; }                      /* ricetta.html, preparazione-base.html */
+  .ingredients-table th, .ingredients-table td { padding: 10px 8px; } /* ricetta.html, preparazione-base.html */
+  .add-ingredient-line { flex-direction: column; align-items: stretch; } /* modifica-preparazione-base.html, modifica-ricetta.html */
+  .allergen-grid-horizontal { grid-template-columns: 1fr; }    /* solo modifica-ingrediente.html */
+  .table#ingredientTable { display: block; overflow-x: auto; } /* Scroll orizzontale — solo ingredienti.html */
+  .table#ingredientTable th, .table#ingredientTable td { padding: 8px 10px; font-size: 13px; } /* solo ingredienti.html */
   .table#ingredientTable th:nth-child(1),
   .table#ingredientTable th:nth-child(2),
   .table#ingredientTable th:nth-child(3),
   .table#ingredientTable th:nth-child(4),
   .table#ingredientTable th:nth-child(5),
-  .table#ingredientTable th:nth-child(6) { width: auto; min-width: 120px; }
+  .table#ingredientTable th:nth-child(6) { width: auto; min-width: 120px; } /* solo ingredienti.html */
 }
 
+/* ====== RESPONSIVE (MOBILE ≤600px) ====== */
 @media (max-width: 600px) {
-  .container { padding: 8px; }
-  .panel { padding: 20px; }
-  .recipe-layout { padding: 20px; }
-  .ingredients-table { display: block; overflow-x: auto; }
-  .editable-ingredients li { flex-direction: column; align-items: stretch; gap: 10px; }
-  .ingredient-editor { justify-content: space-between; }
-  .form-actions { flex-direction: column; }
-  .form-actions .btn { width: 100%; }
-  .table#ingredientTable { font-size: 12px; }
-  .allergen-tag { font-size: 10px !important; padding: 2px 6px !important; }
-  .allergen-grid-horizontal label { font-size: 12px; padding: 4px 8px; height: 32px; }
+  .container { padding: 8px; }                            /* Tutte le pagine tranne index.html */
+  .panel { padding: 20px; }                               /* Tutte le pagine tranne index.html */
+  .recipe-layout { padding: 20px; }                       /* ricetta.html, preparazione-base.html */
+  .ingredients-table { display: block; overflow-x: auto; } /* Scroll orizzontale — ricetta.html, preparazione-base.html */
+  .editable-ingredients li { flex-direction: column; align-items: stretch; gap: 10px; } /* solo modifica-ricetta.html */
+  .ingredient-editor { justify-content: space-between; }  /* solo modifica-ricetta.html */
+  .form-actions { flex-direction: column; }               /* Bottoni in colonna — tutte le pagine con form */
+  .form-actions .btn { width: 100%; }                     /* Bottoni full-width — tutte le pagine con form */
+  .table#ingredientTable { font-size: 12px; }             /* solo ingredienti.html */
+  .allergen-tag { font-size: 10px !important; padding: 2px 6px !important; } /* ingredienti.html, ricetta.html, preparazione-base.html */
+  .allergen-grid-horizontal label { font-size: 12px; padding: 4px 8px; height: 32px; } /* solo modifica-ingrediente.html */
 }
 
+/* ====== DETTAGLI TABELLA VISTA LETTURA ====== */
 .ingredients-table td:first-child small.mute {
-  font-size: 11px;
-  opacity: 0.7;
-  display: block;
-  margin-top: 2px;
+  font-size: 11px;                        /* Nota "da: preparazione X" — ricetta.html */
+  opacity: 0.7;                           /* ricetta.html */
+  display: block;                         /* ricetta.html */
+  margin-top: 2px;                        /* ricetta.html */
 }
 
+/* ====== BOX PREPARAZIONI INCLUSE (ricetta) ====== */
 .included-bases h4 {
-  margin: 0 0 15px 0;
-  color: var(--blue-light);
-  font-size: 16px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid var(--blue-accent);
+  margin: 0 0 15px 0;                     /* Titolo "Preparazioni base incluse" — solo ricetta.html */
+  color: var(--blue-light);               /* Testo blu — solo ricetta.html */
+  font-size: 16px;                        /* solo ricetta.html */
+  padding-bottom: 5px;                    /* solo ricetta.html */
+  border-bottom: 1px solid var(--blue-accent); /* Riga sotto — solo ricetta.html */
 }
 
 .included-bases ul {
-  list-style-type: none;
-  padding-left: 0;
-  margin: 8px 0;
+  list-style-type: none;                  /* Lista ingredienti base — solo ricetta.html */
+  padding-left: 0;                        /* solo ricetta.html */
+  margin: 8px 0;                          /* solo ricetta.html */
 }
 
 .included-bases li {
-  padding: 4px 0;
-  font-size: 14px;
-  border-bottom: 1px dashed #e0e0e0;
+  padding: 4px 0;                         /* Singolo ingrediente base — solo ricetta.html */
+  font-size: 14px;                        /* solo ricetta.html */
+  border-bottom: 1px dashed #e0e0e0;      /* Separatore tratteggiato — solo ricetta.html */
 }
 
 .included-bases li:last-child {
-  border-bottom: none;
+  border-bottom: none;                    /* Ultimo senza bordo — solo ricetta.html */
 }
 
-/* ====== COSTI PREPARAZIONI BASE ====== */
+/* ====== COSTI PREPARAZIONI BASE (editor) ====== */
 .cost-summary {
-  background: linear-gradient(135deg, #f0f7ff, #e3f2fd);
-  padding: 16px;
-  border-radius: 8px;
-  margin: 20px 0;
-  border: 2px solid var(--blue-accent);
+  background: linear-gradient(135deg, #f0f7ff, #e3f2fd);  /* Box costo totale preparazione — modifica-preparazione-base.html */
+  padding: 16px;                                          /* solo modifica-preparazione-base.html */
+  border-radius: 8px;                                     /* solo modifica-preparazione-base.html */
+  margin: 20px 0;                                         /* solo modifica-preparazione-base.html */
+  border: 2px solid var(--blue-accent);                   /* Bordo azzurro — solo modifica-preparazione-base.html */
 }
 
 .cost-summary h4 {
-  margin: 0 0 12px 0;
-  color: var(--blue-light);
+  margin: 0 0 12px 0;                     /* Titolo "Costo Totale Preparazione" — solo modifica-preparazione-base.html */
+  color: var(--blue-light);               /* Testo blu — solo modifica-preparazione-base.html */
 }
 
 #prepIngredientsList li {
-  padding: 12px;
-  border: 1px dashed #e2f0ff;
-  margin: 8px 0;
-  border-radius: 8px;
-  background: var(--bg-panel-light);
+  padding: 12px;                          /* Lista ingredienti preparazione — solo modifica-preparazione-base.html */
+  border: 1px dashed #e2f0ff;             /* Bordo tratteggiato — solo modifica-preparazione-base.html */
+  margin: 8px 0;                          /* solo modifica-preparazione-base.html */
+  border-radius: 8px;                     /* solo modifica-preparazione-base.html */
+  background: var(--bg-panel-light);      /* solo modifica-preparazione-base.html */
 }
 
 #prepIngredientsList li > div {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
+  display: flex;                          /* Contenitore nome+elimina — solo modifica-preparazione-base.html */
+  justify-content: space-between;         /* solo modifica-preparazione-base.html */
+  align-items: center;                    /* solo modifica-preparazione-base.html */
+  width: 100%;                            /* solo modifica-preparazione-base.html */
 }
 
 #prepIngredientsList li .btn {
-  padding: 6px 10px;
-  font-size: 12px;
-  margin-left: 10px;
+  padding: 6px 10px;                      /* Bottone elimina — solo modifica-preparazione-base.html */
+  font-size: 12px;                        /* solo modifica-preparazione-base.html */
+  margin-left: 10px;                      /* solo modifica-preparazione-base.html */
 }
 
 .included-bases .base-total-cost {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 2px dashed var(--blue-accent);
-  font-weight: bold;
-  color: var(--blue-light);
-  text-align: right;
+  margin-top: 8px;                        /* Riga totale preparazione — solo ricetta.html */
+  padding-top: 8px;                       /* solo ricetta.html */
+  border-top: 2px dashed var(--blue-accent); /* Tratteggio sopra — solo ricetta.html */
+  font-weight: bold;                      /* Grassetto — solo ricetta.html */
+  color: var(--blue-light);               /* Testo blu — solo ricetta.html */
+  text-align: right;                      /* Allineato a destra — solo ricetta.html */
 }
 
+/* ====== BOX PESO (vista lettura con peso/porzione) ====== */
 .weight-box {
-  background: linear-gradient(135deg, #f9fff0, #f7ffef);
-  border: 1px solid #e0f0d0;
+  background: linear-gradient(135deg, #f9fff0, #f7ffef);  /* Sfondo verde tenue — ricetta.html, preparazione-base.html */
+  border: 1px solid #e0f0d0;                              /* Bordo verde — ricetta.html, preparazione-base.html */
 }
 
 .weight-box h3 {
-  border-bottom: 2px solid #8bc34a;
+  border-bottom: 2px solid #8bc34a;       /* Riga verde sotto titolo — ricetta.html, preparazione-base.html */
 }
 
 #weightControl {
-  background-color: rgba(240, 247, 255, 0.7);
-  padding: 12px;
-  border-radius: 8px;
+  background-color: rgba(240, 247, 255, 0.7);  /* Controllo peso desiderato — solo ricetta.html */
+  padding: 12px;                                /* solo ricetta.html */
+  border-radius: 8px;                           /* solo ricetta.html */
 }
 
 @media (max-width: 900px) {
-  .portions-control { flex-direction: column; align-items: flex-start; gap: 12px; }
-  #weightControl { width: 100%; }
-  #desiredWeight { width: 80px; }
+  .portions-control { flex-direction: column; align-items: flex-start; gap: 12px; } /* solo ricetta.html */
+  #weightControl { width: 100%; }         /* solo ricetta.html */
+  #desiredWeight { width: 80px; }         /* solo ricetta.html */
 }
 
 /* ========================================================================
-   AGGIUNTE: MASCHERA HOME + MOBILE + HEADER PULSANTE HOME
+   HOME (index.html) + MOBILE + HEADER CLICCABILE
    ======================================================================== */
 
 .home-body {
-  background: linear-gradient(160deg, #02119e 0%, #010957 100%);
-  min-height: 100vh;
-  min-height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px 16px;
+  background: linear-gradient(160deg, #02119e 0%, #010957 100%); /* Sfondo blu pieno — solo index.html */
+  min-height: 100vh;                      /* Altezza minima schermo — solo index.html */
+  min-height: 100dvh;                     /* Fallback mobile — solo index.html */
+  display: flex;                          /* Centratura — solo index.html */
+  align-items: center;                    /* solo index.html */
+  justify-content: center;                /* solo index.html */
+  padding: 20px 16px;                     /* solo index.html */
 }
 
 .home-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
-  max-width: 700px;
-  margin: 0 auto;
-  align-items: stretch;
-  justify-content: center;
+  display: flex;                          /* Menu a card — solo index.html */
+  flex-direction: column;                 /* In colonna — solo index.html */
+  gap: 16px;                              /* Spazio tra card — solo index.html */
+  width: 100%;                            /* solo index.html */
+  max-width: 700px;                       /* solo index.html */
+  margin: 0 auto;                         /* solo index.html */
+  align-items: stretch;                   /* solo index.html */
+  justify-content: center;                /* solo index.html */
 }
 
 .home-card {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 130px;
-  padding: 20px 24px;
-  border-radius: var(--radius);
-  overflow: hidden;
-  background-size: cover;
-  background-position: center;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
-  transition: var(--transition);
-  color: #fff;
-  text-decoration: none;
+  position: relative;                     /* Card singola (Ricette, Basi, ecc.) — solo index.html */
+  display: flex;                          /* solo index.html */
+  align-items: center;                    /* solo index.html */
+  justify-content: space-between;         /* solo index.html */
+  min-height: 130px;                      /* Altezza card — solo index.html */
+  padding: 20px 24px;                     /* solo index.html */
+  border-radius: var(--radius);           /* solo index.html */
+  overflow: hidden;                       /* solo index.html */
+  background-size: cover;                 /* Immagine di sfondo copre — solo index.html */
+  background-position: center;            /* Immagine centrata — solo index.html */
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35); /* solo index.html */
+  transition: var(--transition);          /* solo index.html */
+  color: #fff;                            /* Testo bianco — solo index.html */
+  text-decoration: none;                  /* solo index.html */
 }
 
 .home-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.15));
-  z-index: 1;
-  transition: var(--transition);
+  content: '';                                                    /* Overlay scuro sopra immagine — solo index.html */
+  position: absolute;                                             /* solo index.html */
+  inset: 0;                                                       /* solo index.html */
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.15)); /* Sfumatura — solo index.html */
+  z-index: 1;                                                     /* Sopra immagine, sotto testo — solo index.html */
+  transition: var(--transition);                                  /* solo index.html */
 }
 
 .home-card:hover::before,
 .home-card:active::before {
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.3));
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.3)); /* Overlay più scuro — solo index.html */
 }
 
 .home-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  transform: translateY(-3px);            /* Sale all'hover — solo index.html */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); /* solo index.html */
 }
 
 .home-title {
-  position: relative;
-  z-index: 2;
-  font-size: 24px;
-  font-weight: 700;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-  letter-spacing: 0.5px;
+  position: relative;                     /* Titolo card ("Ricette", "Planner"...) — solo index.html */
+  z-index: 2;                             /* Sopra overlay — solo index.html */
+  font-size: 24px;                        /* solo index.html */
+  font-weight: 700;                       /* Grassetto — solo index.html */
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6); /* Leggibilità — solo index.html */
+  letter-spacing: 0.5px;                  /* solo index.html */
 }
 
 .home-arrow {
-  position: relative;
-  z-index: 2;
-  font-size: 40px;
-  font-weight: 300;
-  line-height: 1;
-  opacity: 0.85;
-  transition: transform 0.3s ease;
+  position: relative;                     /* Freccia "›" — solo index.html */
+  z-index: 2;                             /* solo index.html */
+  font-size: 40px;                        /* Grande — solo index.html */
+  font-weight: 300;                       /* Sottile — solo index.html */
+  line-height: 1;                         /* solo index.html */
+  opacity: 0.85;                          /* solo index.html */
+  transition: transform 0.3s ease;        /* solo index.html */
 }
 
 .home-card:hover .home-arrow {
-  transform: translateX(6px);
-  opacity: 1;
+  transform: translateX(6px);             /* Freccia scivola a dx — solo index.html */
+  opacity: 1;                             /* Diventa piena — solo index.html */
 }
 
 @media (max-width: 500px) {
-  .home-card { min-height: 110px; padding: 16px 20px; }
-  .home-title { font-size: 20px; }
-  .home-arrow { font-size: 34px; }
+  .home-card { min-height: 110px; padding: 16px 20px; } /* Card più compatta — solo index.html */
+  .home-title { font-size: 20px; }        /* Titolo più piccolo — solo index.html */
+  .home-arrow { font-size: 34px; }        /* Freccia più piccola — solo index.html */
 }
 
+/* ====== HEADER CLICCABILE (torna alla home) ====== */
 .site-header.is-home-link {
-  cursor: pointer;
-  transition: var(--transition);
-  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;                                        /* Tutte le pagine tranne index.html */
+  transition: var(--transition);                          /* stesse pagine */
+  -webkit-tap-highlight-color: transparent;               /* Rimuove flash tap iOS — stesse pagine */
 }
 
 .site-header.is-home-link:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 26px rgba(0, 0, 0, 0.18);
+  transform: translateY(-1px);                            /* Sale leggermente — stesse pagine */
+  box-shadow: 0 6px 26px rgba(0, 0, 0, 0.18);             /* Ombra più forte — stesse pagine */
 }
 
 .site-header.is-home-link:active {
-  transform: scale(0.995);
+  transform: scale(0.995);                                /* Rimpicciolisce al click — stesse pagine */
 }
 
+/* ====== SAFE AREA (iPhone notch) ====== */
 body {
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
+  padding-top: env(safe-area-inset-top);          /* Tutte le pagine — spazio notch */
+  padding-bottom: env(safe-area-inset-bottom);    /* Tutte le pagine — spazio home indicator */
+  padding-left: env(safe-area-inset-left);        /* Tutte le pagine */
+  padding-right: env(safe-area-inset-right);      /* Tutte le pagine */
 }
 
 body.home-body {
-  padding: 20px 16px;
-  padding-top: calc(20px + env(safe-area-inset-top));
-  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  padding: 20px 16px;                                     /* Override per index.html */
+  padding-top: calc(20px + env(safe-area-inset-top));     /* solo index.html */
+  padding-bottom: calc(20px + env(safe-area-inset-bottom)); /* solo index.html */
 }
 
 input, select, textarea, button {
-  font-size: 16px;
+  font-size: 16px;                        /* Evita zoom automatico su iOS — tutte le pagine */
 }
 
 * {
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent;  /* Rimuove flash blu al tap — tutte le pagine */
 }
 
 html, body {
-  overscroll-behavior: none;
+  overscroll-behavior: none;              /* Blocca rimbalzo scroll — tutte le pagine */
 }
 
 .site-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  position: sticky;                       /* Header fissa in alto — tutte le pagine tranne index.html */
+  top: 0;                                 /* stesse pagine */
+  z-index: 100;                           /* Sopra contenuto — stesse pagine */
 }
 
 @media (max-width: 900px) {
-  .site-header { position: relative; }
+  .site-header { position: relative; }    /* Su mobile non sticky — tutte le pagine tranne index.html */
 }
 
+/* ========================================================================
+   BOTTOM NAV (barra in basso mobile)
+   Usata in: index2.html, preparazioni-base.html, ingredienti.html, planner.html,
+   impostazioni.html, modifica-ricetta.html, modifica-ingrediente.html,
+   modifica-preparazione-base.html, modifica-ordine.html, preparazione-base.html
+   ======================================================================== */
 .bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  background: linear-gradient(135deg, var(--blue-light), var(--blue-dark));
-  padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
-  z-index: 200;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: fixed;                        /* Fissa in basso — tutte le pagine con nav */
+  bottom: 0;                              /* stesse pagine */
+  left: 0;                                /* stesse pagine */
+  right: 0;                               /* stesse pagine */
+  display: flex;                          /* stesse pagine */
+  justify-content: space-around;          /* stesse pagine */
+  align-items: center;                    /* stesse pagine */
+  background: linear-gradient(135deg, var(--blue-light), var(--blue-dark)); /* Sfondo gradiente blu — stesse pagine */
+  padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); /* stesse pagine */
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15); /* stesse pagine */
+  z-index: 200;                           /* Sopra contenuto — stesse pagine */
+  border-top: 1px solid rgba(255, 255, 255, 0.1); /* stesse pagine */
 }
 
 .bottom-nav a {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-  font-size: 10px;
-  font-weight: 600;
-  padding: 6px 4px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  flex: 1;
-  gap: 2px;
-  max-width: 80px;
+  display: flex;                          /* Link singolo nav — tutte le pagine con nav */
+  flex-direction: column;                 /* Icona sopra, testo sotto — stesse pagine */
+  align-items: center;                    /* stesse pagine */
+  justify-content: center;                /* stesse pagine */
+  color: rgba(255, 255, 255, 0.7);        /* Testo bianco trasparente — stesse pagine */
+  text-decoration: none;                  /* stesse pagine */
+  font-size: 10px;                        /* stesse pagine */
+  font-weight: 600;                       /* stesse pagine */
+  padding: 6px 4px;                       /* stesse pagine */
+  border-radius: 8px;                     /* stesse pagine */
+  transition: all 0.2s ease;              /* stesse pagine */
+  flex: 1;                                /* Uguale larghezza — stesse pagine */
+  gap: 2px;                               /* stesse pagine */
+  max-width: 80px;                        /* stesse pagine */
 }
 
 .bottom-nav a.active,
 .bottom-nav a:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.15);
+  color: #fff;                                    /* Testo bianco pieno — tutte le pagine con nav */
+  background: rgba(255, 255, 255, 0.15);          /* Sfondo chiaro — stesse pagine */
 }
 
 .bottom-nav a .nav-icon {
-  font-size: 20px;
-  line-height: 1;
+  font-size: 20px;                        /* Icona nav (emoji) — tutte le pagine con nav */
+  line-height: 1;                         /* stesse pagine */
 }
 
 body.has-bottom-nav {
-  padding-bottom: calc(70px + env(safe-area-inset-bottom));
+  padding-bottom: calc(70px + env(safe-area-inset-bottom)); /* Spazio per nav — tutte le pagine con nav */
 }
 
 @media (min-width: 901px) {
-  .bottom-nav { display: none; }
-  body.has-bottom-nav { padding-bottom: 0; }
+  .bottom-nav { display: none; }          /* Nascosta su desktop — tutte le pagine con nav */
+  body.has-bottom-nav { padding-bottom: 0; } /* stesse pagine */
 }
 
-::-webkit-scrollbar { width: 8px; height: 8px; }
+/* ====== SCROLLBAR ====== */
+::-webkit-scrollbar { width: 8px; height: 8px; }  /* Scrollbar sottile — tutte le pagine */
 ::-webkit-scrollbar-thumb {
-  background: rgba(2, 17, 158, 0.3);
-  border-radius: 4px;
+  background: rgba(2, 17, 158, 0.3);                /* Maniglia blu tenue — tutte le pagine */
+  border-radius: 4px;                               /* stesse pagine */
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(2, 17, 158, 0.5);
+  background: rgba(2, 17, 158, 0.5);                /* Più scura all'hover — tutte le pagine */
 }
 
+/* ====== RESPONSIVE MOBILE FORM ====== */
 @media (max-width: 900px) {
   .form-field input,
   .form-field select,
   .form-field textarea {
-    padding: 12px 14px;
-    font-size: 16px;
+    padding: 12px 14px;                   /* Più comodi — tutte le pagine con form */
+    font-size: 16px;                      /* stesse pagine */
   }
-  .btn { padding: 12px 18px; font-size: 15px; min-height: 44px; }
-  .btn-small { min-height: 36px; padding: 8px 12px; }
-  .two-columns-list { grid-template-columns: 1fr; }
-  .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .btn { padding: 12px 18px; font-size: 15px; min-height: 44px; } /* Touch target — tutte le pagine */
+  .btn-small { min-height: 36px; padding: 8px 12px; }             /* stesse pagine */
+  .two-columns-list { grid-template-columns: 1fr; }               /* index2.html, preparazioni-base.html */
+  .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; } /* ingredienti.html */
 }
 
 /* ========================================================================
    PLANNER / ORDINI
+   Usata in: planner.html
    ======================================================================== */
 
 .ordini-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 8px;
+  display: flex;                          /* Lista ordini — solo planner.html */
+  flex-direction: column;                 /* In colonna — solo planner.html */
+  gap: 12px;                              /* Spazio tra card — solo planner.html */
+  margin-top: 8px;                        /* solo planner.html */
 }
 
 .ordine-card {
-  background: var(--bg-panel-light);
-  border-left: 4px solid var(--blue-light);
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  transition: var(--transition);
+  background: var(--bg-panel-light);              /* Card singolo ordine — solo planner.html */
+  border-left: 4px solid var(--blue-light);       /* Barra blu a sx — solo planner.html */
+  border-radius: 8px;                             /* solo planner.html */
+  padding: 16px;                                  /* solo planner.html */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);      /* solo planner.html */
+  transition: var(--transition);                  /* solo planner.html */
 }
 
 .ordine-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);      /* Ombra più forte — solo planner.html */
+  transform: translateY(-1px);                    /* Sale leggermente — solo planner.html */
 }
 
 .ordine-data {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--blue-light);
-  margin-bottom: 6px;
-  letter-spacing: 0.3px;
+  font-size: 14px;                        /* Data consegna — solo planner.html */
+  font-weight: 700;                       /* Grassetto — solo planner.html */
+  color: var(--blue-light);               /* Testo blu — solo planner.html */
+  margin-bottom: 6px;                     /* solo planner.html */
+  letter-spacing: 0.3px;                  /* solo planner.html */
 }
 
 .ordine-cliente {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-dark);
-  margin-bottom: 4px;
+  font-size: 18px;                        /* Nome cliente — solo planner.html */
+  font-weight: 700;                       /* Grassetto — solo planner.html */
+  color: var(--text-dark);                /* Testo scuro — solo planner.html */
+  margin-bottom: 4px;                     /* solo planner.html */
 }
 
 .ordine-dolce {
-  font-size: 15px;
-  color: var(--text-dark);
-  margin-bottom: 8px;
-  font-style: italic;
+  font-size: 15px;                        /* Nome dolce/torta — solo planner.html */
+  color: var(--text-dark);                /* Testo scuro — solo planner.html */
+  margin-bottom: 8px;                     /* solo planner.html */
+  font-style: italic;                     /* Corsivo — solo planner.html */
 }
 
 .ordine-riga {
-  font-size: 14px;
-  color: var(--text-muted);
-  margin-bottom: 4px;
-  line-height: 1.5;
+  font-size: 14px;                        /* Riga info (qtà, consegna) — solo planner.html */
+  color: var(--text-muted);               /* Testo grigio — solo planner.html */
+  margin-bottom: 4px;                     /* solo planner.html */
+  line-height: 1.5;                       /* solo planner.html */
 }
 
 .ordine-note {
-  background: #fffbeb;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border-left: 3px solid var(--warning);
-  margin-top: 8px;
+  background: #fffbeb;                            /* Sfondo giallo tenue — solo planner.html */
+  padding: 8px 10px;                              /* solo planner.html */
+  border-radius: 6px;                             /* solo planner.html */
+  border-left: 3px solid var(--warning);          /* Barra arancione a sx — solo planner.html */
+  margin-top: 8px;                                /* solo planner.html */
 }
 
 .ordine-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #e8f0fe;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: flex;                          /* Riga stato + bottoni — solo planner.html */
+  justify-content: space-between;         /* solo planner.html */
+  align-items: center;                    /* solo planner.html */
+  margin-top: 12px;                       /* solo planner.html */
+  padding-top: 12px;                      /* solo planner.html */
+  border-top: 1px solid #e8f0fe;          /* Separatore sopra — solo planner.html */
+  flex-wrap: wrap;                        /* solo planner.html */
+  gap: 8px;                               /* solo planner.html */
 }
 
 .ordine-stato {
-  color: #fff;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: capitalize;
+  color: #fff;                            /* Badge stato (In attesa, Confermato...) — solo planner.html */
+  padding: 4px 12px;                      /* solo planner.html */
+  border-radius: 12px;                    /* Forma pillola — solo planner.html */
+  font-size: 12px;                        /* solo planner.html */
+  font-weight: 600;                       /* solo planner.html */
+  text-transform: capitalize;             /* Prima lettera maiuscola — solo planner.html */
 }
 
 .ordine-actions {
-  display: flex;
-  gap: 8px;
+  display: flex;                          /* Bottoni Modifica/Elimina — solo planner.html */
+  gap: 8px;                               /* solo planner.html */
 }
 
 .ordine-actions .btn {
-  padding: 6px 10px;
-  font-size: 12px;
+  padding: 6px 10px;                      /* Bottoni piccoli — solo planner.html */
+  font-size: 12px;                        /* solo planner.html */
 }
 
 @media (max-width: 600px) {
-  .ordine-card { padding: 14px; }
-  .ordine-cliente { font-size: 16px; }
-  .ordine-footer { flex-direction: column; align-items: stretch; }
-  .ordine-actions { justify-content: flex-end; }
+  .ordine-card { padding: 14px; }                             /* solo planner.html */
+  .ordine-cliente { font-size: 16px; }                        /* solo planner.html */
+  .ordine-footer { flex-direction: column; align-items: stretch; } /* solo planner.html */
+  .ordine-actions { justify-content: flex-end; }              /* solo planner.html */
 }
 
 /* ========================================================================
    DATA LEGGIBILE (modifica-ordine)
+   Solo modifica-ordine.html
    ======================================================================== */
 
 .data-leggibile {
-  margin-top: 6px;
-  padding: 6px 10px;
-  background: #e9f2ff;
-  color: var(--blue-light);
-  border-left: 3px solid var(--blue-light);
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  min-height: 0;
-  transition: var(--transition);
+  margin-top: 6px;                                        /* solo modifica-ordine.html */
+  padding: 6px 10px;                                      /* solo modifica-ordine.html */
+  background: #e9f2ff;                                    /* Sfondo azzurro tenue — solo modifica-ordine.html */
+  color: var(--blue-light);                               /* Testo blu — solo modifica-ordine.html */
+  border-left: 3px solid var(--blue-light);               /* Barra blu a sx — solo modifica-ordine.html */
+  border-radius: 6px;                                     /* solo modifica-ordine.html */
+  font-size: 14px;                                        /* solo modifica-ordine.html */
+  font-weight: 600;                                       /* solo modifica-ordine.html */
+  min-height: 0;                                          /* solo modifica-ordine.html */
+  transition: var(--transition);                          /* solo modifica-ordine.html */
 }
 
 .data-leggibile:empty {
-  display: none;
+  display: none;                          /* Nascosta se vuota — solo modifica-ordine.html */
 }
 
 /* ========================================================================
-   TEMI
+   TEMA DARK
+   Applicato a body quando selezionato in impostazioni.html
    ======================================================================== */
 
 body.theme-dark {
-  --bg-body: #1a1a1a;
-  --bg-panel: #2a2a2a;
-  --bg-panel-light: #333333;
-  --text-dark: #f0f0f0;
-  --text-muted: #b8b8b8;
-  --text-light-muted: #909090;
-  --border-light: #404040;
-  --tag-bg: #3a3a3a;
-  --pill-bg: #3a3a3a;
-  --allergen-bg: #4a2020;
-  --allergen-text: #ffb3b3;
-  --allergen-border: #6a3030;
-  color-scheme: dark;
+  --bg-body: #1a1a1a;                     /* Sfondo scuro — tutte le pagine (se tema dark) */
+  --bg-panel: #2a2a2a;                    /* Pannello scuro — tutte le pagine */
+  --bg-panel-light: #333333;              /* Pannello interno scuro — tutte le pagine */
+  --text-dark: #f0f0f0;                   /* Testo chiaro — tutte le pagine */
+  --text-muted: #b8b8b8;                  /* Testo secondario — tutte le pagine */
+  --text-light-muted: #909090;            /* Testo molto tenue — tutte le pagine */
+  --border-light: #404040;                /* Bordi scuri — tutte le pagine */
+  --tag-bg: #3a3a3a;                      /* Tag scuri — tutte le pagine */
+  --pill-bg: #3a3a3a;                     /* Pillole scure — tutte le pagine */
+  --allergen-bg: #4a2020;                 /* Sfondo allergeni scuro — tutte le pagine */
+  --allergen-text: #ffb3b3;               /* Testo allergeni chiaro — tutte le pagine */
+  --allergen-border: #6a3030;             /* Bordo allergeni scuro — tutte le pagine */
+  color-scheme: dark;                     /* Segnala al browser tema scuro — tutte le pagine */
 }
 
 body.theme-dark .ingredients-table td,
@@ -1327,20 +1367,24 @@ body.theme-dark .ordine-note {
   border-left-color: #b8860b;
 }
 
+/* ========================================================================
+   TEMA WHITE (avorio)
+   ======================================================================== */
+
 body.theme-white {
-  --bg-body: #faf8f3;
-  --bg-panel: #fffefb;
-  --bg-panel-light: #fdfbf6;
-  --text-dark: #2a2a2a;
-  --text-muted: #6b6b6b;
-  --text-light-muted: #909090;
-  --border-light: #e8e3d8;
-  --tag-bg: #f5f0e3;
-  --pill-bg: #fef9ed;
-  --allergen-bg: #ffe8e8;
-  --allergen-text: #8a1f1f;
-  --allergen-border: #f5c5c5;
-  color-scheme: light;
+  --bg-body: #faf8f3;                     /* Sfondo avorio — tutte le pagine (se tema white) */
+  --bg-panel: #fffefb;                    /* Pannello avorio — tutte le pagine */
+  --bg-panel-light: #fdfbf6;              /* Pannello interno avorio — tutte le pagine */
+  --text-dark: #2a2a2a;                   /* Testo scuro — tutte le pagine */
+  --text-muted: #6b6b6b;                  /* Testo secondario — tutte le pagine */
+  --text-light-muted: #909090;            /* Testo molto tenue — tutte le pagine */
+  --border-light: #e8e3d8;                /* Bordi avorio — tutte le pagine */
+  --tag-bg: #f5f0e3;                      /* Tag avorio — tutte le pagine */
+  --pill-bg: #fef9ed;                     /* Pillole avorio — tutte le pagine */
+  --allergen-bg: #ffe8e8;                 /* Sfondo allergeni rosato — tutte le pagine */
+  --allergen-text: #8a1f1f;               /* Testo allergeni scuro — tutte le pagine */
+  --allergen-border: #f5c5c5;             /* Bordo allergeni rosato — tutte le pagine */
+  color-scheme: light;                    /* Segnala tema chiaro — tutte le pagine */
 }
 
 body.theme-white .ingredients-table td,
@@ -1363,144 +1407,148 @@ body.theme-white .two-columns-list li:hover { background: #f9f2dd; }
 
 body.theme-white .ordine-note { background: #fef9ed; }
 
+/* ========================================================================
+   SELEZIONE TEMA (impostazioni.html)
+   ======================================================================== */
+
 .theme-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 8px;
+  display: grid;                          /* Griglia card tema — solo impostazioni.html */
+  grid-template-columns: repeat(3, 1fr);  /* 3 colonne — solo impostazioni.html */
+  gap: 12px;                              /* solo impostazioni.html */
+  margin-bottom: 8px;                     /* solo impostazioni.html */
 }
 
 .theme-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 12px;
-  background: var(--bg-panel-light);
-  border: 2px solid var(--border-light);
-  border-radius: 10px;
-  cursor: pointer;
-  transition: var(--transition);
-  font-family: inherit;
+  display: flex;                          /* Card tema (Default/Dark/White) — solo impostazioni.html */
+  flex-direction: column;                 /* solo impostazioni.html */
+  align-items: center;                    /* solo impostazioni.html */
+  gap: 8px;                               /* solo impostazioni.html */
+  padding: 12px;                          /* solo impostazioni.html */
+  background: var(--bg-panel-light);      /* solo impostazioni.html */
+  border: 2px solid var(--border-light);  /* solo impostazioni.html */
+  border-radius: 10px;                    /* solo impostazioni.html */
+  cursor: pointer;                        /* solo impostazioni.html */
+  transition: var(--transition);          /* solo impostazioni.html */
+  font-family: inherit;                   /* solo impostazioni.html */
 }
 
 .theme-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
+  transform: translateY(-2px);            /* Sale all'hover — solo impostazioni.html */
+  box-shadow: var(--shadow);              /* solo impostazioni.html */
 }
 
 .theme-card.active {
-  border-color: var(--blue-light);
-  box-shadow: 0 0 0 2px rgba(2, 17, 158, 0.2);
+  border-color: var(--blue-light);                        /* Bordo blu se selezionato — solo impostazioni.html */
+  box-shadow: 0 0 0 2px rgba(2, 17, 158, 0.2);            /* Alone blu — solo impostazioni.html */
 }
 
 .theme-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-dark);
+  font-size: 13px;                        /* Etichetta "Default"/"Dark"/"White" — solo impostazioni.html */
+  font-weight: 600;                       /* Semi-grassetto — solo impostazioni.html */
+  color: var(--text-dark);                /* Testo scuro — solo impostazioni.html */
 }
 
 .theme-preview {
-  width: 100%;
-  height: 50px;
-  border-radius: 6px;
-  display: block;
-  border: 1px solid rgba(0,0,0,0.1);
+  width: 100%;                            /* Anteprima tema — solo impostazioni.html */
+  height: 50px;                           /* solo impostazioni.html */
+  border-radius: 6px;                     /* solo impostazioni.html */
+  display: block;                         /* solo impostazioni.html */
+  border: 1px solid rgba(0,0,0,0.1);      /* solo impostazioni.html */
 }
 
-.theme-preview-default { background: linear-gradient(135deg, #8a8a8a 0%, #adadad 100%); }
-.theme-preview-dark { background: linear-gradient(135deg, #1a1a1a 0%, #3a3a3a 100%); }
-.theme-preview-white {
-  background: linear-gradient(135deg, #faf8f3 0%, #fffefb 100%);
-  border: 1px solid #e0d8c8;
+.theme-preview-default { background: linear-gradient(135deg, #8a8a8a 0%, #adadad 100%); } /* Anteprima tema default — solo impostazioni.html */
+.theme-preview-dark    { background: linear-gradient(135deg, #1a1a1a 0%, #3a3a3a 100%); } /* Anteprima tema dark — solo impostazioni.html */
+.theme-preview-white   {
+  background: linear-gradient(135deg, #faf8f3 0%, #fffefb 100%);  /* Anteprima tema white — solo impostazioni.html */
+  border: 1px solid #e0d8c8;                                       /* solo impostazioni.html */
 }
 
 /* ========================================================================
-   MODALE + SELECT MULTIPLA PDF
+   MODALE (impostazioni.html - export PDF)
    ======================================================================== */
 
 .modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 500;
-  padding: 20px;
+  position: fixed;                        /* Overlay modale — solo impostazioni.html */
+  inset: 0;                               /* Copre tutto — solo impostazioni.html */
+  background: rgba(0, 0, 0, 0.6);         /* Sfondo nero semitrasparente — solo impostazioni.html */
+  display: flex;                          /* Centratura — solo impostazioni.html */
+  align-items: center;                    /* solo impostazioni.html */
+  justify-content: center;                /* solo impostazioni.html */
+  z-index: 500;                           /* Sopra tutto — solo impostazioni.html */
+  padding: 20px;                          /* solo impostazioni.html */
 }
 
 .modal-box {
-  background: var(--bg-panel-light);
-  border-radius: 12px;
-  padding: 24px;
-  max-width: 420px;
-  width: 100%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-  color: var(--text-dark);
+  background: var(--bg-panel-light);      /* Box modale — solo impostazioni.html */
+  border-radius: 12px;                    /* solo impostazioni.html */
+  padding: 24px;                          /* solo impostazioni.html */
+  max-width: 420px;                       /* solo impostazioni.html */
+  width: 100%;                            /* solo impostazioni.html */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4); /* solo impostazioni.html */
+  color: var(--text-dark);                /* Testo scuro — solo impostazioni.html */
 }
 
 .modal-check {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  background: var(--bg-panel);
-  border-radius: 8px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: var(--transition);
+  display: flex;                          /* Riga checkbox "Ingredienti"/"Allergeni" — solo impostazioni.html */
+  align-items: center;                    /* solo impostazioni.html */
+  gap: 10px;                              /* solo impostazioni.html */
+  padding: 10px 12px;                     /* solo impostazioni.html */
+  background: var(--bg-panel);            /* solo impostazioni.html */
+  border-radius: 8px;                     /* solo impostazioni.html */
+  margin-bottom: 8px;                     /* solo impostazioni.html */
+  cursor: pointer;                        /* solo impostazioni.html */
+  font-weight: 500;                       /* solo impostazioni.html */
+  transition: var(--transition);          /* solo impostazioni.html */
 }
 
-.modal-check:hover { background: var(--tag-bg); }
+.modal-check:hover { background: var(--tag-bg); }  /* Sfondo azzurro all'hover — solo impostazioni.html */
 
 .modal-check input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  accent-color: var(--blue-light);
-  cursor: pointer;
+  width: 20px;                            /* Checkbox modale — solo impostazioni.html */
+  height: 20px;                           /* solo impostazioni.html */
+  accent-color: var(--blue-light);        /* Checkbox blu — solo impostazioni.html */
+  cursor: pointer;                        /* solo impostazioni.html */
 }
 
 .pdf-select {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border-light);
-  background: var(--bg-panel);
-  color: var(--text-dark);
-  font-size: 16px;
-  font-family: inherit;
+  width: 100%;                            /* Select multipla ricette PDF — solo impostazioni.html */
+  padding: 12px;                          /* solo impostazioni.html */
+  border-radius: 8px;                     /* solo impostazioni.html */
+  border: 1px solid var(--border-light);  /* solo impostazioni.html */
+  background: var(--bg-panel);            /* solo impostazioni.html */
+  color: var(--text-dark);                /* solo impostazioni.html */
+  font-size: 16px;                        /* solo impostazioni.html */
+  font-family: inherit;                   /* solo impostazioni.html */
 }
 
 .pdf-select[multiple] {
-  min-height: 180px;
-  padding: 6px;
+  min-height: 180px;                      /* Select multipla alta — solo impostazioni.html */
+  padding: 6px;                           /* solo impostazioni.html */
 }
 
 .pdf-select[multiple] option {
-  padding: 8px 10px;
-  border-radius: 4px;
-  margin: 2px 0;
-  cursor: pointer;
+  padding: 8px 10px;                      /* Opzione singola — solo impostazioni.html */
+  border-radius: 4px;                     /* solo impostazioni.html */
+  margin: 2px 0;                          /* solo impostazioni.html */
+  cursor: pointer;                        /* solo impostazioni.html */
 }
 
 .pdf-select[multiple] option:checked {
-  background: linear-gradient(135deg, var(--blue-light), var(--blue-dark)) !important;
-  color: #fff !important;
+  background: linear-gradient(135deg, var(--blue-light), var(--blue-dark)) !important; /* Opzione selezionata blu — solo impostazioni.html */
+  color: #fff !important;                                                              /* Testo bianco — solo impostazioni.html */
 }
 
 .modal-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 20px;
+  display: flex;                          /* Riga bottoni Annulla/Esporta — solo impostazioni.html */
+  gap: 10px;                              /* solo impostazioni.html */
+  justify-content: flex-end;              /* Allineati a destra — solo impostazioni.html */
+  margin-top: 20px;                       /* solo impostazioni.html */
 }
 
 @media (max-width: 500px) {
-  .theme-grid { grid-template-columns: 1fr; }
-  .theme-preview { height: 40px; }
-  .modal-actions { flex-direction: column; }
-  .modal-actions .btn { width: 100%; }
-  .pdf-select[multiple] { min-height: 140px; }
+  .theme-grid { grid-template-columns: 1fr; }    /* Card tema in colonna — solo impostazioni.html */
+  .theme-preview { height: 40px; }               /* Anteprima più bassa — solo impostazioni.html */
+  .modal-actions { flex-direction: column; }     /* Bottoni in colonna — solo impostazioni.html */
+  .modal-actions .btn { width: 100%; }           /* Bottoni full-width — solo impostazioni.html */
+  .pdf-select[multiple] { min-height: 140px; }   /* Select più bassa — solo impostazioni.html */
 }

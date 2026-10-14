@@ -1,5 +1,7 @@
 /* ========================================================================
-   SCRIPT.JS - Ricette PWA (versione con JSONBin + ottimizzazioni mobile)
+   SCRIPT.JS - Ricette PWA
+   Gestione ricette, preparazioni base, ingredienti, ordini (planner)
+   Dati su JSONBin, cache locale per offline, temi, export PDF
    ======================================================================== */
 
 /* ---------------- CONFIGURAZIONE JSONBIN ---------------- */
@@ -67,7 +69,43 @@ async function jsonbinWrite(binId, data) {
   return true;
 }
 
-/* ---------------- SALVATAGGI CON FALLBACK LOCALE ---------------- */
+/* ========================================================================
+   MIGRAZIONE DATI
+   Converte il vecchio formato `importedBases: ["pb123"]` in `[{id, porzioni}]`
+   usando le porzioni base della preparazione come default.
+   ======================================================================== */
+
+function migrateImportedBases(ricetteArr, preparazioniArr) {
+  if (!Array.isArray(ricetteArr)) return ricetteArr;
+
+  ricetteArr.forEach(r => {
+    if (!Array.isArray(r.importedBases)) {
+      r.importedBases = [];
+      return;
+    }
+    r.importedBases = r.importedBases.map(item => {
+      // Già nel formato nuovo
+      if (typeof item === 'object' && item !== null && item.id) {
+        return {
+          id: String(item.id),
+          porzioni: Number(item.porzioni) || 1
+        };
+      }
+      // Vecchio formato: stringa
+      const base = preparazioniArr.find(p => String(p.id) === String(item));
+      return {
+        id: String(item),
+        porzioni: base ? (Number(base.porzioni) || 1) : 1
+      };
+    });
+  });
+
+  return ricetteArr;
+}
+
+/* ========================================================================
+   SALVATAGGI CON FALLBACK LOCALE
+   ======================================================================== */
 
 async function saveIngredienti(arr) {
   try {
@@ -108,7 +146,9 @@ async function savePreparazioni(arr) {
   }
 }
 
-/* ---------------- LOAD DATA (con fallback localStorage) ---------------- */
+/* ========================================================================
+   LOAD DATA (con fallback localStorage + migrazione)
+   ======================================================================== */
 
 async function loadData(forceRemote = false) {
   if (!forceRemote) {
@@ -119,6 +159,8 @@ async function loadData(forceRemote = false) {
       if (ci) ingredienti = JSON.parse(ci);
       if (cr) ricette = JSON.parse(cr);
       if (cp) preparazioni = JSON.parse(cp);
+      // Migra la cache locale
+      ricette = migrateImportedBases(ricette, preparazioni);
     } catch (e) { /* ignore */ }
   }
 
@@ -132,13 +174,14 @@ async function loadData(forceRemote = false) {
       ingredienti = ing;
       localStorage.setItem(LS_ING, JSON.stringify(ing));
     }
-    if (Array.isArray(ric)) {
-      ricette = ric;
-      localStorage.setItem(LS_RIC, JSON.stringify(ric));
-    }
     if (Array.isArray(prep)) {
       preparazioni = prep;
       localStorage.setItem(LS_PREP, JSON.stringify(prep));
+    }
+    if (Array.isArray(ric)) {
+      // Migra il formato importedBases
+      ricette = migrateImportedBases(ric, preparazioni);
+      localStorage.setItem(LS_RIC, JSON.stringify(ricette));
     }
   } catch (e) {
     console.warn('Lettura JSONBin fallita, uso cache locale', e);
@@ -146,13 +189,168 @@ async function loadData(forceRemote = false) {
 }
 
 /* ========================================================================
-   INDEX PAGE (ricette + preparazioni)
+   HELPERS: costi e macro di un ingrediente
    ======================================================================== */
+
+function computeCostForIngredient(ing, qty, unitInRecipe) {
+  const price = Number(ing.price || 0);
+  const pu = ing.priceUnit || 'kg';
+  const ingUnit = (ing.unit || 'g').toLowerCase();
+  const u = (unitInRecipe || ingUnit).toLowerCase();
+
+  if (u === 'min' || u === 'minuti') {
+    if (pu === 'h') return (qty / 60) * price;
+  }
+  if (pu === 'pcs') return qty * price;
+  if (pu === 'kg') {
+    if (u === 'g' || u === 'gr' || u === 'grammi') return (qty / 1000) * price;
+    if (u === 'pcs') {
+      if (ing.weightPerPiece) return ((qty * ing.weightPerPiece) / 1000) * price;
+      return 0;
+    }
+  }
+  if (pu === 'l') {
+    if (u === 'ml') return (qty / 1000) * price;
+  }
+  if (pu === 'h') {
+    if (u === 'h' || u === 'ora' || u === 'ore') return qty * price;
+  }
+  return 0;
+}
+
+function computeMacroForIngredient(ing, qty, unitInRecipe) {
+  const u = (unitInRecipe || ing.unit || 'g').toLowerCase();
+  if (u === 'min' || u === 'minuti' || u === 'h' || u === 'ora' || u === 'ore') {
+    return { kcal: 0, prot: 0, carb: 0, fat: 0 };
+  }
+  if (u === 'g' || u === 'gr' || u === 'grammi') {
+    const factor = qty / 100;
+    return {
+      kcal: (ing.macro?.kcal || 0) * factor,
+      prot: (ing.macro?.prot || 0) * factor,
+      carb: (ing.macro?.carb || 0) * factor,
+      fat: (ing.macro?.fat || 0) * factor
+    };
+  }
+  if (u === 'pcs' && ing.weightPerPiece) {
+    const grams = qty * ing.weightPerPiece;
+    const factor = grams / 100;
+    return {
+      kcal: (ing.macro?.kcal || 0) * factor,
+      prot: (ing.macro?.prot || 0) * factor,
+      carb: (ing.macro?.carb || 0) * factor,
+      fat: (ing.macro?.fat || 0) * factor
+    };
+  }
+  return { kcal: 0, prot: 0, carb: 0, fat: 0 };
+}
+
+/* ========================================================================
+   HELPERS: costo/macro/peso/allergeni di una preparazione base
+   Calcolati alle porzioni base della preparazione.
+   ======================================================================== */
+
+function computePreparazioneBaseStats(base) {
+  const stats = {
+    costo: 0,
+    macro: { kcal: 0, prot: 0, carb: 0, fat: 0 },
+    allergeni: new Set(),
+    pesoStimato: 0
+  };
+
+  if (!base || !Array.isArray(base.ingredients)) return stats;
+
+  base.ingredients.forEach(it => {
+    const ing = ingredienti.find(x => String(x.id) === String(it.id));
+    if (!ing) return;
+
+    const qty = Number(it.qty) || 0;
+    const unit = it.unit || 'g';
+
+    stats.costo += computeCostForIngredient(ing, qty, unit);
+
+    const m = computeMacroForIngredient(ing, qty, unit);
+    stats.macro.kcal += m.kcal;
+    stats.macro.prot += m.prot;
+    stats.macro.carb += m.carb;
+    stats.macro.fat += m.fat;
+
+    (ing.allergeni || []).forEach(a => stats.allergeni.add(a));
+
+    // Peso stimato
+    if (unit === 'g' || unit === 'gr' || unit === 'grammi') stats.pesoStimato += qty;
+    else if (unit === 'pcs' && ing.weightPerPiece) stats.pesoStimato += qty * ing.weightPerPiece;
+    else if (unit === 'ml') stats.pesoStimato += qty;
+  });
+
+  return stats;
+}
+
+/* ========================================================================
+   INDEX PAGE (ricette + preparazioni base)
+   Card uniformi con pulsanti Modifica / Elimina
+   ======================================================================== */
+
 async function initIndexPage() {
   await loadData();
   const recipesList = document.getElementById('recipesList');
   const basesList = document.getElementById('basesList');
   const search = document.getElementById('searchInput');
+
+  function createCard(item, tipo) {
+    // tipo: 'ricetta' | 'preparazione'
+    const li = document.createElement('li');
+    li.className = 'card-item';
+
+    const isRicetta = tipo === 'ricetta';
+
+    li.innerHTML = `
+      <span class="card-title">${item.name}</span>
+      <div class="card-actions">
+        <button class="btn btn-small card-btn-edit" data-id="${item.id}">Modifica</button>
+        <button class="btn btn-small card-btn-del" data-id="${item.id}">Elimina</button>
+      </div>
+    `;
+
+    // Click sulla card (non sui pulsanti) → vista lettura
+    li.addEventListener('click', (ev) => {
+      // Se il click è partito da un pulsante, ignora
+      if (ev.target.closest('.card-actions')) return;
+      if (isRicetta) {
+        window.location.href = `ricetta.html?id=${encodeURIComponent(item.id)}`;
+      } else {
+        window.location.href = `preparazione-base.html?id=${encodeURIComponent(item.id)}`;
+      }
+    });
+
+    // Pulsante Modifica
+    li.querySelector('.card-btn-edit').addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      if (isRicetta) {
+        window.location.href = `modifica-ricetta.html?id=${encodeURIComponent(item.id)}`;
+      } else {
+        window.location.href = `modifica-preparazione-base.html?id=${encodeURIComponent(item.id)}`;
+      }
+    });
+
+    // Pulsante Elimina
+    li.querySelector('.card-btn-del').addEventListener('click', async (ev) => {
+      ev.stopPropagation();
+      const msg = isRicetta ? 'Eliminare questa ricetta?' : 'Eliminare questa preparazione?';
+      if (!confirm(msg)) return;
+
+      if (isRicetta) {
+        const others = ricette.filter(x => String(x.id) !== String(item.id));
+        await saveRicette(others);
+      } else {
+        const others = preparazioni.filter(x => String(x.id) !== String(item.id));
+        await savePreparazioni(others);
+      }
+      render();
+    });
+
+    return li;
+  }
 
   function render() {
     recipesList.innerHTML = '';
@@ -165,21 +363,8 @@ async function initIndexPage() {
       a.name.localeCompare(b.name, 'it', { sensitivity: 'base' })
     );
 
-    sortedRicette.forEach(r => {
-      const li = document.createElement('li');
-      li.innerHTML = `<span>${r.name}</span><small class="mute"> porz: ${r.portions || 1}</small>`;
-      li.addEventListener('click', () => window.location.href = `ricetta.html?id=${encodeURIComponent(r.id)}`);
-      recipesList.appendChild(li);
-    });
-
-    sortedPreparazioni.forEach(p => {
-      const li = document.createElement('li');
-      li.innerHTML = `<span>${p.name}</span><small class="mute"> preparazione base</small>`;
-      li.addEventListener('click', () => {
-        window.location.href = `modifica-preparazione-base.html?id=${encodeURIComponent(p.id)}`;
-      });
-      basesList.appendChild(li);
-    });
+    sortedRicette.forEach(r => recipesList.appendChild(createCard(r, 'ricetta')));
+    sortedPreparazioni.forEach(p => basesList.appendChild(createCard(p, 'preparazione')));
   }
 
   render();
@@ -196,42 +381,57 @@ async function initIndexPage() {
 }
 
 /* ========================================================================
-   PREPARATIONS PAGE
+   PREPARATIONS PAGE (lista preparazioni base)
+   Card uniformi con pulsanti Modifica / Elimina
    ======================================================================== */
+
 async function initPreparationsPage() {
   await loadData();
   const list = document.getElementById('prepsList');
   const search = document.getElementById('baseSearch');
+
+  function createCard(p) {
+    const li = document.createElement('li');
+    li.className = 'card-item';
+
+    li.innerHTML = `
+      <span class="card-title">${p.name}</span>
+      <div class="card-actions">
+        <button class="btn btn-small card-btn-edit" data-id="${p.id}">Modifica</button>
+        <button class="btn btn-small card-btn-del" data-id="${p.id}">Elimina</button>
+      </div>
+    `;
+
+    // Click sulla card → vista lettura
+    li.addEventListener('click', (ev) => {
+      if (ev.target.closest('.card-actions')) return;
+      window.location.href = `preparazione-base.html?id=${encodeURIComponent(p.id)}`;
+    });
+
+    // Modifica
+    li.querySelector('.card-btn-edit').addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      window.location.href = `modifica-preparazione-base.html?id=${encodeURIComponent(p.id)}`;
+    });
+
+    // Elimina
+    li.querySelector('.card-btn-del').addEventListener('click', async (ev) => {
+      ev.stopPropagation();
+      if (!confirm('Eliminare questa preparazione?')) return;
+      const others = preparazioni.filter(x => String(x.id) !== String(p.id));
+      await savePreparazioni(others);
+      render();
+    });
+
+    return li;
+  }
 
   function render() {
     list.innerHTML = '';
     const sortedPreparazioni = [...preparazioni].sort((a, b) =>
       a.name.localeCompare(b.name, 'it', { sensitivity: 'base' })
     );
-
-    sortedPreparazioni.forEach(p => {
-      const li = document.createElement('li');
-      li.innerHTML = `<span>${p.name}</span>
-                      <div>
-                        <button class="btn btn-small" data-id="${p.id}" data-act="open">Apri</button>
-                        <button class="btn btn-small" data-id="${p.id}" data-act="del">Elimina</button>
-                      </div>`;
-      list.appendChild(li);
-    });
-
-    list.querySelectorAll('button').forEach(b => {
-      b.addEventListener('click', async (ev) => {
-        const id = ev.currentTarget.dataset.id;
-        const act = ev.currentTarget.dataset.act;
-        if (act === 'open') window.location.href = `modifica-preparazione-base.html?id=${encodeURIComponent(id)}`;
-        if (act === 'del') {
-          if (!confirm('Eliminare preparazione?')) return;
-          const others = preparazioni.filter(x => x.id !== id);
-          await savePreparazioni(others);
-          render();
-        }
-      });
-    });
+    sortedPreparazioni.forEach(p => list.appendChild(createCard(p)));
   }
 
   render();
@@ -239,15 +439,133 @@ async function initPreparationsPage() {
   search.addEventListener('input', () => {
     const q = search.value.toLowerCase();
     Array.from(list.children).forEach(li => {
-      const text = li.querySelector('span').textContent.toLowerCase();
-      li.style.display = text.includes(q) ? '' : 'none';
+      li.style.display = li.textContent.toLowerCase().includes(q) ? '' : 'none';
     });
   });
 }
 
 /* ========================================================================
-   EDIT PREPARATION PAGE
+   PREPARAZIONE BASE PAGE (vista lettura, come ricetta.html)
    ======================================================================== */
+
+async function initPreparazioneBasePage() {
+  await loadData();
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  const base = preparazioni.find(p => String(p.id) === String(id));
+
+  if (!base) {
+    document.getElementById('baseTitle').textContent = 'Preparazione non trovata';
+    return;
+  }
+
+  document.getElementById('baseTitle').textContent = base.name;
+  document.getElementById('basePortionsBase').textContent = base.porzioni || 1;
+
+  const stats = computePreparazioneBaseStats(base);
+  const porzioni = Number(base.porzioni) || 1;
+
+  // Tabella ingredienti
+  const tbody = document.querySelector('#baseIngredientsTable tbody');
+  tbody.innerHTML = '';
+
+  if (!Array.isArray(base.ingredients) || base.ingredients.length === 0) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td colspan="8" class="mute">Nessun ingrediente</td>`;
+    tbody.appendChild(tr);
+  } else {
+    // Ordina alfabeticamente
+    const sorted = [...base.ingredients].sort((a, b) => {
+      const ingA = ingredienti.find(i => String(i.id) === String(a.id));
+      const ingB = ingredienti.find(i => String(i.id) === String(b.id));
+      const nA = ingA ? ingA.name.toLowerCase() : '';
+      const nB = ingB ? ingB.name.toLowerCase() : '';
+      return nA.localeCompare(nB, 'it', { sensitivity: 'base' });
+    });
+
+    sorted.forEach(it => {
+      const ing = ingredienti.find(x => String(x.id) === String(it.id));
+      const qty = Number(it.qty) || 0;
+      const unit = it.unit || 'g';
+      const costo = ing ? computeCostForIngredient(ing, qty, unit) : 0;
+      const macro = ing ? computeMacroForIngredient(ing, qty, unit) : { kcal:0, prot:0, carb:0, fat:0 };
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${ing ? ing.name : it.id}</strong></td>
+        <td>${qty.toFixed(1)}</td>
+        <td>${unit}</td>
+        <td><strong>€ ${costo.toFixed(2)}</strong></td>
+        <td><strong>${macro.kcal.toFixed(1)}</strong></td>
+        <td>${macro.fat.toFixed(1)}g</td>
+        <td>${macro.carb.toFixed(1)}g</td>
+        <td>${macro.prot.toFixed(1)}g</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Totali tabella
+  document.getElementById('baseTotalCost').textContent = `€ ${stats.costo.toFixed(2)}`;
+  document.getElementById('baseTotalKcal').textContent = stats.macro.kcal.toFixed(1);
+  document.getElementById('baseTotalFat').textContent = `${stats.macro.fat.toFixed(1)}g`;
+  document.getElementById('baseTotalCarb').textContent = `${stats.macro.carb.toFixed(1)}g`;
+  document.getElementById('baseTotalProt').textContent = `${stats.macro.prot.toFixed(1)}g`;
+
+  // Box costi
+  const costoPerPorzione = stats.costo / porzioni;
+  document.getElementById('baseTotalCostBox').textContent = `€ ${stats.costo.toFixed(2)}`;
+  document.getElementById('basePortionCost').textContent = `€ ${costoPerPorzione.toFixed(2)}`;
+
+  // Box macro
+  document.getElementById('baseKcalBox').textContent = `${Math.round(stats.macro.kcal)} kcal`;
+  document.getElementById('baseProtBox').textContent = `${Math.round(stats.macro.prot)}g`;
+  document.getElementById('baseCarbBox').textContent = `${Math.round(stats.macro.carb)}g`;
+  document.getElementById('baseFatBox').textContent = `${Math.round(stats.macro.fat)}g`;
+
+  // Peso e costi/macro per 100g se peso/porzione definito
+  const pesoPerPorzione = Number(base.pesoPerPorzione) || 0;
+  if (pesoPerPorzione > 0) {
+    const pesoAtteso = porzioni * pesoPerPorzione;
+    const costoPer100g = (stats.costo / pesoAtteso) * 100;
+    const kcalPer100g = (stats.macro.kcal / pesoAtteso) * 100;
+
+    document.getElementById('baseCostPer100g').style.display = 'flex';
+    document.getElementById('baseCostPer100gValue').textContent = `€ ${costoPer100g.toFixed(2)}`;
+
+    document.getElementById('baseMacroPer100g').style.display = 'block';
+    document.getElementById('baseKcalPer100g').textContent = `${Math.round(kcalPer100g)} kcal`;
+
+    document.getElementById('baseTotalWeightBox').style.display = 'block';
+    document.getElementById('baseTotalWeightValue').textContent = `${Math.round(stats.pesoStimato)} g`;
+  }
+
+  // Allergeni
+  const allergenDiv = document.getElementById('baseAllergens');
+  const codes = Array.from(stats.allergeni);
+  if (codes.length === 0) {
+    allergenDiv.innerHTML = '<div class="mute">Nessun allergene presente</div>';
+  } else {
+    allergenDiv.innerHTML = codes.map(c => {
+      const allergen = ALLERGEN_LIST.find(x => x.code === c);
+      return `<div class="allergen-tag">${allergen ? allergen.name : c}</div>`;
+    }).join('');
+  }
+
+  // Procedimento
+  document.getElementById('basePreparationText').innerHTML = base.preparation || '';
+
+  // Bottoni
+  document.getElementById('editBaseBtn').addEventListener('click', () => {
+    window.location.href = `modifica-preparazione-base.html?id=${encodeURIComponent(base.id)}`;
+  });
+  document.getElementById('printBaseBtn').addEventListener('click', () => window.print());
+}
+
+/* ========================================================================
+   EDIT PREPARATION PAGE (editor completo: porzioni, peso, ingredienti, macro, allergeni)
+   ======================================================================== */
+
 async function initEditPreparationPage() {
   await loadData();
   const params = new URLSearchParams(window.location.search);
@@ -258,9 +576,8 @@ async function initEditPreparationPage() {
   const unitSel = document.getElementById('prepIngredientUnit');
   const addBtn = document.getElementById('addPrepIngredientBtn');
   const list = document.getElementById('prepIngredientsList');
-  const totalCostDiv = document.getElementById('prepTotalCost');
-  const totalCostValue = document.getElementById('prepTotalCostValue');
 
+  // Popola select ingredienti
   const sortedIngredients = [...ingredienti].sort((a, b) => a.name.localeCompare(b.name));
   sortedIngredients.forEach(i => {
     const o = document.createElement('option');
@@ -278,23 +595,22 @@ async function initEditPreparationPage() {
     unitSel.appendChild(o);
   });
 
-  function calculateTotalCost() {
-    let total = 0;
+  function refreshTotali() {
     const items = Array.from(list.querySelectorAll('li'));
-    items.forEach(li => {
-      const itemId = li.dataset.id;
-      const itemQty = Number(li.dataset.qty) || 0;
-      const itemUnit = li.dataset.unit || 'g';
-      const ing = ingredienti.find(i => String(i.id) === String(itemId));
-      if (ing) total += computeCostForIngredient(ing, itemQty, itemUnit);
-    });
+    const tempBase = {
+      ingredients: items.map(li => ({
+        id: li.dataset.id,
+        qty: Number(li.dataset.qty) || 0,
+        unit: li.dataset.unit || 'g'
+      }))
+    };
+    const stats = computePreparazioneBaseStats(tempBase);
     if (items.length > 0) {
-      totalCostDiv.style.display = 'block';
-      totalCostValue.textContent = `€ ${total.toFixed(2)}`;
+      document.getElementById('prepTotalCost').style.display = 'block';
+      document.getElementById('prepTotalCostValue').textContent = `€ ${stats.costo.toFixed(2)}`;
     } else {
-      totalCostDiv.style.display = 'none';
+      document.getElementById('prepTotalCost').style.display = 'none';
     }
-    return total;
   }
 
   function addLine(item) {
@@ -322,11 +638,12 @@ async function initEditPreparationPage() {
     costDiv.innerHTML = `<span style="color: var(--blue-light); font-weight: 600;">€ ${cost.toFixed(2)}</span>`;
 
     const del = document.createElement('button');
+    del.type = 'button';
     del.className = 'btn';
     del.textContent = 'Elimina';
     del.addEventListener('click', () => {
       li.remove();
-      calculateTotalCost();
+      refreshTotali();
       sortIngredientsList(list);
     });
 
@@ -336,7 +653,7 @@ async function initEditPreparationPage() {
     li.appendChild(container);
     list.appendChild(li);
 
-    calculateTotalCost();
+    refreshTotali();
     sortIngredientsList(list);
   }
 
@@ -346,13 +663,16 @@ async function initEditPreparationPage() {
     items.forEach(item => listElement.appendChild(item));
   }
 
+  // Carica dati esistenti se in modifica
   if (id) {
     const editing = preparazioni.find(p => String(p.id) === String(id));
     if (editing) {
-      form.name.value = editing.name;
+      form.name.value = editing.name || '';
+      form.porzioni.value = editing.porzioni || 1;
+      form.pesoPerPorzione.value = editing.pesoPerPorzione || '';
       form.preparation.value = editing.preparation || '';
       (editing.ingredients || []).forEach(it => addLine(it));
-      calculateTotalCost();
+      refreshTotali();
     }
   }
 
@@ -360,6 +680,8 @@ async function initEditPreparationPage() {
     if (!sel.value) return alert('Seleziona ingrediente');
     const it = { id: sel.value, qty: Number(qty.value) || 0, unit: unitSel.value || 'g' };
     addLine(it);
+    qty.value = '';
+    sel.value = '';
   });
 
   form.addEventListener('submit', async (ev) => {
@@ -367,14 +689,19 @@ async function initEditPreparationPage() {
     const p = {
       id: id || `pb${Date.now()}`,
       name: form.name.value,
+      porzioni: Number(form.porzioni.value) || 1,
+      pesoPerPorzione: form.pesoPerPorzione.value ? Number(form.pesoPerPorzione.value) : null,
       preparation: form.preparation.value,
       ingredients: Array.from(list.querySelectorAll('li')).map(li => ({
-        id: li.dataset.id, qty: Number(li.dataset.qty), unit: li.dataset.unit
+        id: li.dataset.id,
+        qty: Number(li.dataset.qty),
+        unit: li.dataset.unit
       }))
     };
     const others = preparazioni.filter(x => String(x.id) !== String(p.id));
     others.push(p);
-    await savePreparazioni(others);
+    const ok = await savePreparazioni(others);
+    if (!ok) alert('Salvataggio online fallito. Salvato localmente.');
     window.location.href = 'preparazioni-base.html';
   });
 }
@@ -382,6 +709,7 @@ async function initEditPreparationPage() {
 /* ========================================================================
    INGREDIENTI PAGE
    ======================================================================== */
+
 async function initIngredientPage() {
   await loadData();
 
@@ -467,6 +795,7 @@ async function initIngredientPage() {
 /* ========================================================================
    EDIT INGREDIENT PAGE
    ======================================================================== */
+
 async function initEditIngredientPage() {
   await loadData();
   const params = new URLSearchParams(window.location.search);
@@ -524,74 +853,16 @@ async function initEditIngredientPage() {
     others.sort((a, b) => a.name.localeCompare(b.name));
 
     const ok = await saveIngredienti(others);
-    if (ok) {
-      alert('Ingrediente salvato online.');
-    } else {
-      alert('Salvataggio online fallito. Salvato localmente.');
-    }
+    if (!ok) alert('Salvataggio online fallito. Salvato localmente.');
     window.location.href = 'ingredienti.html';
   });
 }
 
 /* ========================================================================
-   HELPERS: costi e macro
+   RECIPE PAGE (vista lettura)
+   Considera preparazioni base importate con porzioni selezionate
    ======================================================================== */
-function computeCostForIngredient(ing, qty, unitInRecipe) {
-  const price = Number(ing.price || 0);
-  const pu = ing.priceUnit || 'kg';
-  const ingUnit = (ing.unit || 'g').toLowerCase();
-  const u = (unitInRecipe || ingUnit).toLowerCase();
 
-  if (u === 'min' || u === 'minuti') {
-    if (pu === 'h') return (qty / 60) * price;
-  }
-  if (pu === 'pcs') return qty * price;
-  if (pu === 'kg') {
-    if (u === 'g' || u === 'gr' || u === 'grammi') return (qty / 1000) * price;
-    if (u === 'pcs') {
-      if (ing.weightPerPiece) return ((qty * ing.weightPerPiece) / 1000) * price;
-      return 0;
-    }
-  }
-  if (pu === 'l') {
-    if (u === 'ml') return (qty / 1000) * price;
-  }
-  if (pu === 'h') {
-    if (u === 'h' || u === 'ora' || u === 'ore') return qty * price;
-  }
-  return 0;
-}
-
-function computeMacroForIngredient(ing, qty, unitInRecipe) {
-  const u = (unitInRecipe || ing.unit || 'g').toLowerCase();
-  if (u === 'min' || u === 'minuti' || u === 'h' || u === 'ora' || u === 'ore') {
-    return { kcal: 0, prot: 0, carb: 0, fat: 0 };
-  }
-  if (u === 'g' || u === 'gr' || u === 'grammi') {
-    const factor = qty / 100;
-    return {
-      kcal: (ing.macro?.kcal || 0) * factor,
-      prot: (ing.macro?.prot || 0) * factor,
-      carb: (ing.macro?.carb || 0) * factor,
-      fat: (ing.macro?.fat || 0) * factor
-    };
-  }
-  if (u === 'pcs' && ing.weightPerPiece) {
-    const grams = qty * ing.weightPerPiece;
-    const factor = grams / 100;
-    return {
-      kcal: (ing.macro?.kcal || 0) * factor,
-      prot: (ing.macro?.prot || 0) * factor,
-      carb: (ing.macro?.carb || 0) * factor,
-      fat: (ing.macro?.fat || 0) * factor
-    };
-  }
-  return { kcal: 0, prot: 0, carb: 0, fat: 0 };
-}
-
-/* ========================================================================
-   RECIPE PAGE
-   ======================================================================== */
 async function initRecipePage() {
   await loadData();
   const params = new URLSearchParams(window.location.search);
@@ -623,20 +894,48 @@ async function initRecipePage() {
   let currentPortions = Number(recipe.portions || 1);
   let totalRecipeWeight = 0;
 
+  /* Raccoglie ingredienti: quelli della ricetta + quelli delle prep base importate,
+     scalati in base alle porzioni importate / porzioni base della prep. */
   function gatherAllIngredients(forPortions) {
     const result = [];
+
+    // Ingredienti diretti
     (recipe.ingredients || []).forEach(it => {
-      result.push({ ...it, source: 'recipe', parentBase: null });
+      result.push({ ...it, source: 'recipe', parentBase: null, parentScale: 1 });
     });
-    (recipe.importedBases || []).forEach(baseId => {
+
+    // Prep base importate
+    (recipe.importedBases || []).forEach(ib => {
+      const baseId = ib.id;
+      const basePorzioniImportate = Number(ib.porzioni) || 1;
       const base = preparazioni.find(p => String(p.id) === String(baseId));
       if (!base) return;
+
+      const basePorzioniOrig = Number(base.porzioni) || 1;
+      const scale = basePorzioniImportate / basePorzioniOrig;
+
       (base.ingredients || []).forEach(it => {
-        result.push({ id: it.id, qty: it.qty || 0, unit: it.unit || 'g', source: 'base', parentBase: baseId });
+        result.push({
+          id: it.id,
+          qty: (Number(it.qty) || 0) * scale,
+          unit: it.unit || 'g',
+          source: 'base',
+          parentBase: baseId,
+          parentScale: scale
+        });
       });
     });
+
+    // Scala per porzioni ricetta
     const factor = forPortions / (recipe.portions || 1);
-    return result.map(it => ({ id: it.id, qty: (it.qty || 0) * factor, unit: it.unit || 'g', source: it.source, parentBase: it.parentBase }));
+    return result.map(it => ({
+      id: it.id,
+      qty: (it.qty || 0) * factor,
+      unit: it.unit || 'g',
+      source: it.source,
+      parentBase: it.parentBase,
+      parentScale: it.parentScale
+    }));
   }
 
   function renderIngredients(forPortions) {
@@ -686,13 +985,10 @@ async function initRecipePage() {
 
         if (unit === 'g' || unit === 'gr' || unit === 'grammi') totalRecipeWeight += qtyAdjusted;
         else if (unit === 'pcs' && ing.weightPerPiece) totalRecipeWeight += qtyAdjusted * ing.weightPerPiece;
-        else if (unit === 'ml') totalRecipeWeight += qtyAdjusted * 1;
+        else if (unit === 'ml') totalRecipeWeight += qtyAdjusted;
       }
 
       totalCost += cost;
-
-      let displayUnit = unit;
-      if (unit === 'min') displayUnit = 'min';
 
       let sourceIndicator = '';
       if (a.parentBases.size > 0) {
@@ -707,7 +1003,7 @@ async function initRecipePage() {
       tr.innerHTML = `
         <td><strong>${ing ? ing.name : a.id}</strong>${sourceIndicator}</td>
         <td>${(qtyAdjusted).toFixed(1)}</td>
-        <td>${displayUnit}</td>
+        <td>${unit}</td>
         <td><strong>€ ${cost.toFixed(2)}</strong></td>
         <td><strong>${macros.kcal.toFixed(1)}</strong></td>
         <td>${macros.fat.toFixed(1)}g</td>
@@ -747,6 +1043,7 @@ async function initRecipePage() {
       document.getElementById('totalWeightBox').style.display = 'none';
     }
 
+    // Allergeni
     const codes = Array.from(allergenCodes);
     const allergenDiv = document.getElementById('recipeAllergens');
     if (codes.length === 0) {
@@ -758,6 +1055,7 @@ async function initRecipePage() {
       }).join('');
     }
 
+    // Preparazioni base incluse (con porzioni importate)
     const includedDiv = document.getElementById('includedBases');
     includedDiv.innerHTML = '';
 
@@ -767,9 +1065,13 @@ async function initRecipePage() {
       baseHeader.style.marginBottom = '10px';
       includedDiv.appendChild(baseHeader);
 
-      (recipe.importedBases || []).forEach(bid => {
-        const base = preparazioni.find(x => String(x.id) === String(bid));
+      recipe.importedBases.forEach(ib => {
+        const base = preparazioni.find(x => String(x.id) === String(ib.id));
         if (!base) return;
+
+        const basePorzioniImportate = Number(ib.porzioni) || 1;
+        const basePorzioniOrig = Number(base.porzioni) || 1;
+        const scale = basePorzioniImportate / basePorzioniOrig;
 
         const block = document.createElement('div');
         block.style.marginBottom = '15px';
@@ -778,7 +1080,8 @@ async function initRecipePage() {
         block.style.borderRadius = '6px';
         block.style.borderLeft = '3px solid var(--blue-accent)';
 
-        block.innerHTML = `<strong>${base.name}</strong>`;
+        block.innerHTML = `<strong>${base.name}</strong>
+          <small class="mute"> — ${basePorzioniImportate} ${basePorzioniImportate === 1 ? 'porzione' : 'porzioni'} importate</small>`;
 
         let baseTotalCost = 0;
         const ul = document.createElement('ul');
@@ -787,7 +1090,7 @@ async function initRecipePage() {
 
         base.ingredients.forEach(ingLine => {
           const ingObj = ingredienti.find(i => String(i.id) === String(ingLine.id));
-          const qtyAdj = (ingLine.qty || 0) * (forPortions / (recipe.portions || 1));
+          const qtyAdj = (Number(ingLine.qty) || 0) * scale * (forPortions / (recipe.portions || 1));
           const costLine = ingObj ? computeCostForIngredient(ingObj, qtyAdj, ingLine.unit) : 0;
           baseTotalCost += costLine;
 
@@ -844,8 +1147,9 @@ async function initRecipePage() {
 }
 
 /* ========================================================================
-   EDIT RECIPE PAGE
+   EDIT RECIPE PAGE (con selezione porzioni per prep base importate)
    ======================================================================== */
+
 async function initEditRecipePage() {
   await loadData();
   const params = new URLSearchParams(window.location.search);
@@ -857,9 +1161,11 @@ async function initEditRecipePage() {
   const addIngBtn = document.getElementById('addIngredientBtn');
   const ingList = document.getElementById('ingredientsList');
   const baseSelect = document.getElementById('baseSelect');
+  const basePorzioniInput = document.getElementById('basePorzioniInput');
   const importBaseBtn = document.getElementById('importBaseBtn');
   const importedBasesList = document.getElementById('importedBasesList');
 
+  // Popola select ingredienti
   const sortedIngredients = [...ingredienti].sort((a, b) => a.name.localeCompare(b.name));
   ingSelect.innerHTML = '<option value="">Seleziona ingrediente...</option>';
   sortedIngredients.forEach(i => {
@@ -888,6 +1194,17 @@ async function initEditRecipePage() {
     });
   }
   populateBaseSelect();
+
+  // Quando si seleziona una prep, il campo porzioni si aggiorna col valore di default
+  baseSelect.addEventListener('change', () => {
+    const baseId = baseSelect.value;
+    const base = preparazioni.find(p => String(p.id) === String(baseId));
+    if (base) {
+      basePorzioniInput.value = base.porzioni || 1;
+    } else {
+      basePorzioniInput.value = '';
+    }
+  });
 
   function createIngredientEditor(item) {
     const ingObj = ingredienti.find(i => String(i.id) === String(item.id));
@@ -948,8 +1265,8 @@ async function initEditRecipePage() {
     const items = Array.from(importedBasesList.children);
     if (items.length === 0) return;
     items.sort((a, b) => {
-      const nameA = a.textContent.split('Rimuovi')[0].trim().toLowerCase();
-      const nameB = b.textContent.split('Rimuovi')[0].trim().toLowerCase();
+      const nameA = a.textContent.split('porzioni')[0].trim().toLowerCase();
+      const nameB = b.textContent.split('porzioni')[0].trim().toLowerCase();
       return nameA.localeCompare(nameB, 'it', { sensitivity: 'base' });
     });
     items.forEach(item => importedBasesList.appendChild(item));
@@ -961,26 +1278,54 @@ async function initEditRecipePage() {
     sortIngredientsListAlphabetically();
   }
 
-  function addImportedBase(baseId) {
+  /* Aggiunge una prep base importata con porzioni specifiche */
+  function addImportedBase(baseId, porzioni) {
     if (!baseId) return;
     if (Array.from(importedBasesList.children).some(li => li.dataset.id === baseId)) return;
     const base = preparazioni.find(b => String(b.id) === String(baseId));
     if (!base) return;
+
+    const porz = Number(porzioni) || Number(base.porzioni) || 1;
+
     const li = document.createElement('li');
     li.dataset.id = base.id;
-    li.textContent = base.name;
+    li.dataset.porzioni = porz;
+
+    const label = document.createElement('span');
+    label.innerHTML = `<strong>${base.name}</strong> — ${porz} ${porz === 1 ? 'porzione' : 'porzioni'}`;
+
+    // Input per modificare le porzioni
+    const porzInput = document.createElement('input');
+    porzInput.type = 'number';
+    porzInput.min = '0.1';
+    porzInput.step = '0.1';
+    porzInput.value = porz;
+    porzInput.style.width = '80px';
+    porzInput.style.marginLeft = '10px';
+    porzInput.style.marginRight = '10px';
+    porzInput.addEventListener('change', () => {
+      const v = Number(porzInput.value) || 1;
+      li.dataset.porzioni = v;
+      label.innerHTML = `<strong>${base.name}</strong> — ${v} ${v === 1 ? 'porzione' : 'porzioni'}`;
+    });
+
     const del = document.createElement('button');
+    del.type = 'button';
     del.className = 'btn';
     del.textContent = 'Rimuovi';
     del.addEventListener('click', () => {
       li.remove();
       sortBasesListAlphabetically();
     });
+
+    li.appendChild(label);
+    li.appendChild(porzInput);
     li.appendChild(del);
     importedBasesList.appendChild(li);
     sortBasesListAlphabetically();
   }
 
+  // Carica dati esistenti se in modifica
   let editing = null;
   if (id) {
     editing = ricette.find(r => String(r.id) === String(id));
@@ -993,7 +1338,7 @@ async function initEditRecipePage() {
       form.image.value = editing.image || '';
       form.preparation.value = editing.preparation || '';
       (editing.ingredients || []).forEach(it => addIngredientToList(it));
-      (editing.importedBases || []).forEach(bid => addImportedBase(bid));
+      (editing.importedBases || []).forEach(ib => addImportedBase(ib.id, ib.porzioni));
     }
   }
 
@@ -1022,7 +1367,10 @@ async function initEditRecipePage() {
   importBaseBtn.addEventListener('click', () => {
     const v = baseSelect.value;
     if (!v) return alert('Seleziona una preparazione');
-    addImportedBase(v);
+    const porz = Number(basePorzioniInput.value) || null;
+    addImportedBase(v, porz);
+    baseSelect.value = '';
+    basePorzioniInput.value = '';
   });
 
   form.addEventListener('submit', async (ev) => {
@@ -1040,6 +1388,11 @@ async function initEditRecipePage() {
       };
     });
 
+    const importedBases = Array.from(importedBasesList.querySelectorAll('li')).map(li => ({
+      id: li.dataset.id,
+      porzioni: Number(li.dataset.porzioni) || 1
+    }));
+
     const r = {
       id: editing ? editing.id : `r${Date.now()}`,
       name: form.name.value,
@@ -1050,18 +1403,14 @@ async function initEditRecipePage() {
       image: form.image.value,
       preparation: form.preparation.value,
       ingredients: ingredients,
-      importedBases: Array.from(importedBasesList.querySelectorAll('li')).map(li => li.dataset.id)
+      importedBases: importedBases
     };
 
     const others = ricette.filter(x => String(x.id) !== String(r.id));
     others.push(r);
 
     const ok = await saveRicette(others);
-    if (ok) {
-      alert('Ricetta salvata online.');
-    } else {
-      alert('Salvataggio online fallito. Salvato localmente.');
-    }
+    if (!ok) alert('Salvataggio online fallito. Salvato localmente.');
     window.location.href = `ricetta.html?id=${encodeURIComponent(r.id)}`;
   });
 }
@@ -1069,6 +1418,7 @@ async function initEditRecipePage() {
 /* ========================================================================
    REGISTRAZIONE SERVICE WORKER
    ======================================================================== */
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(err => {
@@ -1263,11 +1613,7 @@ async function initEditOrdinePage() {
     others.push(obj);
 
     const ok = await saveOrdini(others);
-    if (ok) {
-      alert('Ordine salvato online.');
-    } else {
-      alert('Salvataggio online fallito. Salvato localmente.');
-    }
+    if (!ok) alert('Salvataggio online fallito. Salvato localmente.');
     window.location.href = 'planner.html';
   });
 }
@@ -1350,7 +1696,9 @@ async function initSettingsPage() {
         await saveIngredienti(json);
         alert('Ingredienti importati e salvati online.');
       } else {
-        await saveRicette(json);
+        // Migra le ricette importate
+        const migrated = migrateImportedBases(json, preparazioni);
+        await saveRicette(migrated);
         alert('Ricette importate e salvate online.');
       }
     } catch (e) {
@@ -1372,7 +1720,6 @@ async function initSettingsPage() {
   const modal = document.getElementById('pdfModal');
   const select = document.getElementById('pdfRicettaSelect');
 
-  // Popola select ricette (ordine alfabetico) - niente placeholder, è multipla
   select.innerHTML = '';
   [...ricette]
     .sort((a, b) => a.name.localeCompare(b.name, 'it', { sensitivity: 'base' }))
@@ -1453,7 +1800,6 @@ async function generaPdfRicette(ricettaIds, includiIngredienti, includiAllergeni
     return;
   }
 
-  /* -------- Raccogli TUTTI gli ingredienti da TUTTE le ricette (senza duplicati) -------- */
   const ingredientiUnici = [];
   const aggiunti = new Set();
 
@@ -1466,8 +1812,8 @@ async function generaPdfRicette(ricettaIds, includiIngredienti, includiAllergeni
 
   ricetteSelezionate.forEach(ricetta => {
     (ricetta.ingredients || []).forEach(it => aggiungiIngrediente(it.id));
-    (ricetta.importedBases || []).forEach(bid => {
-      const base = preparazioni.find(p => String(p.id) === String(bid));
+    (ricetta.importedBases || []).forEach(ib => {
+      const base = preparazioni.find(p => String(p.id) === String(ib.id));
       if (!base) return;
       (base.ingredients || []).forEach(it => aggiungiIngrediente(it.id));
     });
@@ -1475,14 +1821,12 @@ async function generaPdfRicette(ricettaIds, includiIngredienti, includiAllergeni
 
   ingredientiUnici.sort((a, b) => a.name.localeCompare(b.name, 'it', { sensitivity: 'base' }));
 
-  /* -------- Raccogli allergeni -------- */
   const allergeniSet = new Set();
   ingredientiUnici.forEach(ing => {
     (ing.allergeni || []).forEach(code => allergeniSet.add(code));
   });
   const allergeniArr = Array.from(allergeniSet).sort();
 
-  /* -------- Genera PDF -------- */
   const doc = new JsPDF({ unit: 'mm', format: 'a4' });
   const MARGINE = 18;
   let y = MARGINE;
@@ -1496,7 +1840,6 @@ async function generaPdfRicette(ricettaIds, includiIngredienti, includiAllergeni
     }
   }
 
-  /* --- Titolo --- */
   let titolo = 'Riepilogo ricette';
   if (ricetteSelezionate.length === 1) titolo = ricetteSelezionate[0].name;
   else if (ricetteSelezionate.length <= 3) titolo = ricetteSelezionate.map(r => r.name).join(' + ');
@@ -1526,7 +1869,6 @@ async function generaPdfRicette(ricettaIds, includiIngredienti, includiAllergeni
   }
   y += 4;
 
-  /* --- Blocco INGREDIENTI --- */
   if (includiIngredienti) {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
@@ -1551,7 +1893,6 @@ async function generaPdfRicette(ricettaIds, includiIngredienti, includiAllergeni
     y += 6;
   }
 
-  /* --- Blocco ALLERGENI --- */
   if (includiAllergeni) {
     nuovaPaginaSeNecessario(20);
     doc.setFont('helvetica', 'bold');
@@ -1569,6 +1910,7 @@ async function generaPdfRicette(ricettaIds, includiIngredienti, includiAllergeni
       y += 8;
     } else {
       allergeniArr.forEach(code => {
+        nuovaPaginaSelezionaSeNecessario && null;
         nuovaPaginaSeNecessario(6);
         const allergen = ALLERGEN_LIST.find(x => x.code === code);
         const nome = allergen ? allergen.name : code;
@@ -1578,7 +1920,6 @@ async function generaPdfRicette(ricettaIds, includiIngredienti, includiAllergeni
     }
   }
 
-  /* --- Salva --- */
   let nomeFile = 'ricetta';
   if (ricetteSelezionate.length === 1) {
     nomeFile = `ricetta-${ricetteSelezionate[0].name.replace(/[^a-z0-9]/gi, '_')}.pdf`;
