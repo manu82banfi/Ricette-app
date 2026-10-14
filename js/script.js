@@ -808,11 +808,13 @@ async function initIngredientPage() {
 
   render();
 
-  search.addEventListener('input', () => {
+    search.addEventListener('input', () => {
     const query = search.value.toLowerCase().trim();
     Array.from(tbody.querySelectorAll('tr')).forEach(tr => {
-      const text = tr.textContent.toLowerCase();
-      tr.style.display = (query === '' || text.includes(query)) ? '' : 'none';
+      // Prende SOLO il testo della prima cella (colonna Nome)
+      const firstCell = tr.querySelector('td:first-child');
+      const nome = firstCell ? firstCell.textContent.toLowerCase() : '';
+      tr.style.display = (query === '' || nome.includes(query)) ? '' : 'none';
     });
   });
 }
