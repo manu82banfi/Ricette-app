@@ -875,6 +875,15 @@ async function initRecipePage() {
   document.getElementById('recipePortions').value = recipe.portions || 1;
   if (recipe.image) document.getElementById('recipeImage').src = `images/${recipe.image}`;
 
+  /* ---- LINK VIDEO (opzionale) ---- */
+  const videoLink = document.getElementById('recipeVideoLink');
+  if (recipe.videoUrl && recipe.videoUrl.trim() !== '') {
+    videoLink.href = recipe.videoUrl;
+    videoLink.style.display = 'inline-flex';
+  } else {
+    videoLink.style.display = 'none';
+  }
+
   if (recipe.weightPerPortion) {
     const weightInfo = document.getElementById('recipeWeightInfo');
     weightInfo.textContent = `Peso/porzione: ${recipe.weightPerPortion}g`;
@@ -1318,6 +1327,7 @@ async function initEditRecipePage() {
       form.time.value = editing.time || '';
       form.difficulty.value = editing.difficulty || '';
       form.image.value = editing.image || '';
+      if (form.videoUrl) form.videoUrl.value = editing.videoUrl || '';
       form.preparation.value = editing.preparation || '';
       (editing.ingredients || []).forEach(it => addIngredientToList(it));
       (editing.importedBases || []).forEach(ib => addImportedBase(ib.id, ib.porzioni));
@@ -1383,6 +1393,7 @@ async function initEditRecipePage() {
       time: form.time.value,
       difficulty: form.difficulty.value,
       image: form.image.value,
+      videoUrl: form.videoUrl ? form.videoUrl.value.trim() : '',
       preparation: form.preparation.value,
       ingredients: ingredients,
       importedBases: importedBases

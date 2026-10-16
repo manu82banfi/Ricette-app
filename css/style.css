@@ -1790,3 +1790,46 @@ body.theme-white #ingredientTable tbody tr:hover {
     font-size: 18px;
   }
 }
+/* ========================================================================
+   ICONA VIDEO NELLA RICETTA (ricetta.html)
+   Pulsante play che apre un video esterno in nuova scheda
+   ======================================================================== */
+
+.video-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--blue-light), var(--blue-dark));
+  color: #fff;
+  border-radius: 50%;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(2, 17, 158, 0.35);
+  transition: var(--transition);
+  flex-shrink: 0;
+  margin: 0 auto;
+  /* Il margin: 0 auto lo centra orizzontalmente tra H2 e portions-control grazie al flex del parent */
+}
+
+.video-link:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 14px rgba(2, 17, 158, 0.5);
+}
+
+.video-icon {
+  font-size: 18px;
+  line-height: 1;
+  margin-left: 3px; /* Piccolo offset perché il triangolo ▶ otticamente è più a sinistra */
+}
+
+/* Su mobile, più piccolo */
+@media (max-width: 600px) {
+  .video-link {
+    width: 36px;
+    height: 36px;
+  }
+  .video-icon {
+    font-size: 16px;
+  }
+}
