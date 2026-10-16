@@ -2267,3 +2267,28 @@ body.theme-dark .inventario-riga .inv-del:hover {
     width: 100%;
   }
 }
+/* ========================================================================
+   FIX: pulsanti nel panel-header di ingredienti.html
+   Forza la stessa altezza per "+ Nuovo ingrediente" e "📦 Inventario magazzino"
+   ======================================================================== */
+
+#ingredientiSection .panel-header .btn,
+.panel-header .btn {
+  height: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Su mobile lascia stare il comportamento responsive esistente */
+@media (max-width: 900px) {
+  .panel-header .btn {
+    height: auto;
+    min-height: 44px;
+    padding: 12px 18px;
+  }
+}
