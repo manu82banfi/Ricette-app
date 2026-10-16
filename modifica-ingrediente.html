@@ -63,6 +63,26 @@
           <small class="mute">Per corrente/metano lasciare vuoto o inserire 0,0,0,0</small>
         </div>
 
+        <!-- ============ SCORTE ============ -->
+        <fieldset class="scorte-field form-field">
+          <legend>Scorte / Magazzino</legend>
+
+          <label class="checkbox-line">
+            <input type="checkbox" id="tracciaScorte" />
+            <span><strong>Traccia scorte per questo ingrediente</strong></span>
+          </label>
+          <small class="mute">
+            Se attivo, questo ingrediente viene conteggiato nel magazzino: gli ordini verificano la disponibilità e, alla conferma, stornano la quantità usata.
+          </small>
+
+          <div id="scortaFields" style="display: none; margin-top: 16px;">
+            <label>Scorta attuale:
+              <input id="scortaAttuale" type="number" step="0.01" min="0" placeholder="es. 3500" />
+            </label>
+            <small class="mute">Inserisci la quantità disponibile <strong>nell'unità base dell'ingrediente</strong> (es. g, ml, pcs).</small>
+          </div>
+        </fieldset>
+
         <fieldset class="allergeni-field form-field">
           <legend>Allergeni (seleziona)</legend>
           <div id="allergenCheckboxes" class="allergen-grid-horizontal"></div>

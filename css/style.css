@@ -1833,3 +1833,327 @@ body.theme-white #ingredientTable tbody tr:hover {
     font-size: 16px;
   }
 }
+/* ========================================================================
+   SCORTE / MAGAZZINO
+   ======================================================================== */
+
+/* --- Colonna Scorta nella tabella ingredienti --- */
+.col-scorta {
+  width: 12% !important;
+  min-width: 100px;
+}
+
+#ingredientTable th:nth-child(4) { /* Scorta */
+  width: 12%;
+  min-width: 100px;
+}
+
+#ingredientTable th:nth-child(5) { /* Allergeni — ricalcolato */
+  width: 18%;
+  min-width: 140px;
+}
+
+#ingredientTable th:nth-child(6) { /* Macro */
+  width: 13%;
+  min-width: 100px;
+}
+
+#ingredientTable th:nth-child(7) { /* Azioni */
+  width: 10%;
+  min-width: 120px;
+}
+
+.scorta-ok {
+  color: var(--blue-light);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.scorta-zero {
+  color: var(--danger);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* --- Editor ingrediente: sezione scorte --- */
+.scorte-field {
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #f8fbff, #f0f7ff);
+}
+
+.scorte-field legend {
+  font-weight: 700;
+  color: var(--text-dark);
+  padding: 0 8px;
+  font-size: 14px;
+}
+
+.checkbox-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.checkbox-line input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--blue-light);
+  cursor: pointer;
+  margin: 0;
+}
+
+#scortaFields input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* --- Box verifica scorte nell'editor ordine --- */
+.ordine-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  align-items: start;
+}
+
+.ordine-left {
+  min-width: 0;
+}
+
+.ordine-right {
+  position: sticky;
+  top: 100px;
+}
+
+.scorte-panel {
+  background: var(--bg-panel-light);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.scorte-panel h3 {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  color: var(--text-dark);
+  border-bottom: 2px solid var(--blue-light);
+  padding-bottom: 6px;
+}
+
+.scorte-badge {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 10px;
+  color: #fff;
+  background: #999;
+}
+
+.scorte-badge.verde   { background: #10b981; }
+.scorte-badge.giallo  { background: #f59e0b; }
+.scorte-badge.rosso   { background: #ef4444; }
+
+.scorte-dettagli {
+  font-size: 13px;
+  color: var(--text-dark);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.mancanti-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0 0;
+}
+
+.mancanti-list li {
+  padding: 8px 10px;
+  background: #fff5f5;
+  border-left: 3px solid var(--danger);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.mancante-qta {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+/* --- Editor ordine: aggiungi dolce --- */
+.add-dolce-line {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.add-dolce-line select,
+.add-dolce-line input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #dfeefb;
+  font-size: 14px;
+  min-width: 100px;
+}
+
+.add-dolce-line select {
+  flex: 1;
+  min-width: 180px;
+}
+
+.add-dolce-line input {
+  width: 120px;
+}
+
+.dolci-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0 0;
+}
+
+.dolce-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: var(--bg-panel-light);
+  border: 1px dashed #e2f0ff;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.dolce-info {
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+  color: var(--text-dark);
+}
+
+.dolce-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.dolce-actions .btn {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+/* --- Badge scorte nella card ordine del planner --- */
+.ordine-footer-left {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.scorte-badge {
+  /* Riusa lo stile di sopra, ma nella card è più piccolo */
+  font-size: 11px;
+  padding: 4px 10px;
+  text-transform: none;
+}
+
+/* --- Lista dolci nella comanda di stampa --- */
+.comanda-dolci-list {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0 0;
+}
+
+.comanda-dolci-list li {
+  padding: 4px 0;
+  font-size: 16px;
+  color: #000;
+  border-bottom: 1px dashed #ddd;
+}
+
+.comanda-dolci-list li:last-child {
+  border-bottom: none;
+}
+
+/* --- Responsive: editor ordine su mobile diventa 1 colonna --- */
+@media (max-width: 900px) {
+  .ordine-layout {
+    grid-template-columns: 1fr;
+  }
+  .ordine-right {
+    position: static;
+  }
+  .add-dolce-line {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .add-dolce-line select,
+  .add-dolce-line input {
+    width: 100%;
+  }
+  .add-dolce-line .btn {
+    width: 100%;
+  }
+}
+
+/* ========================================================================
+   TEMA DARK — integrazioni scorte
+   ======================================================================== */
+
+body.theme-dark .scorte-field {
+  background: linear-gradient(135deg, #2a2a2a, #333333);
+  border-color: #404040;
+}
+
+body.theme-dark .scorte-field legend {
+  color: #f0f0f0;
+}
+
+body.theme-dark .scorte-panel {
+  background: var(--bg-panel-light);
+  border-color: var(--border-light);
+}
+
+body.theme-dark .mancanti-list li {
+  background: #3a2020;
+  border-left-color: #ef4444;
+  color: #ffd0d0;
+}
+
+body.theme-dark .dolce-item {
+  background: var(--bg-panel-light);
+  border-color: #505050;
+}
+
+body.theme-dark .comanda-dolci-list li {
+  color: #000;
+  border-bottom-color: #ddd;
+}
+
+/* ========================================================================
+   TEMA WHITE — integrazioni scorte
+   ======================================================================== */
+
+body.theme-white .scorte-field {
+  background: linear-gradient(135deg, #fdfbf6, #f5f0e3);
+  border-color: #e8e3d8;
+}
+
+body.theme-white .mancanti-list li {
+  background: #fff5f5;
+  border-left-color: #ef4444;
+}

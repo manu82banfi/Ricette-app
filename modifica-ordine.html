@@ -21,57 +21,81 @@
   </header>
 
   <main class="container">
-    <section class="panel narrow">
+    <section class="panel">
       <form id="ordineForm">
-        <div class="form-field">
-          <label>Cliente: <input name="cliente" required placeholder="es. Mario Rossi" /></label>
-        </div>
+        <div class="ordine-layout">
+          <!-- Colonna sinistra: dati ordine -->
+          <div class="ordine-left">
+            <div class="form-field">
+              <label>Cliente: <input name="cliente" required placeholder="es. Mario Rossi" /></label>
+            </div>
 
-        <div class="form-field">
-          <label>Data e ora di consegna: 
-            <input name="dataConsegna" id="dataConsegna" type="datetime-local" required />
-          </label>
-          <div id="dataConsegnaLeggibile" class="data-leggibile"></div>
-        </div>
+            <div class="form-field">
+              <label>Data e ora di consegna: 
+                <input name="dataConsegna" id="dataConsegna" type="datetime-local" required />
+              </label>
+              <div id="dataConsegnaLeggibile" class="data-leggibile"></div>
+            </div>
 
-        <div class="form-field">
-          <label>Torta o dolce richiesto:
-            <input name="dolce" placeholder="es. Torta 3 piani al cioccolato" />
-          </label>
-        </div>
+            <h3>Dolci richiesti</h3>
 
-        <div class="form-field">
-          <label>Quantità:
-            <input name="quantita" placeholder="es. 2 torte da 8 porzioni" />
-          </label>
-        </div>
+            <!-- Aggiungi da ricetta -->
+            <div class="add-dolce-line">
+              <select id="ricettaSelect">
+                <option value="">Seleziona ricetta...</option>
+              </select>
+              <input id="ricettaPorzioni" type="number" min="1" step="1" placeholder="Porzioni" />
+              <button type="button" id="addRicettaBtn" class="btn primary">+ Ricetta</button>
+            </div>
 
-        <div class="form-field">
-          <label>Note:<br/>
-            <textarea name="note" rows="4" placeholder="Allergie, richieste speciali, decorazioni..."></textarea>
-          </label>
-        </div>
+            <!-- Aggiungi descrizione libera -->
+            <div class="add-dolce-line">
+              <input id="descrizioneLibera" type="text" placeholder="es. Torta 3 piani personalizzata" />
+              <input id="descrizionePorzioni" type="number" min="0" step="1" placeholder="Porzioni (opz.)" />
+              <button type="button" id="addDescrizioneBtn" class="btn">+ Descrizione</button>
+            </div>
 
-        <div class="form-field">
-          <label>Modalità di ritiro o consegna:
-            <input name="ritiroConsegna" placeholder="es. Consegna a domicilio Via Roma 5" />
-          </label>
-        </div>
+            <ul id="dolciList" class="dolci-list"></ul>
 
-        <div class="form-field">
-          <label>Stato:
-            <select name="stato">
-              <option value="in attesa">In attesa</option>
-              <option value="confermato">Confermato</option>
-              <option value="fatto">Fatto</option>
-              <option value="annullato">Annullato</option>
-            </select>
-          </label>
-        </div>
+            <div class="form-field" style="margin-top: 24px;">
+              <label>Note:<br/>
+                <textarea name="note" rows="4" placeholder="Allergie, richieste speciali, decorazioni..."></textarea>
+              </label>
+            </div>
 
-        <div class="form-actions">
-          <button type="submit" class="btn primary">Salva ordine</button>
-          <button id="cancelBtn" type="button" class="btn">Annulla</button>
+            <div class="form-field">
+              <label>Modalità di ritiro o consegna:
+                <input name="ritiroConsegna" placeholder="es. Consegna a domicilio Via Roma 5" />
+              </label>
+            </div>
+
+            <div class="form-field">
+              <label>Stato:
+                <select name="stato">
+                  <option value="in attesa">In attesa</option>
+                  <option value="confermato">Confermato</option>
+                  <option value="fatto">Fatto</option>
+                  <option value="annullato">Annullato</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn primary">Salva ordine</button>
+              <button id="cancelBtn" type="button" class="btn">Annulla</button>
+            </div>
+          </div>
+
+          <!-- Colonna destra: verifica scorte -->
+          <aside class="ordine-right">
+            <div class="scorte-panel" id="scorteBox">
+              <h3>Verifica scorte</h3>
+              <div id="scorteBadge" class="scorte-badge">—</div>
+              <div id="scorteDettagli" class="scorte-dettagli">
+                <p class="mute">Aggiungi dolci per vedere la verifica.</p>
+              </div>
+            </div>
+          </aside>
         </div>
       </form>
     </section>
@@ -124,7 +148,7 @@
 
     /* Inizializza la pagina (carica eventuale ordine esistente) */
     initEditOrdinePage().then(() => {
-      aggiornaDataLeggibile(); // mostra la scritta anche in modalità "modifica"
+      aggiornaDataLeggibile();
     });
 
     document.getElementById('cancelBtn').addEventListener('click', () => window.location.href = 'planner.html');
