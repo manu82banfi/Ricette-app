@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <title>Inventario magazzino</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#02119e" />
+  <link rel="apple-touch-icon" href="images/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Ricette" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header is-home-link" onclick="window.location.href='index.html'">
+    <div class="header-left">
+      <h1>Inventario magazzino</h1>
+      <p class="mute">Aggiungi o togli scorte in blocco</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel narrow">
+      <p class="mute" style="margin-top:0;">
+        Seleziona gli ingredienti e inserisci una <strong>quantità positiva</strong> per aggiungere scorte
+        (es. <em>+5000</em>) oppure una <strong>quantità negativa</strong> per togliere
+        (es. <em>-500</em>).<br>
+        Vengono mostrati solo gli ingredienti con <strong>traccia scorte</strong> attiva.
+        La quantità è nell'unità base dell'ingrediente (g, ml, pcs...).
+      </p>
+
+      <div id="inventarioList" class="inventario-list"></div>
+
+      <button type="button" id="addRigaBtn" class="btn" style="width:100%; margin-top:12px;">
+        + Aggiungi riga
+      </button>
+
+      <div class="form-actions" style="margin-top:24px;">
+        <button type="button" id="applyBtn" class="btn primary">Applica modifiche</button>
+        <button type="button" id="cancelBtn" class="btn">Annulla</button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="index2.html"><span class="nav-icon">📖</span><span>Ricette</span></a>
+    <a href="preparazioni-base.html"><span class="nav-icon">🥣</span><span>Basi</span></a>
+    <a href="ingredienti.html" class="active"><span class="nav-icon">🥕</span><span>Ingredienti</span></a>
+    <a href="planner.html"><span class="nav-icon">📅</span><span>Planner</span></a>
+    <a href="impostazioni.html"><span class="nav-icon">⚙️</span><span>Setup</span></a>
+  </nav>
+  <script>document.body.classList.add('has-bottom-nav');</script>
+
+  <script src="js/script.js"></script>
+  <script>
+    initInventarioPage();
+    document.getElementById('cancelBtn').addEventListener('click', () => window.location.href = 'ingredienti.html');
+  </script>
+</body>
+</html>

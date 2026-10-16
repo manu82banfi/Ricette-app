@@ -2157,3 +2157,113 @@ body.theme-white .mancanti-list li {
   background: #fff5f5;
   border-left-color: #ef4444;
 }
+/* ========================================================================
+   INVENTARIO MAGAZZINO (inventario.html)
+   ======================================================================== */
+
+.inventario-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.inventario-riga {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg-panel-light);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.inventario-riga .inv-select {
+  flex: 1;
+  min-width: 180px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg-panel-light);
+  color: var(--text-dark);
+}
+
+.inventario-riga .inv-qty {
+  width: 130px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg-panel-light);
+  color: var(--text-dark);
+}
+
+.inventario-riga .inv-unit {
+  min-width: 40px;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.inventario-riga .inv-del {
+  padding: 8px 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--danger);
+  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  cursor: pointer;
+  line-height: 1;
+  min-width: 40px;
+}
+
+.inventario-riga .inv-del:hover {
+  background: #fff0f0;
+  border-color: var(--danger);
+}
+
+/* Dark theme */
+body.theme-dark .inventario-riga {
+  background: var(--bg-panel-light);
+  border-color: var(--border-light);
+}
+
+body.theme-dark .inventario-riga .inv-select,
+body.theme-dark .inventario-riga .inv-qty {
+  background: #333;
+  color: #f0f0f0;
+  border-color: #505050;
+}
+
+body.theme-dark .inventario-riga .inv-del {
+  background: #404040;
+  color: #ffb3b3;
+  border-color: #505050;
+}
+
+body.theme-dark .inventario-riga .inv-del:hover {
+  background: #5a2020;
+}
+
+/* Responsive: su mobile le righe vanno in colonna */
+@media (max-width: 600px) {
+  .inventario-riga {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .inventario-riga .inv-select,
+  .inventario-riga .inv-qty {
+    width: 100%;
+  }
+  .inventario-riga .inv-unit {
+    text-align: right;
+  }
+  .inventario-riga .inv-del {
+    width: 100%;
+  }
+}

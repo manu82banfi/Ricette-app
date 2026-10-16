@@ -25,6 +25,7 @@
       <div class="panel-header">
         <input id="ingredientSearch" class="search" placeholder="Cerca ingrediente..." autofocus />
         <button id="nuovoIngredienteBtn" class="btn primary">+ Nuovo ingrediente</button>
+        <button id="inventarioBtn" class="btn">📦 Inventario magazzino</button>
       </div>
 
       <div class="table-responsive">
@@ -59,6 +60,9 @@
   <script>
     document.getElementById('nuovoIngredienteBtn').addEventListener('click', function() {
       window.location.href = 'modifica-ingrediente.html';
+    });
+    document.getElementById('inventarioBtn').addEventListener('click', function() {
+      window.location.href = 'inventario.html';
     });
     initIngredientPage();
   </script>
