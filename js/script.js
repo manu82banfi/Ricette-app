@@ -71,8 +71,7 @@ async function jsonbinWrite(binId, data) {
 
 /* ========================================================================
    MIGRAZIONE DATI
-   - importedBases: da ["pb123"] a [{id, porzioni}]
-   - dolci negli ordini: NON migriamo (li cancellerà l'utente)
+   Converte il vecchio formato `importedBases: ["pb123"]` in `[{id, porzioni}]`
    ======================================================================== */
 
 function migrateImportedBases(ricetteArr, preparazioniArr) {
@@ -282,9 +281,6 @@ function computePreparazioneBaseStats(base) {
 
 /* ========================================================================
    HELPERS: CONVERSIONE UNITÀ (solo quando serve)
-   Converte una quantità da un'unità all'unità base dell'ingrediente.
-   Ritorna la quantità convertita (o la stessa se non serve conversione).
-   Se le unità sono incompatibili, ritorna null.
    ======================================================================== */
 
 function convertiInUnitaBase(qty, unitaDa, unitaBase) {
@@ -293,49 +289,40 @@ function convertiInUnitaBase(qty, unitaDa, unitaBase) {
 
   if (da === a) return qty;
 
-  // g <-> kg
   if (da === 'g' && a === 'kg') return qty / 1000;
   if (da === 'kg' && a === 'g') return qty * 1000;
 
-  // ml <-> l
   if (da === 'ml' && a === 'l') return qty / 1000;
   if (da === 'l' && a === 'ml') return qty * 1000;
 
-  // pcs <-> pcs (già gestito sopra)
-
-  // min <-> h
   if (da === 'min' && a === 'h') return qty / 60;
   if (da === 'h' && a === 'min') return qty * 60;
 
-  // Alias
   if ((da === 'gr' || da === 'grammi') && a === 'g') return qty;
   if (a === 'gr' || a === 'grammi') {
     if (da === 'g') return qty;
     if (da === 'kg') return qty * 1000;
   }
 
-  // Incompatibili
   return null;
 }
 
 /* ========================================================================
    HELPERS: FABBISOGNO INGREDIENTI PER UN ORDINE
-   Calcola, per ogni ingrediente tracciato, la quantità totale necessaria
-   per realizzare tutti i dolci dell'ordine.
-   Ritorna un oggetto: { ingredienteId: { qty, unitaBase } }
+   Per ogni dolce con ricetta: ingredienti × quantità (n. ripetizioni ricetta).
    ======================================================================== */
 
 function calcolaFabbisognoOrdine(ordine) {
-  const fabbisogno = {}; // ingredienteId -> { qty, unitaBase }
+  const fabbisogno = {};
 
   function addQty(ingredienteId, qty, unitaInUso) {
     const ing = ingredienti.find(i => String(i.id) === String(ingredienteId));
     if (!ing) return;
-    if (!ing.tracciaScorte) return; // ignoriamo gli ingredienti non tracciati
+    if (!ing.tracciaScorte) return;
 
     const unitaBase = (ing.unit || 'g').toLowerCase();
     const qtyBase = convertiInUnitaBase(qty, unitaInUso, unitaBase);
-    if (qtyBase === null) return; // unità incompatibili, ignoriamo
+    if (qtyBase === null) return;
 
     if (!fabbisogno[ingredienteId]) {
       fabbisogno[ingredienteId] = { qty: 0, unitaBase };
@@ -343,23 +330,21 @@ function calcolaFabbisognoOrdine(ordine) {
     fabbisogno[ingredienteId].qty += qtyBase;
   }
 
-  // Per ogni dolce dell'ordine
   (ordine.dolci || []).forEach(d => {
-    if (d.tipo !== 'ricetta') return; // testo libero = ignorato
+    if (d.tipo !== 'ricetta') return;
     const ricetta = ricette.find(r => String(r.id) === String(d.ricettaId));
     if (!ricetta) return;
 
-    const porzioniOrdine = Number(d.porzioni) || 0;
-    const porzioniBase = Number(ricetta.portions) || 1;
-    if (porzioniOrdine <= 0) return;
-    const factor = porzioniOrdine / porzioniBase;
+    const quantita = Number(d.quantita) || 0;
+    if (quantita <= 0) return;
+    const factor = quantita; // 1 = una ricetta base, 2 = doppia, ecc.
 
-    // Ingredienti diretti della ricetta
+    // Ingredienti diretti
     (ricetta.ingredients || []).forEach(it => {
       addQty(it.id, (Number(it.qty) || 0) * factor, it.unit || 'g');
     });
 
-    // Ingredienti delle preparazioni base importate (scalati per porzioni importate)
+    // Preparazioni base importate
     (ricetta.importedBases || []).forEach(ib => {
       const base = preparazioni.find(p => String(p.id) === String(ib.id));
       if (!base) return;
@@ -379,8 +364,6 @@ function calcolaFabbisognoOrdine(ordine) {
 
 /* ========================================================================
    HELPERS: VERIFICA SCORTE
-   Confronta fabbisogno con scorta attuale.
-   Ritorna: { esito: 'verde'|'giallo'|'rosso', dettagli: [...] }
    ======================================================================== */
 
 function verificaScorte(fabbisogno) {
@@ -419,7 +402,7 @@ function verificaScorte(fabbisogno) {
 }
 
 /* ========================================================================
-   INDEX PAGE (ricette + preparazioni base)
+   INDEX PAGE
    ======================================================================== */
 
 async function initIndexPage() {
@@ -844,7 +827,6 @@ async function initIngredientPage() {
         `kcal:${i.macro.kcal}<br>prot:${i.macro.prot || 0}<br>carb:${i.macro.carb || 0}<br>fat:${i.macro.fat || 0}` :
         '';
 
-      // Colonna scorta
       let scortaHtml = '<span class="mute">—</span>';
       if (i.tracciaScorte) {
         const s = Number(i.scortaAttuale) || 0;
@@ -951,7 +933,6 @@ async function initEditIngredientPage() {
   const scortaFields = document.getElementById('scortaFields');
   const scortaInput = document.getElementById('scortaAttuale');
 
-  // Genera checkboxes allergeni
   ALLERGEN_LIST.forEach(a => {
     const wrapper = document.createElement('label');
     const cb = document.createElement('input');
@@ -963,7 +944,6 @@ async function initEditIngredientPage() {
     checkContainer.appendChild(wrapper);
   });
 
-  // Mostra/nascondi sezione scorte
   function toggleScortaFields() {
     if (tracciaScorteCheckbox.checked) {
       scortaFields.style.display = 'block';
@@ -973,7 +953,6 @@ async function initEditIngredientPage() {
   }
   tracciaScorteCheckbox.addEventListener('change', toggleScortaFields);
 
-  // Carica dati se in modifica
   let editing = null;
   if (id) {
     editing = ingredienti.find(i => String(i.id) === String(id));
@@ -987,7 +966,6 @@ async function initEditIngredientPage() {
         const c = checkContainer.querySelector(`input[value="${code}"]`);
         if (c) c.checked = true;
       });
-      // Scorte
       tracciaScorteCheckbox.checked = !!editing.tracciaScorte;
       scortaInput.value = editing.scortaAttuale !== undefined ? editing.scortaAttuale : '';
     }
@@ -1045,7 +1023,6 @@ async function initRecipePage() {
   document.getElementById('recipePortions').value = recipe.portions || 1;
   if (recipe.image) document.getElementById('recipeImage').src = `images/${recipe.image}`;
 
-  /* ---- LINK VIDEO (opzionale) ---- */
   const videoLink = document.getElementById('recipeVideoLink');
   if (videoLink) {
     if (recipe.videoUrl && recipe.videoUrl.trim() !== '') {
@@ -1627,7 +1604,6 @@ async function loadOrdini(forceRemote = false) {
   }
 }
 
-/* -------- Helper: formattazione data -------- */
 function formatData(iso) {
   if (!iso) return '—';
   try {
@@ -1643,16 +1619,16 @@ function formatData(iso) {
   }
 }
 
-/* -------- Helper: riassunto dolci di un ordine (testo) -------- */
+/* Riassunto dolci ordine: "Meringhe × 2 + torta personalizzata" */
 function riassuntoDolci(o) {
   if (!Array.isArray(o.dolci) || o.dolci.length === 0) return '';
   const parti = o.dolci.map(d => {
     if (d.tipo === 'ricetta') {
       const ricetta = ricette.find(r => String(r.id) === String(d.ricettaId));
       const nome = ricetta ? ricetta.name : 'Ricetta sconosciuta';
-      return `${nome} (${d.porzioni || '?'} porz.)`;
+      return `${nome} × ${d.quantita || 1}`;
     } else {
-      return `${d.descrizione || 'Dolce'} (${d.porzioni || '?'} porz.)`;
+      return d.descrizione || 'Dolce';
     }
   });
   return parti.join(' + ');
@@ -1661,6 +1637,7 @@ function riassuntoDolci(o) {
 /* -------- PLANNER PAGE -------- */
 async function initPlannerPage() {
   await loadOrdini();
+  await loadData();
 
   const search = document.getElementById('ordiniSearch');
   const containerFuturi = document.getElementById('ordiniFuturi');
@@ -1676,7 +1653,6 @@ async function initPlannerPage() {
   }
 
   function scorteBadge(o) {
-    // Mostra solo se l'ordine è "in attesa" (per gli altri stati non ha senso)
     if ((o.stato || '').toLowerCase() !== 'in attesa') return '';
     const fabbisogno = calcolaFabbisognoOrdine(o);
     const res = verificaScorte(fabbisogno);
@@ -1784,7 +1760,7 @@ async function initPlannerPage() {
 
 /* ========================================================================
    EDIT ORDINE PAGE
-   Con gestione multi-dolce, verifica scorte, storno automatico
+   Multi-dolce con quantità, verifica scorte, storno automatico
    ======================================================================== */
 
 async function initEditOrdinePage() {
@@ -1795,21 +1771,17 @@ async function initEditOrdinePage() {
   const id = params.get('id');
   const form = document.getElementById('ordineForm');
 
-  // Riferimenti UI
   const ricettaSelect = document.getElementById('ricettaSelect');
-  const ricettaPorzioni = document.getElementById('ricettaPorzioni');
+  const ricettaQuantita = document.getElementById('ricettaQuantita');
   const addRicettaBtn = document.getElementById('addRicettaBtn');
   const descrizioneLibera = document.getElementById('descrizioneLibera');
-  const descrizionePorzioni = document.getElementById('descrizionePorzioni');
   const addDescrizioneBtn = document.getElementById('addDescrizioneBtn');
   const dolciList = document.getElementById('dolciList');
 
-  // Box verifica scorte
-  const scorteBox = document.getElementById('scorteBox');
   const scorteBadge = document.getElementById('scorteBadge');
   const scorteDettagli = document.getElementById('scorteDettagli');
 
-  // Popola select ricette (ordine alfabetico)
+  // Popola select ricette
   ricettaSelect.innerHTML = '<option value="">Seleziona ricetta...</option>';
   [...ricette]
     .sort((a, b) => a.name.localeCompare(b.name, 'it', { sensitivity: 'base' }))
@@ -1820,10 +1792,7 @@ async function initEditOrdinePage() {
       ricettaSelect.appendChild(o);
     });
 
-  // Stato corrente dei dolci
   let dolci = [];
-
-  // Stato originale dell'ordine (per gestire storni)
   let editing = null;
   let statoOriginale = null;
 
@@ -1842,18 +1811,15 @@ async function initEditOrdinePage() {
       let label = '';
       if (d.tipo === 'ricetta') {
         const ricetta = ricette.find(r => String(r.id) === String(d.ricettaId));
-        label = `<strong>${ricetta ? ricetta.name : 'Ricetta sconosciuta'}</strong>`;
+        label = `<strong>${ricetta ? ricetta.name : 'Ricetta sconosciuta'}</strong> × ${d.quantita || 1}`;
       } else {
         label = `<em>${d.descrizione || 'Dolce libero'}</em>`;
       }
 
       li.innerHTML = `
-        <div class="dolce-info">
-          ${label}
-          <small class="mute"> — ${d.porzioni || '?'} porzioni</small>
-        </div>
+        <div class="dolce-info">${label}</div>
         <div class="dolce-actions">
-          <button type="button" class="btn btn-small dolce-edit" data-idx="${idx}">Modifica</button>
+          ${d.tipo === 'ricetta' ? `<button type="button" class="btn btn-small dolce-edit" data-idx="${idx}">Modifica</button>` : ''}
           <button type="button" class="btn btn-small dolce-remove" data-idx="${idx}">Rimuovi</button>
         </div>
       `;
@@ -1864,30 +1830,38 @@ async function initEditOrdinePage() {
         aggiornaVerificaScorte();
       });
 
-      li.querySelector('.dolce-edit').addEventListener('click', () => {
-        const nuovaPorzioni = prompt(`Modifica porzioni per questo dolce:`, d.porzioni || 1);
-        if (nuovaPorzioni === null) return;
-        const v = Number(nuovaPorzioni);
-        if (!v || v <= 0) return alert('Inserisci un numero valido');
-        dolci[idx].porzioni = v;
-        renderDolci();
-        aggiornaVerificaScorte();
-      });
+      const editBtn = li.querySelector('.dolce-edit');
+      if (editBtn) {
+        editBtn.addEventListener('click', () => {
+          const nuovaQ = prompt(`Modifica quantità per "${ricettaNome(d)}":`, d.quantita || 1);
+          if (nuovaQ === null) return;
+          const v = Number(nuovaQ);
+          if (!v || v <= 0) return alert('Inserisci un numero valido');
+          dolci[idx].quantita = v;
+          renderDolci();
+          aggiornaVerificaScorte();
+        });
+      }
 
       dolciList.appendChild(li);
     });
+  }
+
+  function ricettaNome(d) {
+    const r = ricette.find(x => String(x.id) === String(d.ricettaId));
+    return r ? r.name : 'Ricetta';
   }
 
   /* -------- Aggiungi dolce da ricetta -------- */
   addRicettaBtn.addEventListener('click', () => {
     const rid = ricettaSelect.value;
     if (!rid) return alert('Seleziona una ricetta');
-    const porz = Number(ricettaPorzioni.value) || 0;
-    if (porz <= 0) return alert('Inserisci le porzioni');
+    const qta = Number(ricettaQuantita.value) || 0;
+    if (qta <= 0) return alert('Inserisci la quantità');
 
-    dolci.push({ tipo: 'ricetta', ricettaId: rid, porzioni: porz });
+    dolci.push({ tipo: 'ricetta', ricettaId: rid, quantita: qta });
     ricettaSelect.value = '';
-    ricettaPorzioni.value = '';
+    ricettaQuantita.value = '';
     renderDolci();
     aggiornaVerificaScorte();
   });
@@ -1896,11 +1870,9 @@ async function initEditOrdinePage() {
   addDescrizioneBtn.addEventListener('click', () => {
     const desc = (descrizioneLibera.value || '').trim();
     if (!desc) return alert('Scrivi una descrizione');
-    const porz = Number(descrizionePorzioni.value) || 0;
 
-    dolci.push({ tipo: 'testo', descrizione: desc, porzioni: porz });
+    dolci.push({ tipo: 'testo', descrizione: desc });
     descrizioneLibera.value = '';
-    descrizionePorzioni.value = '';
     renderDolci();
     aggiornaVerificaScorte();
   });
@@ -1957,11 +1929,11 @@ async function initEditOrdinePage() {
       form.ritiroConsegna.value = editing.ritiroConsegna || '';
       form.stato.value = editing.stato || 'in attesa';
 
-      // Migra vecchio formato (dolce+quantita) se presente, ma solo per comodità
       if (Array.isArray(editing.dolci)) {
         dolci = JSON.parse(JSON.stringify(editing.dolci));
       } else if (editing.dolce) {
-        dolci = [{ tipo: 'testo', descrizione: editing.dolce, porzioni: null }];
+        // Vecchio formato
+        dolci = [{ tipo: 'testo', descrizione: editing.dolce }];
       }
       renderDolci();
       aggiornaVerificaScorte();
@@ -1995,14 +1967,13 @@ async function initEditOrdinePage() {
       storni: editing && Array.isArray(editing.storni) ? editing.storni : []
     };
 
-    /* ========== LOGICA STORNI ========== */
+    /* LOGICA STORNI */
 
-    // Caso 1: da "in attesa" a "confermato" → storna
+    // Caso 1: da non-confermato a confermato → storna
     if (!eraConfermato && oraConfermato) {
       const fabbisogno = calcolaFabbisognoOrdine(obj);
       const res = verificaScorte(fabbisogno);
 
-      // Chiedi conferma se mancano ingredienti
       if (res.mancanti > 0) {
         const ok = confirm(
           `Mancano ${res.mancanti} ingredienti su ${res.totale}.\n\nProcedere comunque con la conferma?\n\n` +
@@ -2011,7 +1982,6 @@ async function initEditOrdinePage() {
         if (!ok) return;
       }
 
-      // Applica storni
       const nuoviStorni = [];
       const nuoviIngredienti = ingredienti.map(ing => {
         const need = fabbisogno[String(ing.id)];
@@ -2031,21 +2001,18 @@ async function initEditOrdinePage() {
 
       obj.storni = nuoviStorni;
 
-      // Salva ordine + ingredienti
       const othersOrd = ordini.filter(x => String(x.id) !== String(obj.id));
       othersOrd.push(obj);
 
       const okIng = await saveIngredienti(nuoviIngredienti);
       const okOrd = await saveOrdini(othersOrd);
 
-      if (!okIng || !okOrd) {
-        alert('Salvataggio online fallito. Dati salvati localmente.');
-      }
+      if (!okIng || !okOrd) alert('Salvataggio online fallito. Dati salvati localmente.');
       window.location.href = 'planner.html';
       return;
     }
 
-    // Caso 2: da "confermato" a "in attesa" o "annullato" → ripristina
+    // Caso 2: da confermato a non-confermato → ripristina
     if (eraConfermato && !oraConfermato && Array.isArray(obj.storni) && obj.storni.length > 0) {
       const nuoviIngredienti = ingredienti.map(ing => {
         const storno = obj.storni.find(s => String(s.ingredienteId) === String(ing.id));
@@ -2061,15 +2028,12 @@ async function initEditOrdinePage() {
       const okIng = await saveIngredienti(nuoviIngredienti);
       const okOrd = await saveOrdini(othersOrd);
 
-      if (!okIng || !okOrd) {
-        alert('Salvataggio online fallito. Dati salvati localmente.');
-      }
+      if (!okIng || !okOrd) alert('Salvataggio online fallito. Dati salvati localmente.');
       window.location.href = 'planner.html';
       return;
     }
 
-    // Caso 3: nessuna transizione di stato rilevante (resta in attesa, o già confermato e resta confermato)
-    // Se è già confermato e resta confermato, NON ri-stornare (mantieni storni esistenti)
+    // Caso 3: nessuna transizione rilevante
     const othersOrd = ordini.filter(x => String(x.id) !== String(obj.id));
     othersOrd.push(obj);
     const ok = await saveOrdini(othersOrd);
@@ -2084,7 +2048,7 @@ async function initEditOrdinePage() {
 
 async function initStampaOrdiniPage() {
   await loadOrdini();
-  await loadData(); // Serve per risolvere i nomi delle ricette
+  await loadData();
 
   const params = new URLSearchParams(window.location.search);
   const idPartenza = params.get('id');
@@ -2182,9 +2146,9 @@ async function initStampaOrdiniPage() {
           if (d.tipo === 'ricetta') {
             const ricetta = ricette.find(r => String(r.id) === String(d.ricettaId));
             const nome = ricetta ? ricetta.name : 'Ricetta sconosciuta';
-            return `<li><strong>${nome}</strong> — ${d.porzioni || '?'} porzioni</li>`;
+            return `<li><strong>${nome}</strong> — Quantità: ${d.quantita || 1}</li>`;
           } else {
-            return `<li><em>${d.descrizione || 'Dolce libero'}</em>${d.porzioni ? ` — ${d.porzioni} porzioni` : ''}</li>`;
+            return `<li><em>${d.descrizione || 'Dolce libero'}</em></li>`;
           }
         }).join('');
       } else {

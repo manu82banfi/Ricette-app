@@ -44,15 +44,14 @@
               <select id="ricettaSelect">
                 <option value="">Seleziona ricetta...</option>
               </select>
-              <input id="ricettaPorzioni" type="number" min="1" step="1" placeholder="Porzioni" />
+              <input id="ricettaQuantita" type="number" min="1" step="1" placeholder="Quantità" />
               <button type="button" id="addRicettaBtn" class="btn primary">+ Ricetta</button>
             </div>
 
-            <!-- Aggiungi descrizione libera -->
+            <!-- Aggiungi descrizione libera (nessuna quantità) -->
             <div class="add-dolce-line">
-              <input id="descrizioneLibera" type="text" placeholder="es. Torta 3 piani personalizzata" />
-              <input id="descrizionePorzioni" type="number" min="0" step="1" placeholder="Porzioni (opz.)" />
-              <button type="button" id="addDescrizioneBtn" class="btn">+ Descrizione</button>
+              <input id="descrizioneLibera" type="text" placeholder="torta personalizzata" />
+              <button type="button" id="addDescrizioneBtn" class="btn">+ Aggiungi</button>
             </div>
 
             <ul id="dolciList" class="dolci-list"></ul>
@@ -146,7 +145,6 @@
     document.getElementById('dataConsegna').addEventListener('input', aggiornaDataLeggibile);
     document.getElementById('dataConsegna').addEventListener('change', aggiornaDataLeggibile);
 
-    /* Inizializza la pagina (carica eventuale ordine esistente) */
     initEditOrdinePage().then(() => {
       aggiornaDataLeggibile();
     });
