@@ -5,7 +5,7 @@
    - Funziona offline per le pagine già visitate
    ======================================================================== */
 
-const CACHE_NAME = 'ricette-pwa-v15';
+const CACHE_NAME = 'ricette-pwa-v16';
 
 const PRECACHE_URLS = [
   './',
